@@ -34,9 +34,9 @@ object AppModule {
   @Provides
   fun providesNotesDatabase(@ApplicationContext context: Context): NotesDatabase {
     return Room.databaseBuilder(
-      context,
-      NotesDatabase::class.java,
-      "notes_database"
-    ).fallbackToDestructiveMigration(false).build()
+        context,
+        NotesDatabase::class.java,
+        "notes_database"
+      ).fallbackToDestructiveMigration(false).build()
   }
 }
