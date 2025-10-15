@@ -31,11 +31,7 @@ class NoteViewModel @Inject constructor(
   init {
     viewModelScope.launch(Dispatchers.IO) {
       repository.getNotes().collect { item ->
-        if(item.isEmpty()){
-          _notes.value = emptyList()
-        } else {
-          _notes.value = item
-        }
+       _notes.value = item
       }
     }
   }
@@ -47,7 +43,7 @@ class NoteViewModel @Inject constructor(
    * @usage Llamar a addNote(note) para insertar una nueva Note en la fuente de datos.
    */
   fun addNote(note: Note){
-    viewModelScope.launch {
+    viewModelScope.launch(Dispatchers.IO) {
       repository.addNote(note)
     }
   }
@@ -59,7 +55,7 @@ class NoteViewModel @Inject constructor(
    * @usage Llamar a updateNote(note) para modificar una Note existente en la fuente de datos.
    */
   fun updateNote(note: Note){
-    viewModelScope.launch {
+    viewModelScope.launch(Dispatchers.IO)  {
       repository.updateNote(note)
     }
   }
@@ -71,7 +67,7 @@ class NoteViewModel @Inject constructor(
    * @usage Llamar a deleteNote(note) para eliminar una Note de la fuente de datos.
    */
   fun deleteNote(note: Note){
-    viewModelScope.launch {
+    viewModelScope.launch(Dispatchers.IO)  {
       repository.deleteNote(note)
     }
   }
