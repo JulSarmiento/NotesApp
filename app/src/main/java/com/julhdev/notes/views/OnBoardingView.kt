@@ -7,10 +7,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun HomeView() {
+fun OnBoardingView() {
   Scaffold { innerPadding ->
     Text(
       modifier = Modifier.padding(innerPadding),
-      text = "home View")
+      text = "OnBoarding View")
   }
 }
+

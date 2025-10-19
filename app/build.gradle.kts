@@ -58,7 +58,11 @@ dependencies {
 
   implementation(libs.androidx.navigation.compose)
 
+  implementation(libs.androidx.datastore.preferences)
+
   implementation(libs.me.saket.swipe)
+
+  implementation(libs.com.airbnb.lottie)
 
   testImplementation(libs.junit)
   androidTestImplementation(libs.androidx.junit)
