@@ -1,0 +1,39 @@
+package com.julhdev.notes.components
+
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
+
+
+/**
+ * MainImage Composable
+ * @param modifier: Modifier debe ser pasado para personalizar el diseño del componente.
+ * @param image: Int es el recurso de la imagen Lottie a mostrar.
+ * @usage MainImage(modifier = Modifier.size(200.dp), image = R.raw.example
+ */
+@Composable
+fun MainImage(
+  modifier: Modifier = Modifier,
+  image: Int
+) {
+  val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(image ))
+
+  Box(
+    modifier = Modifier
+      .size(250.dp)
+  ){
+    LottieAnimation(
+      composition = composition,
+      iterations = LottieConstants.IterateForever,
+      modifier = Modifier
+        .then(modifier)
+    )
+  }
+}
