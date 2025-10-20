@@ -8,6 +8,7 @@ package com.julhdev.notes.navigation
  * @usage Utilizar estas constantes para navegar entre las diferentes vistas de la aplicación.
  */
 object Routes {
+  const val SPLASH = "splash"
   const val ONBOARDING =  "onboarding"
   const val HOME = "home"
   const val ADD = "add"

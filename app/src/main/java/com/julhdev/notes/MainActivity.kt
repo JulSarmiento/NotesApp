@@ -8,7 +8,9 @@ import androidx.activity.viewModels
 import com.julhdev.notes.navigation.NavManager
 import com.julhdev.notes.ui.theme.NotesTheme
 import com.julhdev.notes.viewmodel.OnBoardingViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)

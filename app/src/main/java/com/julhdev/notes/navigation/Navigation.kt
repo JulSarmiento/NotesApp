@@ -14,6 +14,7 @@ import com.julhdev.notes.views.AddView
 import com.julhdev.notes.views.EditView
 import com.julhdev.notes.views.HomeView
 import com.julhdev.notes.views.OnBoardingView
+import com.julhdev.notes.views.SplashView
 
 
 /**
@@ -23,15 +24,19 @@ import com.julhdev.notes.views.OnBoardingView
  */
 @Composable
 fun NavManager(onBoardingViewModel: OnBoardingViewModel) {
-  val context = LocalContext.current
-  val dataStore = StoreBoarding(context)
-  val store = dataStore.getBoarding.collectAsState(initial = false)
+
+  val isOnBoardingCompleted = onBoardingViewModel.completed.collectAsState()
   val navController = rememberNavController()
 
   NavHost(
     navController = navController,
-    startDestination = if(store.value) Routes.HOME else Routes.ONBOARDING)
+    startDestination = Routes.SPLASH
+  )
   {
+
+    composable(Routes.SPLASH) {
+      SplashView(navController, isOnBoardingCompleted.value)
+    }
 
     composable(Routes.ONBOARDING) {
       OnBoardingView(navController, onBoardingViewModel)

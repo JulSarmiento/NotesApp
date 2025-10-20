@@ -25,7 +25,7 @@ class OnBoardingViewModel @Inject constructor(
   private val _completed = repository.getBoarding
     .stateIn(
       viewModelScope,
-      SharingStarted.WhileSubscribed(5_000),
+      SharingStarted.WhileSubscribed(100),
       false
     )
   val completed: StateFlow<Boolean> = _completed

@@ -26,6 +26,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+/**
+ * OnBoardingView Composable
+ * @param navController de tipo NavController para la navegación entre pantallas
+ * @param onBoardingViewModel de tipo OnBoardingViewModel para manejar el estado del onboarding
+ * @usage OnBoardingView(navController = navController, onBoardingViewModel = onBoardingViewModel)
+ */
 @Composable
 fun OnBoardingView(navController: NavController, onBoardingViewModel: OnBoardingViewModel) {
   Scaffold { innerPadding ->
@@ -81,7 +87,6 @@ fun OnBoardingView(navController: NavController, onBoardingViewModel: OnBoarding
           }
           navController.navigate(Routes.HOME) {
             popUpTo(Routes.ONBOARDING) { inclusive = true }
-            launchSingleTop = true
           }
         },
       )
