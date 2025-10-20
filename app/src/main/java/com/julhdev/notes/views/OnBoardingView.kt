@@ -4,11 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,14 +13,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.julhdev.notes.R
 import com.julhdev.notes.components.MainBtn
 import com.julhdev.notes.components.MainImage
 import com.julhdev.notes.components.OnBoardingTitle
 import com.julhdev.notes.components.Subtitle
+import com.julhdev.notes.navigation.Routes
+import com.julhdev.notes.viewmodel.OnBoardingViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
-fun OnBoardingView() {
+fun OnBoardingView(navController: NavController, onBoardingViewModel: OnBoardingViewModel) {
   Scaffold { innerPadding ->
     Column(
       horizontalAlignment = Alignment.CenterHorizontally,
@@ -45,11 +49,10 @@ fun OnBoardingView() {
         image= R.raw.copywriting,
         modifier = Modifier
           .padding(vertical = 30.dp)
-          .fillMaxWidth()
       )
 
       Subtitle(
-        text = "!Bienvenido a Dashi's Notes!"
+        text = "¡Bienvenido a Dashi's Notes!"
       )
 
       Spacer(
@@ -59,8 +62,10 @@ fun OnBoardingView() {
 
       Text(
         text = "La mejor app para tomar notas de forma rápida y sencilla.",
-        style = MaterialTheme.typography.bodySmall,
-        textAlign = TextAlign.Center
+        textAlign = TextAlign.Center,
+        fontSize = 16.sp,
+        modifier = Modifier
+          .padding(horizontal = 10.dp)
       )
 
       Spacer(
@@ -70,7 +75,15 @@ fun OnBoardingView() {
 
       MainBtn(
         text = "Comenzar",
-        onClick = {/*TODO: Navegar a la siguiente pantalla*/ },
+        onClick = {
+          CoroutineScope(Dispatchers.IO).launch {
+            onBoardingViewModel.saveBoarding(true)
+          }
+          navController.navigate(Routes.HOME) {
+            popUpTo(Routes.ONBOARDING) { inclusive = true }
+            launchSingleTop = true
+          }
+        },
       )
     }
 

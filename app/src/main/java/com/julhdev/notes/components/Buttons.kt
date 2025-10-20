@@ -11,6 +11,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+/**
+ * MainBtn Composable
+ * @param text de tipo String que representa el texto del botón
+ * @param onClick de tipo () -> Unit que representa la acción a realizar al hacer clic en el botón
+ * @usage MainBtn(text = "Login", onClick = { /* acción a realizar */ })
+ */
 @Composable
 fun MainBtn(
   text: String,
@@ -25,7 +31,6 @@ fun MainBtn(
   ) {
     Text(
       text = text,
-      style = MaterialTheme.typography.bodyMedium,
       letterSpacing = 0.5.sp,
       fontWeight = FontWeight.Medium,
       modifier = Modifier

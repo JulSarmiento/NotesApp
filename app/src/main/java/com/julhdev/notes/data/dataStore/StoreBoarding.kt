@@ -6,8 +6,10 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 /**
  * StoreBroading es una clase que gestiona el almacenamiento del estado de finalización del onboarding utilizando DataStore.
@@ -16,8 +18,8 @@ import kotlinx.coroutines.flow.map
  * @usage val storeBoarding = StoreBoarding(context)
  * @return Una instancia de StoreBoarding para gestionar el estado del onboarding.
  */
-class StoreBoarding(
-  private val context: Context
+class StoreBoarding @Inject constructor(
+  @param:ApplicationContext private val context: Context
 ) {
 
   companion object {

@@ -24,13 +24,16 @@ fun Subtitle(
 ) {
   Text(
     text = text,
-    style = MaterialTheme.typography.bodyMedium,
+    fontSize = 18.sp,
     fontWeight = FontWeight.Bold,
     modifier = Modifier
       .then(modifier)
   )
 }
 
+/**
+ *
+ */
 @Composable
 fun OnBoardingTitle(
   text: String,
@@ -38,8 +41,9 @@ fun OnBoardingTitle(
 ) {
   Text(
     text = text,
-    style = MaterialTheme.typography.headlineLarge,
+    fontSize = 35.sp,
     fontWeight = FontWeight.Bold,
+    color = MaterialTheme.colorScheme.primary,
     modifier = Modifier
       .then(modifier)
 

@@ -1,9 +1,12 @@
 package com.julhdev.notes.components
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.LottieAnimation
@@ -25,14 +28,19 @@ fun MainImage(
 ) {
   val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(image ))
 
-  Box(
+  BoxWithConstraints(
+    contentAlignment = Alignment.Center,
     modifier = Modifier
-      .size(250.dp)
+      .fillMaxWidth()
   ){
+
+    val imageSize = maxWidth * 0.8f
+
     LottieAnimation(
       composition = composition,
       iterations = LottieConstants.IterateForever,
       modifier = Modifier
+        .size(imageSize)
         .then(modifier)
     )
   }
