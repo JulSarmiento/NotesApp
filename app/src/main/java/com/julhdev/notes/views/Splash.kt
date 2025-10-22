@@ -1,7 +1,5 @@
 package com.julhdev.notes.views
 
-import android.text.Layout
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding

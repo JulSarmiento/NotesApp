@@ -1,8 +1,12 @@
 package com.julhdev.notes.components
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,4 +41,26 @@ fun MainBtn(
         .padding(horizontal = 10.dp)
     )
   }
+}
+
+/**
+ * FloatingButton Composable
+ * @param onClick de tipo () -> Unit que representa la acción a realizar al hacer clic en el botón flotante
+ * @usage FloatingButton(onClick = { /* acción a realizar */ })
+ */
+@Composable
+fun FloatingButton(
+  onClick: () -> Unit,
+) {
+  FloatingActionButton(
+    onClick = onClick,
+    containerColor = MaterialTheme.colorScheme.primary,
+    contentColor = MaterialTheme.colorScheme.onPrimary,
+  ) {
+    Icon(
+      imageVector = Icons.Default.Add,
+      contentDescription = "Nueva Nota",
+    )
+  }
+
 }

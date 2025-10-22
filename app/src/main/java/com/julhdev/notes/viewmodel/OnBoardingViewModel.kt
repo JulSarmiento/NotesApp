@@ -7,6 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -26,16 +27,17 @@ class OnBoardingViewModel @Inject constructor(
     .stateIn(
       viewModelScope,
       SharingStarted.WhileSubscribed(100),
-      false
+      null
     )
-  val completed: StateFlow<Boolean> = _completed
+  val completed: StateFlow<Boolean?> = _completed
 
   /**
    * Guarda el estado de finalización del onboarding.
    * @param completed Un valor booleano que indica si el onboarding ha sido completado.
    * @usage Llamar a saveBoarding(completed) para almacenar el estado del onboarding.
    */
-  suspend fun saveBoarding(completed: Boolean) {
-    repository.saveBoarding(completed)
+  fun saveBoarding(completed: Boolean) {
+    viewModelScope.launch { repository.saveBoarding(completed) }
   }
+
 }

@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import com.julhdev.notes.navigation.NavManager
 import com.julhdev.notes.ui.theme.NotesTheme
+import com.julhdev.notes.viewmodel.NoteViewModel
 import com.julhdev.notes.viewmodel.OnBoardingViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -15,10 +16,11 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     val onBoardingViewModel: OnBoardingViewModel by viewModels()
+    val noteViewModel: NoteViewModel by viewModels()
     enableEdgeToEdge()
     setContent {
       NotesTheme {
-        NavManager(onBoardingViewModel)
+        NavManager(onBoardingViewModel, noteViewModel)
       }
     }
   }
