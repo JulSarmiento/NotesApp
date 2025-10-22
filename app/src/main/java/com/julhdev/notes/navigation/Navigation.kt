@@ -11,6 +11,7 @@ import androidx.navigation.navArgument
 import com.julhdev.notes.data.dataStore.StoreBoarding
 import com.julhdev.notes.viewmodel.NoteViewModel
 import com.julhdev.notes.viewmodel.OnBoardingViewModel
+import com.julhdev.notes.viewmodel.ThemeViewModel
 import com.julhdev.notes.views.AddView
 import com.julhdev.notes.views.EditView
 import com.julhdev.notes.views.HomeView
@@ -24,7 +25,7 @@ import com.julhdev.notes.views.SplashView
  * @usage Incluir este Composable en el punto de entrada de la aplicación para habilitar la navegación.
  */
 @Composable
-fun NavManager(onBoardingViewModel: OnBoardingViewModel, noteViewModel: NoteViewModel) {
+fun NavManager(onBoardingViewModel: OnBoardingViewModel, noteViewModel: NoteViewModel, themeViewModel: ThemeViewModel) {
 
   val isOnBoardingCompleted = onBoardingViewModel.completed.collectAsState()
   val navController = rememberNavController()
@@ -41,7 +42,7 @@ fun NavManager(onBoardingViewModel: OnBoardingViewModel, noteViewModel: NoteView
       OnBoardingView(navController, onBoardingViewModel)
     }
     composable(Routes.HOME) {
-      HomeView(navController, noteViewModel)
+      HomeView(navController, noteViewModel, themeViewModel)
     }
     composable(Routes.ADD) {
       AddView()

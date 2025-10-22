@@ -1,5 +1,6 @@
 package com.julhdev.notes.components
 
+import android.widget.Switch
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -8,12 +9,19 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import me.saket.swipe.SwipeAction
 
 /**
  * MainBtn Composable
@@ -62,5 +70,34 @@ fun FloatingButton(
       contentDescription = "Nueva Nota",
     )
   }
+}
 
+
+/**
+ * SwitchButton Composable
+ * @param isDark de tipo Boolean que representa el estado inicial del switch
+ * @param onToggle de tipo (Boolean) -> Unit que representa la acción a realizar al cambiar el estado del switch
+ * @usage SwitchButton(isDark = false, onToggle = { isChecked -> /* acción a realizar */ })
+ */
+@Composable
+fun SwitchButton(
+  isDark: Boolean,
+  onToggle: (Boolean) -> Unit
+) {
+  var swithState by remember { mutableStateOf(isDark) }
+  Switch(
+    checked = swithState,
+    onCheckedChange = {
+      swithState = it
+      onToggle(it)
+    },
+    colors = SwitchDefaults.run {
+      colors(
+        checkedThumbColor = MaterialTheme.colorScheme.primary,
+        checkedTrackColor = MaterialTheme.colorScheme.background,
+        uncheckedThumbColor = MaterialTheme.colorScheme.primary,
+        uncheckedTrackColor = MaterialTheme.colorScheme.background
+      )
+    }
+  )
 }

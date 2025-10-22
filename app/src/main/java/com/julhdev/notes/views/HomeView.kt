@@ -12,6 +12,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -27,8 +28,13 @@ import com.julhdev.notes.components.FloatingButton
 import com.julhdev.notes.components.MainTitle
 import com.julhdev.notes.components.PngImage
 import com.julhdev.notes.components.SubTitle
+import com.julhdev.notes.components.SwitchButton
 import com.julhdev.notes.navigation.Routes
 import com.julhdev.notes.viewmodel.NoteViewModel
+import com.julhdev.notes.viewmodel.ThemeViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 /**
  * HomeView Composable
@@ -37,18 +43,35 @@ import com.julhdev.notes.viewmodel.NoteViewModel
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeView(navController: NavController, noteViewModel: NoteViewModel) {
+fun HomeView(navController: NavController, noteViewModel: NoteViewModel, themeViewModel: ThemeViewModel) {
+
+  var theme = themeViewModel.isDark.collectAsState().value
+
   Scaffold(
     topBar = {
-      CenterAlignedTopAppBar(
+      TopAppBar(
         title = {
-          MainTitle(text = "Home", color = MaterialTheme.colorScheme.onPrimary)
+          MainTitle(
+            text = "Dashi's Notes",
+            color = MaterialTheme.colorScheme.onPrimary
+          )
         },
         colors = TopAppBarDefaults.topAppBarColors(
           containerColor = MaterialTheme.colorScheme.primary,
-        )
+        ),
+        actions = {
+          SwitchButton(
+            isDark = theme,
+            onToggle = {
+              CoroutineScope(Dispatchers.Main).launch {
+                themeViewModel.saveIsDark(!theme)
+              }
+            }
+          )
+        }
       )
     },
+
     floatingActionButton = {
       FloatingButton(
         onClick = {
@@ -91,7 +114,7 @@ fun HomeViewContent(noteViewModel: NoteViewModel) {
       modifier = Modifier
         .fillMaxSize()
     ) {
-      if(notes.isEmpty()){
+      if (notes.isEmpty()) {
         HomeEmptyContent()
       } else {
         Box {
@@ -109,19 +132,19 @@ fun HomeViewContent(noteViewModel: NoteViewModel) {
  */
 @Composable
 fun HomeEmptyContent() {
-  Column (
+  Column(
     horizontalAlignment = Alignment.CenterHorizontally,
     verticalArrangement = Arrangement.Center,
     modifier = Modifier
       .alpha(0.7f)
       .fillMaxSize()
-  ){
+  ) {
     PngImage(
       image = R.drawable.empty_note,
       description = "No Notes Image",
     )
     SubTitle(
-      text = "Aun hay notas disponibles, pero no te preocupes, ¡puedes agregar una nueva!",
+      text = "Aún no hay notas disponibles, pero no te preocupes: ¡puedes agregar una nueva!",
       textAlign = TextAlign.Center
     )
   }
