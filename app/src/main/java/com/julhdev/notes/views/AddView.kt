@@ -78,7 +78,6 @@ fun AddView(navController: NavController, noteViewModel: NoteViewModel, themeVie
 
 @Composable
 fun AddViewContent(noteViewModel: NoteViewModel) {
-
   Column(
     modifier = Modifier
       .padding(16.dp)

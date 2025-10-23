@@ -57,7 +57,7 @@ fun SubTitle(
  * OnBoardingTitle Composable
  * @param text de tipo String que representa el texto del título
  * @param modifier de tipo Modifier para modificar el estilo del título
- * @usage OnBoardingTitle(text = "Welcome to the App", modifier = Modifier.padding
+ * @usage OnBoardingTitle(text = "Welcome to the App", modifier = Modifier.padding(8.dp))
  */
 @Composable
 fun OnBoardingTitle(

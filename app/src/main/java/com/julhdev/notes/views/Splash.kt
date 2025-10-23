@@ -27,7 +27,8 @@ import kotlinx.coroutines.delay
 @Composable
 fun SplashView(navController: NavController, store: Boolean) {
 
-  var screen by remember { mutableStateOf(if (store) Routes.HOME else Routes.ONBOARDING) }
+  var screen by remember { mutableStateOf("") }
+  screen = if (store) Routes.HOME else Routes.ONBOARDING
 
   LaunchedEffect(
     Unit

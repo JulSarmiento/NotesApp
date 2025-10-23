@@ -28,7 +28,7 @@ fun MainImage(
   modifier: Modifier = Modifier,
   image: Int
 ) {
-  val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(image ))
+  val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(image))
 
   BoxWithConstraints(
     contentAlignment = Alignment.Center,
