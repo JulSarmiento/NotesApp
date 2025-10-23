@@ -11,11 +11,13 @@ package com.julhdev.notes.data.model
  * @property isValid Indica si el formulario es válido (sin errores y campos no vacíos)
  */
 data class FormState(
+  val noteId: Int? = null,
   val title: String = "",
   val content: String = "",
   val timeStamp: Long = 0L,
   val titleError: String? = null,
-  val contentError: Boolean = false
+  val contentError: String? = null,
+  val isSubmitting: Boolean = false
 ) {
 
   /**
@@ -23,5 +25,5 @@ data class FormState(
    * Un formulario es válido si no hay errores en el título o contenido, y ambos campos no están vacíos.
    */
   val isValid: Boolean
-    get() = titleError == null && !contentError && title.isNotBlank() && content.isNotBlank()
+    get() = titleError == null && contentError == null && title.isNotBlank() && content.isNotBlank()
 }
