@@ -9,6 +9,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -18,9 +19,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.internal.OpDescriptor
 
 /**
  * MainBtn Composable
@@ -46,6 +49,32 @@ fun MainBtn(
       fontWeight = FontWeight.Medium,
       modifier = Modifier
         .padding(horizontal = 10.dp)
+    )
+  }
+}
+
+/**
+ * IconButton Composable
+ * @param icon de tipo ImageVector que representa el icono del botón
+ * @param onClick de tipo () -> Unit que representa la acción a realizar al hacer clic en el botón
+ * @param description de tipo String que representa la descripción del icono para accesibilidad
+ * @usage IconButton(icon = Icons.Default.Home, onClick = { /* acción a realizar */ }, description = "Home Icon")
+ */
+@Composable
+fun IconButton(
+  icon: ImageVector,
+  onClick: () -> Unit,
+  description: String,
+  modifier: Modifier = Modifier
+) {
+  IconButton(
+    onClick = onClick,
+    modifier = modifier
+  ) {
+    Icon(
+      imageVector = icon,
+      contentDescription = description,
+      tint = MaterialTheme.colorScheme.onPrimary
     )
   }
 }
@@ -93,7 +122,7 @@ fun SwitchButton(
     }
   ) {
     Icon(
-      imageVector = if (switchState) Icons.Default.DarkMode else Icons.Default.LightMode,
+      imageVector = if (switchState) Icons.Default.LightMode else Icons.Default.DarkMode,
       contentDescription = "Toggle Theme",
       tint = MaterialTheme.colorScheme.onPrimary
     )

@@ -90,7 +90,11 @@ fun HomeView(navController: NavController, noteViewModel: NoteViewModel, themeVi
   }
 }
 
-
+/**
+ * HomeViewContent Composable
+ * @return un componente que muestra el contenido principal de la vista de inicio.
+ * @usage HomeViewContent(noteViewModel = noteViewModel)
+ */
 @Composable
 fun HomeViewContent(noteViewModel: NoteViewModel) {
   val notes by noteViewModel.notes.collectAsState()
@@ -108,7 +112,6 @@ fun HomeViewContent(noteViewModel: NoteViewModel) {
       text = "Tus Notas",
       color = MaterialTheme.colorScheme.onSecondary,
     )
-
     Column(
       modifier = Modifier
         .fillMaxSize()
@@ -123,6 +126,11 @@ fun HomeViewContent(noteViewModel: NoteViewModel) {
 }
 
 
+/**
+ * HomeNotesContent Composable
+ * @return un componente que muestra una lista de notas disponibles.
+ * @usage HomeNotesContent()
+ */
 @Composable
 fun HomeNotesContent() {
   Column(

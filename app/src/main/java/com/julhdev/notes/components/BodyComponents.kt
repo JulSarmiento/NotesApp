@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -83,4 +84,55 @@ fun NoteCard(
       )
     }
   }
+}
+
+/**
+ * MainTextArea Composable
+ * @param value de tipo String que representa el valor del área de texto
+ * @param onValueChange de tipo (String) -> Unit que representa la función a ejecutar al cambiar el valor del área de texto
+ * @param label de tipo String que representa la etiqueta del área de texto
+ * @usage MainTextArea(value = noteContent, onValueChange = { noteContent = it }, label = "Contenido de la Nota")
+ */
+@Composable
+fun MainTextField(
+  value: String,
+  onValueChange: (String) -> Unit,
+  label: String
+){
+  OutlinedTextField(
+    value = value,
+    onValueChange = onValueChange,
+    label = { Text(text = label) },
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(horizontal = 30.dp)
+      .padding(bottom = 15.dp)
+  )
+}
+
+/**
+ * MainTextArea Composable
+ * @param value de tipo String que representa el valor del área de texto
+ * @param onValueChange de tipo (String) -> Unit que representa la función a ejecutar al cambiar el valor del área de texto
+ * @param label de tipo String que representa la etiqueta del área de texto
+ * @usage MainTextArea(value = noteContent, onValueChange = { noteContent = it }, label = "Contenido de la nota")
+ */
+@Composable
+fun MainTextArea(
+  value: String,
+  onValueChange: (String) -> Unit,
+  label: String
+){
+  OutlinedTextField(
+    value = value,
+    onValueChange = onValueChange,
+    singleLine = false,
+    label = { Text(text = label) },
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(horizontal = 30.dp)
+      .padding(bottom = 15.dp)
+      .heightIn(max = 200.dp),
+    maxLines = 40,
+  )
 }

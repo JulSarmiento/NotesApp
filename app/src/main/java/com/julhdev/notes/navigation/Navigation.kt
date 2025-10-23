@@ -45,7 +45,7 @@ fun NavManager(onBoardingViewModel: OnBoardingViewModel, noteViewModel: NoteView
       HomeView(navController, noteViewModel, themeViewModel)
     }
     composable(Routes.ADD) {
-      AddView()
+      AddView(navController, noteViewModel, themeViewModel)
     }
     composable(Routes.EDIT, arguments = listOf(navArgument("id") { type = NavType.IntType })) {
       val id = it.arguments?.getInt("id") ?: -1

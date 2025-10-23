@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 /**
  * NoteViewModel es un ViewModel que gestiona el estado y las operaciones relacionadas con las entidades Note.
  * Interactúa con el NoteRepository para realizar operaciones CRUD y expone un StateFlow de la lista de Notes.
@@ -71,6 +70,4 @@ class NoteViewModel @Inject constructor(
       repository.deleteNote(note)
     }
   }
-
-
 }
