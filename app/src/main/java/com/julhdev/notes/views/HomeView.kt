@@ -26,6 +26,7 @@ import androidx.navigation.NavController
 import com.julhdev.notes.R
 import com.julhdev.notes.components.FloatingButton
 import com.julhdev.notes.components.MainTitle
+import com.julhdev.notes.components.NoteCard
 import com.julhdev.notes.components.PngImage
 import com.julhdev.notes.components.SubTitle
 import com.julhdev.notes.components.SwitchButton
@@ -105,23 +106,34 @@ fun HomeViewContent(noteViewModel: NoteViewModel) {
     )
     MainTitle(
       text = "Tus Notas",
-      color = MaterialTheme.colorScheme.onBackground,
+      color = MaterialTheme.colorScheme.onSecondary,
     )
 
     Column(
-      horizontalAlignment = Alignment.CenterHorizontally,
-      verticalArrangement = Arrangement.Center,
       modifier = Modifier
         .fillMaxSize()
     ) {
       if (notes.isEmpty()) {
         HomeEmptyContent()
       } else {
-        Box {
-          Text(text = "Aquí se mostrarán las notas guardadas.")
-        }
+        HomeNotesContent()
       }
     }
+  }
+}
+
+
+@Composable
+fun HomeNotesContent() {
+  Column(
+    modifier = Modifier
+      .padding(all = 10.dp)
+  ) {
+    NoteCard(
+      title = "Ejemplo de Nota",
+      content = "Este es el contenido de la nota de ejemplo.",
+      time = System.currentTimeMillis()
+    )
   }
 }
 

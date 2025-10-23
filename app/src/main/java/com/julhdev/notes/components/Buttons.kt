@@ -1,16 +1,16 @@
 package com.julhdev.notes.components
 
-import android.widget.Switch
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import me.saket.swipe.SwipeAction
 
 /**
  * MainBtn Composable
@@ -84,20 +83,19 @@ fun SwitchButton(
   isDark: Boolean,
   onToggle: (Boolean) -> Unit
 ) {
-  var swithState by remember { mutableStateOf(isDark) }
-  Switch(
-    checked = swithState,
+  var switchState by remember { mutableStateOf(isDark) }
+
+  IconToggleButton(
+    checked = switchState,
     onCheckedChange = {
-      swithState = it
+      switchState = it
       onToggle(it)
-    },
-    colors = SwitchDefaults.run {
-      colors(
-        checkedThumbColor = MaterialTheme.colorScheme.primary,
-        checkedTrackColor = MaterialTheme.colorScheme.background,
-        uncheckedThumbColor = MaterialTheme.colorScheme.primary,
-        uncheckedTrackColor = MaterialTheme.colorScheme.background
-      )
     }
-  )
+  ) {
+    Icon(
+      imageVector = if (switchState) Icons.Default.DarkMode else Icons.Default.LightMode,
+      contentDescription = "Toggle Theme",
+      tint = MaterialTheme.colorScheme.onPrimary
+    )
+  }
 }

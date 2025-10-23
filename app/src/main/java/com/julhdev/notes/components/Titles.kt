@@ -39,6 +39,7 @@ fun MainTitle(
 fun SubTitle(
   text: String,
   modifier: Modifier = Modifier,
+  color: Color = MaterialTheme.colorScheme.onSurface,
   textAlign: TextAlign = TextAlign.Start
 ) {
   Text(
@@ -46,6 +47,7 @@ fun SubTitle(
     fontSize = 18.sp,
     fontWeight = FontWeight.Bold,
     textAlign = textAlign,
+    color = color,
     modifier = Modifier
       .then(modifier)
   )

@@ -6,6 +6,8 @@ val Pink = Color(0xFFE64E8C)
 val PinkLight = Color(0xFFFF6FAF)
 val Green = Color(0xFF52B788)
 
+val GreenDark = Color(0xFF103413)
+
 val BackgroundLight = Color(0xFFFFF8FB)
 val BackgroundDark = Color(0xFF1C171D)
 
