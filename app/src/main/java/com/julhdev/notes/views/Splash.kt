@@ -27,8 +27,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun SplashView(navController: NavController, store: Boolean) {
 
-  var screen by remember { mutableStateOf("") }
-  screen = if (store) Routes.HOME else Routes.ONBOARDING
+  var screen by remember { mutableStateOf(if (store) Routes.HOME else Routes.ONBOARDING) }
 
   LaunchedEffect(
     Unit
@@ -39,7 +38,7 @@ fun SplashView(navController: NavController, store: Boolean) {
     }
   }
 
-  Scaffold{ innerPadding ->
+  Scaffold { innerPadding ->
     Box(
       contentAlignment = Alignment.Center,
       modifier = Modifier

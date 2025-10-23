@@ -14,16 +14,11 @@ import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.internal.OpDescriptor
 
 /**
  * MainBtn Composable
@@ -112,17 +107,15 @@ fun SwitchButton(
   isDark: Boolean,
   onToggle: (Boolean) -> Unit
 ) {
-  var switchState by remember { mutableStateOf(isDark) }
 
   IconToggleButton(
-    checked = switchState,
+    checked = isDark,
     onCheckedChange = {
-      switchState = it
       onToggle(it)
     }
   ) {
     Icon(
-      imageVector = if (switchState) Icons.Default.LightMode else Icons.Default.DarkMode,
+      imageVector = if (isDark) Icons.Default.LightMode else Icons.Default.DarkMode,
       contentDescription = "Toggle Theme",
       tint = MaterialTheme.colorScheme.onPrimary
     )

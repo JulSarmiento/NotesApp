@@ -16,19 +16,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.julhdev.notes.components.FloatingButton
 import com.julhdev.notes.components.IconButton
 import com.julhdev.notes.components.MainTextArea
 import com.julhdev.notes.components.MainTextField
 import com.julhdev.notes.components.MainTitle
 import com.julhdev.notes.components.SwitchButton
-import com.julhdev.notes.navigation.Routes
 import com.julhdev.notes.viewmodel.NoteViewModel
 import com.julhdev.notes.viewmodel.ThemeViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,13 +64,6 @@ fun AddView(navController: NavController, noteViewModel: NoteViewModel, themeVie
           )
         }
       )
-    },
-    floatingActionButton = {
-      FloatingButton(
-        onClick = {
-          navController.navigate(Routes.ADD)
-        }
-      )
     }
   ) { innerPadding ->
     Column(
@@ -88,8 +78,6 @@ fun AddView(navController: NavController, noteViewModel: NoteViewModel, themeVie
 
 @Composable
 fun AddViewContent(noteViewModel: NoteViewModel) {
-
-
 
   Column(
     modifier = Modifier
