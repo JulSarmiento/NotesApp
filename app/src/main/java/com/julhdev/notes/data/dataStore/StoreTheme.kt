@@ -6,8 +6,10 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 /**
  * StoreTheme es una clase que gestiona el almacenamiento del estado del tema oscuro utilizando DataStore.
@@ -16,8 +18,8 @@ import kotlinx.coroutines.flow.map
  * @usage val storeTheme = StoreTheme(context)
  * @return Una instancia de StoreTheme para gestionar el estado del tema oscuro.
  */
-class StoreTheme(
-  private val context: Context
+class StoreTheme @Inject constructor(
+  @param:ApplicationContext private val context: Context
 ) {
 
   companion object {

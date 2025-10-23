@@ -9,10 +9,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.julhdev.notes.data.dataStore.StoreBoarding
+import com.julhdev.notes.viewmodel.NoteViewModel
+import com.julhdev.notes.viewmodel.OnBoardingViewModel
+import com.julhdev.notes.viewmodel.ThemeViewModel
 import com.julhdev.notes.views.AddView
 import com.julhdev.notes.views.EditView
 import com.julhdev.notes.views.HomeView
 import com.julhdev.notes.views.OnBoardingView
+import com.julhdev.notes.views.SplashView
 
 
 /**
@@ -21,30 +25,29 @@ import com.julhdev.notes.views.OnBoardingView
  * @usage Incluir este Composable en el punto de entrada de la aplicación para habilitar la navegación.
  */
 @Composable
-fun NavManager() {
-  val context = LocalContext.current
-  val dataStore = StoreBoarding(context)
-  val store = dataStore.getBoarding.collectAsState(initial = false)
+fun NavManager(onBoardingViewModel: OnBoardingViewModel, noteViewModel: NoteViewModel, themeViewModel: ThemeViewModel) {
+
+  val isOnBoardingCompleted = onBoardingViewModel.completed.collectAsState()
   val navController = rememberNavController()
 
   NavHost(
     navController = navController,
-    startDestination = if(store.value) Routes.HOME else Routes.ONBOARDING)
+    startDestination = Routes.SPLASH
+  )
   {
-
+    composable(Routes.SPLASH) {
+      SplashView(navController, isOnBoardingCompleted.value == true)
+    }
     composable(Routes.ONBOARDING) {
-      OnBoardingView()
+      OnBoardingView(navController, onBoardingViewModel)
     }
-
     composable(Routes.HOME) {
-      HomeView()
+      HomeView(navController, noteViewModel, themeViewModel)
     }
-
     composable(Routes.ADD) {
-      AddView()
+      AddView(navController, noteViewModel, themeViewModel)
     }
-
-    composable(Routes.EDIT, arguments =  listOf( navArgument("id") { type = NavType.IntType})) {
+    composable(Routes.EDIT, arguments = listOf(navArgument("id") { type = NavType.IntType })) {
       val id = it.arguments?.getInt("id") ?: -1
       EditView(id)
     }
