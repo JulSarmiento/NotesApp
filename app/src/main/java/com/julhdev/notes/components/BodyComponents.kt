@@ -132,7 +132,7 @@ fun MainTextArea(
       .fillMaxWidth()
       .padding(horizontal = 30.dp)
       .padding(bottom = 15.dp)
-      .heightIn(max = 200.dp),
+      .heightIn(min = 200.dp),
     maxLines = 40,
   )
 }

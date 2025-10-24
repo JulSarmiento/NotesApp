@@ -29,10 +29,13 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun MainBtn(
   text: String,
+  modifier: Modifier = Modifier,
+  enabled: Boolean = true,
   onClick: () -> Unit
 ) {
   Button(
     onClick = onClick,
+    enabled = enabled,
     colors = ButtonDefaults.buttonColors(
       containerColor = MaterialTheme.colorScheme.primary,
       contentColor = MaterialTheme.colorScheme.onPrimary
@@ -44,6 +47,7 @@ fun MainBtn(
       fontWeight = FontWeight.Medium,
       modifier = Modifier
         .padding(horizontal = 10.dp)
+        .then(modifier)
     )
   }
 }
