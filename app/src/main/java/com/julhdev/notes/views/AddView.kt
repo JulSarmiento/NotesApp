@@ -18,13 +18,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.julhdev.notes.components.IconButton
 import com.julhdev.notes.components.MainBtn
+import com.julhdev.notes.components.MainDialog
 import com.julhdev.notes.components.MainTextArea
 import com.julhdev.notes.components.MainTextField
 import com.julhdev.notes.components.MainTitle
@@ -52,6 +55,7 @@ fun AddView(
   themeViewModel: ThemeViewModel,
   formViewModel: FormViewModel
 ) {
+  var showDialog by remember { mutableStateOf(false ) }
   val theme = themeViewModel.isDark.collectAsState().value
   val state by formViewModel.uiState.collectAsState()
   val scaffoldState = remember { SnackbarHostState() }
@@ -60,9 +64,8 @@ fun AddView(
     formViewModel.events.collect { event ->
       when (event) {
         is FormEvent.SubmitSuccess -> {
-          navController.popBackStack()
+          showDialog = true
         }
-
         is FormEvent.ShowMessage -> {
           scaffoldState.showSnackbar(event.msg)
         }
@@ -117,6 +120,18 @@ fun AddView(
         onContentChange = formViewModel::onContentChange,
         onSubmit = { formViewModel.submit() },
       )
+
+      if(showDialog){
+        MainDialog(
+          title = "Nota guardada",
+          content = "La nota se ha guardado correctamente.",
+          onDismiss = { showDialog = false },
+          onConfirm = {
+            showDialog = false
+            navController.popBackStack()
+          },
+        )
+      }
     }
   }
 }
