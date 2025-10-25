@@ -2,6 +2,7 @@ package com.julhdev.notes.components
 
 import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -53,7 +54,8 @@ fun timeFormat(time: Long): String {
 fun NoteCard(
   title: String,
   content: String,
-  time: Long
+  time: Long,
+  onClick: () -> Unit
 ) {
   Box(
     modifier = Modifier
@@ -64,6 +66,7 @@ fun NoteCard(
       .padding(15.dp)
       .fillMaxWidth()
       .heightIn(max = 150.dp)
+      .clickable { onClick() }
   ) {
     Column {
       SubTitle(

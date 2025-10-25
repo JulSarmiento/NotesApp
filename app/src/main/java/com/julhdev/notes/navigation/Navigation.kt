@@ -53,9 +53,9 @@ fun NavManager(
     composable(Routes.ADD) {
       AddView(navController, themeViewModel, formViewModel)
     }
-    composable(Routes.EDIT, arguments = listOf(navArgument("id") { type = NavType.IntType })) {
+    composable("${Routes.EDIT}/{id}", arguments = listOf(navArgument("id") { type = NavType.IntType })) {
       val id = it.arguments?.getInt("id") ?: -1
-      EditView(id)
+      EditView(id, navController, noteViewModel, themeViewModel)
     }
   }
 }

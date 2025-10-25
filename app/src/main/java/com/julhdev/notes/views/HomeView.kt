@@ -58,7 +58,7 @@ fun HomeView(
   themeViewModel: ThemeViewModel
 ) {
 
-  var theme = themeViewModel.isDark.collectAsState().value
+  val theme = themeViewModel.isDark.collectAsState().value
 
   Scaffold(
     topBar = {
@@ -97,7 +97,7 @@ fun HomeView(
       modifier = Modifier
         .padding(innerPadding)
     ) {
-      HomeViewContent(noteViewModel)
+      HomeViewContent(noteViewModel, navController)
     }
   }
 }
@@ -108,9 +108,8 @@ fun HomeView(
  * @usage HomeViewContent(noteViewModel = noteViewModel)
  */
 @Composable
-fun HomeViewContent(noteViewModel: NoteViewModel) {
+fun HomeViewContent(noteViewModel: NoteViewModel, navController: NavController) {
   val notes by noteViewModel.notes.collectAsState()
-
   val onDeleteNote: (Note) -> Unit = { note ->
     noteViewModel.deleteNote(note)
   }
@@ -139,7 +138,7 @@ fun HomeViewContent(noteViewModel: NoteViewModel) {
       if (notes.isEmpty()) {
         HomeEmptyContent()
       } else {
-        HomeNotesContent(notes, onDeleteNote)
+        HomeNotesContent(notes, onDeleteNote, navController = navController)
       }
     }
   }
@@ -154,7 +153,7 @@ fun HomeViewContent(noteViewModel: NoteViewModel) {
  * @usage HomeNotesContent( notes = notes, onDeleteNote = { note -> noteViewModel.deleteNote(note) } )
  */
 @Composable
-fun HomeNotesContent(notes: List<Note>, onDeleteNote: (Note) -> Unit) {
+fun HomeNotesContent(notes: List<Note>, onDeleteNote: (Note) -> Unit, navController: NavController) {
   LazyColumn(
     modifier = Modifier
       .padding(all = 10.dp)
@@ -176,7 +175,10 @@ fun HomeNotesContent(notes: List<Note>, onDeleteNote: (Note) -> Unit) {
         NoteCard(
           title = it.title,
           content = it.content,
-          time = it.timestamp
+          time = it.timestamp,
+          onClick = {
+            navController.navigate("${Routes.EDIT}/${it.id}")
+          }
         )
       }
       Spacer(
