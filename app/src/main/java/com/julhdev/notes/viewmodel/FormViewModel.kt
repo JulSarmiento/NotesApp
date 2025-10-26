@@ -50,11 +50,8 @@ class FormViewModel @Inject constructor(
 
   private val _uiState = MutableStateFlow(FormState())
   val uiState: StateFlow<FormState> = _uiState
-
   private val _events = Channel<FormEvent>(Channel.BUFFERED)
   val events = _events.receiveAsFlow()
-
-  private var isEditing = false
 
   init {
     val draftTitle = savedStateHandle.get<String>("draftTitle") ?: ""
@@ -69,8 +66,12 @@ class FormViewModel @Inject constructor(
     }
   }
 
+  /**
+   * Resetea el formulario a su estado inicial.
+   * Limpia los datos guardados en SavedStateHandle y actualiza el estado del formulario.
+   * @usage Llamar a resetForm() para limpiar el formulario después de un envío exitoso o al cancelar la edición.
+   */
   fun resetForm() {
-    isEditing = false
     savedStateHandle.remove<String>("draftTitle")
     savedStateHandle.remove<String>("draftContent")
     savedStateHandle.remove<Int>("editId")
@@ -84,7 +85,6 @@ class FormViewModel @Inject constructor(
    * @usage Llamar a loadNote(noteId) para cargar los datos de una nota específica en el formulario.
    */
   fun loadNote(noteId: Int) {
-    isEditing = true
     if (_uiState.value.noteId == noteId && _uiState.value.title.isNotBlank()) return
     savedStateHandle["editId"] = noteId
 
@@ -112,8 +112,8 @@ class FormViewModel @Inject constructor(
    */
   private fun validateTitleSync(title: String): String? =
     when {
-      title.isBlank() -> "El título no puede estar vacío"
-      title.length > 80 -> "El título es demasiado largo"
+      title.isBlank() -> "El título no puede estar vacío."
+      title.length > 80 -> "El título es demasiado largo."
       else -> null
     }
 
@@ -124,7 +124,10 @@ class FormViewModel @Inject constructor(
    * @usage Llamar a validateContentSync(content) para validar el contenido antes de actualizar el estado del formulario.
    */
   private fun validateContentSync(content: String): String? =
-    if (content.isBlank()) "El contenido no puede estar vacío" else null
+    when {
+      content.isBlank() -> "La nota no puede estar vacía."
+      else -> null
+    }
 
   /**
    * Maneja el cambio en el título de la nota.
@@ -134,10 +137,7 @@ class FormViewModel @Inject constructor(
    */
   fun onTitleChange(new: String) {
     _uiState.update {
-      it.copy(
-        title = new,
-        titleError = validateTitleSync(new)
-      )
+      it.copy(title = new, titleError = null)
     }
     savedStateHandle["draftTitle"] = new
   }
@@ -152,7 +152,7 @@ class FormViewModel @Inject constructor(
     _uiState.update {
       it.copy(
         content = new,
-        contentError = validateContentSync(new)
+        contentError = null,
       )
     }
     savedStateHandle["draftContent"] = new
@@ -166,10 +166,23 @@ class FormViewModel @Inject constructor(
    */
   fun submit() = viewModelScope.launch {
     val current = _uiState.value
+
+    val contentError = validateContentSync(current.content.trim())
+    val titleError = validateTitleSync(current.title)
+
+    if( titleError != null || contentError != null) {
+      _uiState.update {
+        it.copy(
+          titleError = titleError,
+          contentError = contentError
+        )
+      }
+      _events.send(FormEvent.ShowMessage(titleError ?: contentError ?: "Errores en el formulario"))
+      return@launch
+    }
+
     if (!current.isValid || current.isSubmitting) return@launch
-
     _uiState.update { it.copy(isSubmitting = true) }
-
     try {
       val note = Note(
         id = current.noteId ?: 0,
@@ -179,16 +192,13 @@ class FormViewModel @Inject constructor(
       )
 
       withContext(Dispatchers.IO) {
-        if (current.noteId == null) {
-          repository.addNote(note)
-        } else {
+        if (current.noteId != null) {
           repository.updateNote(note)
+        } else {
+          repository.addNote(note)
         }
       }
-
       resetForm()
-
-      _uiState.update { FormState() }
       _events.send(FormEvent.SubmitSuccess)
     } catch (e: Exception) {
       _events.send(FormEvent.ShowMessage("Error al guardar la nota: ${e.localizedMessage}"))

@@ -1,5 +1,6 @@
 package com.julhdev.notes.views
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -10,11 +11,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -40,6 +39,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+/**
+ * Vista de edición de notas.
+ * Muestra un formulario para editar una nota existente.
+ * @param noteId El ID de la nota a editar.
+ * @param navController El NavController para la navegación entre vistas.
+ * @param formViewModel El ViewModel que maneja el estado del formulario.
+ * @param themeViewModel El ViewModel que maneja el tema de la aplicación.
+ * @usage Incluir EditView en la navegación para permitir la edición de notas existentes.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditView(
@@ -47,10 +55,10 @@ fun EditView(
   navController: NavController,
   formViewModel: FormViewModel,
   themeViewModel: ThemeViewModel,
-  ) {
+) {
 
-  var showDialog by remember { mutableStateOf( false) }
-  val scaffoldState = remember { SnackbarHostState() }
+  var showDialog by remember { mutableStateOf(false) }
+  val snackBarHostState = remember { SnackbarHostState() }
   val theme = themeViewModel.isDark.collectAsState().value
 
   LaunchedEffect(Unit) {
@@ -60,7 +68,7 @@ fun EditView(
           showDialog = true
         }
         is FormEvent.ShowMessage -> {
-          scaffoldState.showSnackbar(event.msg)
+          snackBarHostState.showSnackbar(event.msg)
         }
       }
     }
@@ -68,7 +76,7 @@ fun EditView(
 
   Scaffold(
     snackbarHost = {
-      SnackbarHost(scaffoldState)
+      SnackbarHost(snackBarHostState)
     },
     topBar = {
       TopAppBar(
@@ -107,17 +115,10 @@ fun EditView(
       modifier = Modifier
         .padding(innerPadding)
     ) {
-      Text(
-        text = "Edit View - Note ID: $noteId",
-        style = MaterialTheme.typography.bodyLarge,
-        color = MaterialTheme.colorScheme.onSurface,
-        modifier = Modifier
-          .padding(16.dp)
-      )
 
       EditViewContent(noteId, formViewModel)
 
-      if(showDialog){
+      if (showDialog) {
         MainDialog(
           title = "Nota Actualizada",
           content = "La nota se ha actualizado correctamente.",
@@ -132,6 +133,14 @@ fun EditView(
   }
 }
 
+
+/**
+ * Contenido de la vista de edición de notas.
+ * Muestra el formulario para editar una nota existente.
+ * @param noteId El ID de la nota a editar.
+ * @param formViewModel El ViewModel que maneja el estado del formulario.
+ * @usage Incluir EditViewContent en la vista de edición para mostrar el formulario de edición de notas.
+ */
 @Composable
 fun EditViewContent(
   noteId: Int,
@@ -146,7 +155,7 @@ fun EditViewContent(
   }
 
   SubTitle(
-    text = "Editar la nota:",
+    text = "Editar la nota: $noteId",
     modifier = Modifier
       .padding(16.dp)
   )
@@ -162,12 +171,14 @@ fun EditViewContent(
     MainTextField(
       value = state.title,
       label = "Titulo",
-      onValueChange = { formViewModel.onTitleChange(it) }
+      onValueChange = { formViewModel.onTitleChange(it) },
+      isError = state.title.length > 80 || state.titleError?.isNotBlank() ?: false,
     )
     MainTextArea(
       value = state.content,
       label = "Nota",
-      onValueChange = { formViewModel.onContentChange(it) }
+      onValueChange = { formViewModel.onContentChange(it) },
+      isError = state.contentError?.isNotBlank() ?: false,
     )
     Spacer(
       modifier = Modifier
@@ -175,7 +186,6 @@ fun EditViewContent(
     )
     MainBtn(
       text = "Actualizar Nota",
-      enabled = true,
       onClick = { formViewModel.submit() },
     )
   }

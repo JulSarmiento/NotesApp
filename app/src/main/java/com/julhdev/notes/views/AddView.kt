@@ -171,12 +171,14 @@ fun AddViewContent(
     MainTextField(
       value = state.title,
       label = "Titulo",
-      onValueChange = onTitleChange
+      onValueChange = onTitleChange,
+      isError = state.title.length > 80 || state.titleError?.isNotBlank() ?: false,
     )
     MainTextArea(
       value = state.content,
       label = "Nota",
-      onValueChange = onContentChange
+      onValueChange = onContentChange,
+      isError = state.contentError?.isNotBlank() ?: false,
     )
     Spacer(
       modifier = Modifier
@@ -184,7 +186,6 @@ fun AddViewContent(
     )
     MainBtn(
       text = "Guardar Nota",
-      enabled = state.title.isNotBlank() && state.content.isNotBlank(),
       onClick = { onSubmit() },
     )
   }

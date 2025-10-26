@@ -17,7 +17,7 @@ data class FormState(
   val timeStamp: Long = 0L,
   val titleError: String? = null,
   val contentError: String? = null,
-  val isSubmitting: Boolean = false
+  val isSubmitting: Boolean = false,
 ) {
 
   /**
@@ -25,5 +25,5 @@ data class FormState(
    * Un formulario es válido si no hay errores en el título o contenido, y ambos campos no están vacíos.
    */
   val isValid: Boolean
-    get() = titleError == null && contentError == null && title.isNotBlank() && content.isNotBlank()
+    get() = titleError == null && contentError == null && title.isNotBlank() && content.isNotBlank() && title.length <= 80
 }

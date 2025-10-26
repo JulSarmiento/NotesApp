@@ -105,12 +105,14 @@ fun NoteCard(
 fun MainTextField(
   value: String,
   onValueChange: (String) -> Unit,
-  label: String
-){
+  label: String,
+  isError: Boolean = false
+) {
   OutlinedTextField(
     value = value,
     onValueChange = onValueChange,
     label = { Text(text = label) },
+    isError = isError,
     modifier = Modifier
       .fillMaxWidth()
       .padding(horizontal = 30.dp)
@@ -129,18 +131,22 @@ fun MainTextField(
 fun MainTextArea(
   value: String,
   onValueChange: (String) -> Unit,
-  label: String
-){
+  label: String,
+  modifier: Modifier = Modifier,
+  isError: Boolean = false,
+) {
   OutlinedTextField(
     value = value,
     onValueChange = onValueChange,
     singleLine = false,
     label = { Text(text = label) },
+    isError = isError,
     modifier = Modifier
       .fillMaxWidth()
       .padding(horizontal = 30.dp)
       .padding(bottom = 15.dp)
-      .heightIn(min = 200.dp),
+      .heightIn(min = 200.dp)
+      .then(modifier),
     maxLines = 40,
   )
 }
