@@ -1,6 +1,5 @@
 package com.julhdev.notes.components
 
-import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -152,7 +151,6 @@ fun MainTextArea(
  * @param content de tipo String que representa el contenido del diálogo
  * @param onDismiss de tipo () -> Unit que representa la función a ejecutar al cerrar el diálogo
  * @param onConfirm de tipo () -> Unit que representa la función a ejecutar al confirmar la acción en el diálogo
- * @param state de tipo Boolean que representa el estado de visibilidad del diálogo
  * @usage MainDialog(title = "Confirmar", content = "¿Estás seguro?", onDismiss = { /* acción */ }, onConfirm = { /* acción */ })
  */
 @Composable
