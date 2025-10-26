@@ -11,6 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -53,17 +54,27 @@ class FormViewModel @Inject constructor(
   private val _events = Channel<FormEvent>(Channel.BUFFERED)
   val events = _events.receiveAsFlow()
 
+  private var isEditing = false
+
   init {
     val draftTitle = savedStateHandle.get<String>("draftTitle") ?: ""
     val draftContent = savedStateHandle.get<String>("draftContent") ?: ""
     val editId = savedStateHandle.get<Int>("editId")
-    if (draftTitle.isNotEmpty() || draftContent.isNotEmpty() || editId != null) {
+
+    if (editId == null && (draftTitle.isNotEmpty() || draftContent.isNotEmpty())) {
       _uiState.value = uiState.value.copy(
-        noteId = editId,
         title = draftTitle,
         content = draftContent
       )
     }
+  }
+
+  fun resetForm() {
+    isEditing = false
+    savedStateHandle.remove<String>("draftTitle")
+    savedStateHandle.remove<String>("draftContent")
+    savedStateHandle.remove<Int>("editId")
+    _uiState.value = FormState()
   }
 
   /**
@@ -73,22 +84,21 @@ class FormViewModel @Inject constructor(
    * @usage Llamar a loadNote(noteId) para cargar los datos de una nota específica en el formulario.
    */
   fun loadNote(noteId: Int) {
+    isEditing = true
     if (_uiState.value.noteId == noteId && _uiState.value.title.isNotBlank()) return
     savedStateHandle["editId"] = noteId
 
     viewModelScope.launch {
-      repository.getNoteById(noteId).collect { note ->
-        note?.let{
-          _uiState.update {
-            it.copy(
-              noteId = note.id,
-              title = note.title,
-              content = note.content,
-              timeStamp = note.timestamp,
-              titleError = null,
-              contentError = null
-            )
-          }
+      repository.getNoteById(noteId).firstOrNull()?.let { note ->
+        _uiState.update {
+          it.copy(
+            noteId = note.id,
+            title = note.title,
+            content = note.content,
+            timeStamp = note.timestamp,
+            titleError = null,
+            contentError = null
+          )
         }
       }
     }
@@ -114,7 +124,7 @@ class FormViewModel @Inject constructor(
    * @usage Llamar a validateContentSync(content) para validar el contenido antes de actualizar el estado del formulario.
    */
   private fun validateContentSync(content: String): String? =
-    if(content.isBlank()) "El contenido no puede estar vacío" else null
+    if (content.isBlank()) "El contenido no puede estar vacío" else null
 
   /**
    * Maneja el cambio en el título de la nota.
@@ -126,7 +136,7 @@ class FormViewModel @Inject constructor(
     _uiState.update {
       it.copy(
         title = new,
-        titleError =  validateTitleSync(new)
+        titleError = validateTitleSync(new)
       )
     }
     savedStateHandle["draftTitle"] = new
@@ -156,7 +166,7 @@ class FormViewModel @Inject constructor(
    */
   fun submit() = viewModelScope.launch {
     val current = _uiState.value
-    if(!current.isValid || current.isSubmitting ) return@launch
+    if (!current.isValid || current.isSubmitting) return@launch
 
     _uiState.update { it.copy(isSubmitting = true) }
 
@@ -168,21 +178,19 @@ class FormViewModel @Inject constructor(
         timestamp = System.currentTimeMillis()
       )
 
-      withContext(Dispatchers.IO){
-        if(current.noteId == null){
+      withContext(Dispatchers.IO) {
+        if (current.noteId == null) {
           repository.addNote(note)
-        }else{
+        } else {
           repository.updateNote(note)
         }
       }
 
-      savedStateHandle.remove<String>("draftTitle")
-      savedStateHandle.remove<String>("draftContent")
-      savedStateHandle.remove<Int>("editId")
+      resetForm()
 
       _uiState.update { FormState() }
       _events.send(FormEvent.SubmitSuccess)
-    }catch (e: Exception) {
+    } catch (e: Exception) {
       _events.send(FormEvent.ShowMessage("Error al guardar la nota: ${e.localizedMessage}"))
       _uiState.update { it.copy(isSubmitting = false) }
     }

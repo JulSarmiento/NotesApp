@@ -22,7 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class NoteViewModel @Inject constructor(
   private val repository: NoteRepository
-): ViewModel() {
+) : ViewModel() {
 
   private val _notes = MutableStateFlow<List<Note>>(emptyList())
   val notes = _notes.asStateFlow()
@@ -30,32 +30,8 @@ class NoteViewModel @Inject constructor(
   init {
     viewModelScope.launch(Dispatchers.IO) {
       repository.getNotes().collect { item ->
-       _notes.value = item
+        _notes.value = item
       }
-    }
-  }
-
-  /**
-   * Agrega una nueva entidad Note al repositorio.
-   * @param note La entidad Note que se va a agregar.
-   * @see Note
-   * @usage Llamar a addNote(note) para insertar una nueva Note en la fuente de datos.
-   */
-  fun addNote(note: Note){
-    viewModelScope.launch(Dispatchers.IO) {
-      repository.addNote(note)
-    }
-  }
-
-  /**
-   * Actualiza una entidad Note existente en el repositorio.
-   * @param note La entidad Note que se va a actualizar.
-   * @see Note
-   * @usage Llamar a updateNote(note) para modificar una Note existente en la fuente de datos.
-   */
-  fun updateNote(note: Note){
-    viewModelScope.launch(Dispatchers.IO)  {
-      repository.updateNote(note)
     }
   }
 
@@ -65,8 +41,8 @@ class NoteViewModel @Inject constructor(
    * @see Note
    * @usage Llamar a deleteNote(note) para eliminar una Note de la fuente de datos.
    */
-  fun deleteNote(note: Note){
-    viewModelScope.launch(Dispatchers.IO)  {
+  fun deleteNote(note: Note) {
+    viewModelScope.launch(Dispatchers.IO) {
       repository.deleteNote(note)
     }
   }
