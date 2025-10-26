@@ -1,6 +1,7 @@
 package com.julhdev.notes.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,12 +9,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -47,7 +53,8 @@ fun timeFormat(time: Long): String {
 fun NoteCard(
   title: String,
   content: String,
-  time: Long
+  time: Long,
+  onClick: () -> Unit
 ) {
   Box(
     modifier = Modifier
@@ -58,6 +65,7 @@ fun NoteCard(
       .padding(15.dp)
       .fillMaxWidth()
       .heightIn(max = 150.dp)
+      .clickable { onClick() }
   ) {
     Column {
       SubTitle(
@@ -132,7 +140,76 @@ fun MainTextArea(
       .fillMaxWidth()
       .padding(horizontal = 30.dp)
       .padding(bottom = 15.dp)
-      .heightIn(max = 200.dp),
+      .heightIn(min = 200.dp),
     maxLines = 40,
   )
+}
+
+/**
+ * MainDialog Composable
+ * @param title de tipo String que representa el título del diálogo
+ * @param content de tipo String que representa el contenido del diálogo
+ * @param onDismiss de tipo () -> Unit que representa la función a ejecutar al cerrar el diálogo
+ * @param onConfirm de tipo () -> Unit que representa la función a ejecutar al confirmar la acción en el diálogo
+ * @usage MainDialog(title = "Confirmar", content = "¿Estás seguro?", onDismiss = { /* acción */ }, onConfirm = { /* acción */ })
+ */
+@Composable
+fun MainDialog(
+  title: String,
+  content: String,
+  onDismiss: () -> Unit,
+  onConfirm: () -> Unit,
+) {
+  AlertDialog(
+    onDismissRequest = { onDismiss() },
+    title = {
+      Text(
+        text = title,
+        style = MaterialTheme.typography.headlineSmall,
+        color = MaterialTheme.colorScheme.onSurface
+      )
+    },
+    text = {
+      Text(
+        text = content,
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurface
+      )
+    },
+    confirmButton = {
+      Button(
+        onClick = { onConfirm() },
+        colors = ButtonDefaults.buttonColors(
+          containerColor = MaterialTheme.colorScheme.primary,
+          contentColor = MaterialTheme.colorScheme.onPrimary
+        )
+      ) {
+        Text(
+          text = "Aceptar",
+          letterSpacing = 0.5.sp,
+          fontWeight = FontWeight.Medium,
+          modifier = Modifier
+            .padding(horizontal = 10.dp)
+        )
+      }
+    },
+    dismissButton = {
+      Button(
+        onClick = { onDismiss() },
+        colors = ButtonDefaults.buttonColors(
+          containerColor = MaterialTheme.colorScheme.primary,
+          contentColor = MaterialTheme.colorScheme.onPrimary
+        )
+      ) {
+        Text(
+          text = "Cancelar",
+          letterSpacing = 0.5.sp,
+          fontWeight = FontWeight.Medium,
+          modifier = Modifier
+            .padding(horizontal = 10.dp)
+        )
+      }
+    }
+  )
+
 }

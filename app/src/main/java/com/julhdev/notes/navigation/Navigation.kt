@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.julhdev.notes.data.dataStore.StoreBoarding
+import com.julhdev.notes.viewmodel.FormViewModel
 import com.julhdev.notes.viewmodel.NoteViewModel
 import com.julhdev.notes.viewmodel.OnBoardingViewModel
 import com.julhdev.notes.viewmodel.ThemeViewModel
@@ -25,7 +26,12 @@ import com.julhdev.notes.views.SplashView
  * @usage Incluir este Composable en el punto de entrada de la aplicación para habilitar la navegación.
  */
 @Composable
-fun NavManager(onBoardingViewModel: OnBoardingViewModel, noteViewModel: NoteViewModel, themeViewModel: ThemeViewModel) {
+fun NavManager(
+  onBoardingViewModel: OnBoardingViewModel,
+  noteViewModel: NoteViewModel,
+  themeViewModel: ThemeViewModel,
+  formViewModel: FormViewModel
+) {
 
   val isOnBoardingCompleted = onBoardingViewModel.completed.collectAsState()
   val navController = rememberNavController()
@@ -45,11 +51,11 @@ fun NavManager(onBoardingViewModel: OnBoardingViewModel, noteViewModel: NoteView
       HomeView(navController, noteViewModel, themeViewModel)
     }
     composable(Routes.ADD) {
-      AddView(navController, noteViewModel, themeViewModel)
+      AddView(navController, themeViewModel, formViewModel)
     }
-    composable(Routes.EDIT, arguments = listOf(navArgument("id") { type = NavType.IntType })) {
+    composable("${Routes.EDIT}/{id}", arguments = listOf(navArgument("id") { type = NavType.IntType })) {
       val id = it.arguments?.getInt("id") ?: -1
-      EditView(id)
+      EditView(id, navController, formViewModel, themeViewModel)
     }
   }
 }

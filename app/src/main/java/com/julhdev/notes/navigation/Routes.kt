@@ -12,5 +12,5 @@ object Routes {
   const val ONBOARDING =  "onboarding"
   const val HOME = "home"
   const val ADD = "add"
-  const val EDIT = "edit/{id}"
+  const val EDIT = "edit"
 }
