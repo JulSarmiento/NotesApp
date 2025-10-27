@@ -51,6 +51,4 @@ fun SplashView(navController: NavController, store: Boolean) {
       )
     }
   }
-
-
 }
