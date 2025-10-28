@@ -5,23 +5,39 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.navigation.compose.DialogHost
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -108,8 +124,13 @@ fun MainTextField(
   value: String,
   onValueChange: (String) -> Unit,
   label: String,
-  isError: Boolean = false
+  isError: Boolean = false,
+  focusRequester: FocusRequester = remember { FocusRequester() },
+  nextFocusRequester: FocusRequester?
 ) {
+
+  val focusManager = LocalFocusManager.current
+
   OutlinedTextField(
     value = value,
     onValueChange = onValueChange,
@@ -117,9 +138,20 @@ fun MainTextField(
     isError = isError,
     modifier = Modifier
       .fillMaxWidth()
-      .padding(bottom = 15.dp),
+      .padding(bottom = 15.dp)
+      .focusRequester(focusRequester),
     keyboardOptions = KeyboardOptions(
-      capitalization = KeyboardCapitalization.Sentences
+      capitalization = KeyboardCapitalization.Sentences,
+      imeAction = if (nextFocusRequester != null) ImeAction.Next else ImeAction.Done
+
+    ),
+    keyboardActions = KeyboardActions(
+      onNext = {
+        nextFocusRequester?.requestFocus()
+      },
+      onDone = {
+        focusManager.clearFocus()
+      }
     )
   )
 }
@@ -138,7 +170,11 @@ fun MainTextArea(
   label: String,
   modifier: Modifier = Modifier,
   isError: Boolean = false,
+  focusRequester: FocusRequester = remember { FocusRequester() }
 ) {
+  val focusManager = LocalFocusManager.current
+  val keyboardController = LocalSoftwareKeyboardController.current
+
   OutlinedTextField(
     value = value,
     onValueChange = onValueChange,
@@ -149,11 +185,30 @@ fun MainTextArea(
       .fillMaxWidth()
       .padding(bottom = 15.dp)
       .heightIn(min = 200.dp)
+      .focusRequester(focusRequester)
       .then(modifier),
     maxLines = 40,
     keyboardOptions = KeyboardOptions(
-      capitalization = KeyboardCapitalization.Sentences
-    )
+      capitalization = KeyboardCapitalization.Sentences,
+    ),
+    keyboardActions = KeyboardActions(
+      onNext = {
+        focusManager.clearFocus()
+      }
+    ),
+    trailingIcon = {
+      IconButton(
+        onClick = {
+          keyboardController?.hide()
+          focusManager.clearFocus()
+        }
+      ) {
+        Icon(
+          imageVector = Icons.Default.Done,
+          contentDescription = "Done Icon"
+        )
+      }
+    }
   )
 }
 
@@ -162,7 +217,6 @@ fun MainTextArea(
  * @param title de tipo String que representa el título del diálogo
  * @param content de tipo String que representa el contenido del diálogo
  * @param onDismiss de tipo () -> Unit que representa la función a ejecutar al cerrar el diálogo
- * @param onConfirm de tipo () -> Unit que representa la función a ejecutar al confirmar la acción en el diálogo
  * @usage MainDialog(title = "Confirmar", content = "¿Estás seguro?", onDismiss = { /* acción */ }, onConfirm = { /* acción */ })
  */
 @Composable
@@ -170,58 +224,35 @@ fun MainDialog(
   title: String,
   content: String,
   onDismiss: () -> Unit,
-  onConfirm: () -> Unit,
 ) {
-  AlertDialog(
+  Dialog(
     onDismissRequest = { onDismiss() },
-    title = {
-      Text(
-        text = title,
-        style = MaterialTheme.typography.headlineSmall,
-        color = MaterialTheme.colorScheme.onSurface
-      )
-    },
-    text = {
-      Text(
-        text = content,
-        style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.colorScheme.onSurface
-      )
-    },
-    confirmButton = {
-      Button(
-        onClick = { onConfirm() },
-        colors = ButtonDefaults.buttonColors(
-          containerColor = MaterialTheme.colorScheme.primary,
-          contentColor = MaterialTheme.colorScheme.onPrimary
-        )
+    properties = DialogProperties(
+      dismissOnBackPress = true,
+      dismissOnClickOutside = true
+    ),
+    content = {
+      Box(
+        modifier = Modifier
+          .background(
+            color = MaterialTheme.colorScheme.surfaceVariant,
+            shape = MaterialTheme.shapes.medium
+          )
+          .padding(20.dp)
       ) {
-        Text(
-          text = "Aceptar",
-          letterSpacing = 0.5.sp,
-          fontWeight = FontWeight.Medium,
-          modifier = Modifier
-            .padding(horizontal = 10.dp)
-        )
-      }
-    },
-    dismissButton = {
-      Button(
-        onClick = { onDismiss() },
-        colors = ButtonDefaults.buttonColors(
-          containerColor = MaterialTheme.colorScheme.primary,
-          contentColor = MaterialTheme.colorScheme.onPrimary
-        )
-      ) {
-        Text(
-          text = "Cancelar",
-          letterSpacing = 0.5.sp,
-          fontWeight = FontWeight.Medium,
-          modifier = Modifier
-            .padding(horizontal = 10.dp)
-        )
+        Column {
+          Text(
+            text = title,
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.secondary
+          )
+          Text(
+            text = content,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.secondary
+          )
+        }
       }
     }
   )
-
 }

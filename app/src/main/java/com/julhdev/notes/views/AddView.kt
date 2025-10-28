@@ -26,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.julhdev.notes.components.IconButton
@@ -58,7 +59,7 @@ fun AddView(
   themeViewModel: ThemeViewModel,
   formViewModel: FormViewModel
 ) {
-  var showDialog by remember { mutableStateOf(false ) }
+  var showDialog by remember { mutableStateOf(false) }
   val theme = themeViewModel.isDark.collectAsState().value
   val state by formViewModel.uiState.collectAsState()
   val scaffoldState = remember { SnackbarHostState() }
@@ -70,6 +71,7 @@ fun AddView(
         is FormEvent.SubmitSuccess -> {
           showDialog = true
         }
+
         is FormEvent.ShowMessage -> {
           scaffoldState.showSnackbar(event.msg)
         }
@@ -127,16 +129,14 @@ fun AddView(
         navController = navController,
       )
 
-      if(showDialog){
+      if (showDialog) {
         MainDialog(
           title = "Nota guardada",
           content = "La nota se ha guardado correctamente.",
-          onDismiss = { showDialog = false },
-          onConfirm = {
+          onDismiss = {
             showDialog = false
             navController.popBackStack()
-          },
-        )
+          })
       }
     }
   }
@@ -160,6 +160,10 @@ fun AddViewContent(
   formViewModel: FormViewModel,
   navController: NavController,
 ) {
+
+  val focus1 = remember { FocusRequester() }
+  val focus2 = remember { FocusRequester() }
+
   Spacer(
     modifier = Modifier
       .padding(top = 16.dp)
@@ -181,12 +185,15 @@ fun AddViewContent(
       label = "Titulo",
       onValueChange = onTitleChange,
       isError = state.title.length > 80 || state.titleError?.isNotBlank() ?: false,
+      focusRequester = focus1,
+      nextFocusRequester = focus2
     )
     MainTextArea(
       value = state.content,
       label = "Nota",
       onValueChange = onContentChange,
       isError = state.contentError?.isNotBlank() ?: false,
+      focusRequester = focus2,
     )
     Spacer(
       modifier = Modifier
@@ -199,7 +206,7 @@ fun AddViewContent(
       .padding(16.dp),
     horizontalArrangement = Arrangement.Center,
     verticalAlignment = Alignment.Bottom
-  ){
+  ) {
     MainBtn(
       text = "Cancelar",
       icon = Icons.Filled.Cancel,

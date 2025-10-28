@@ -26,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.julhdev.notes.components.IconButton
@@ -127,12 +128,10 @@ fun EditView(
         MainDialog(
           title = "Nota Actualizada",
           content = "La nota se ha actualizado correctamente.",
-          onDismiss = { showDialog = false },
-          onConfirm = {
+          onDismiss = {
             showDialog = false
             navController.popBackStack()
-          },
-        )
+          })
       }
     }
   }
@@ -153,6 +152,8 @@ fun EditViewContent(
   navController: NavController,
 ) {
   val state by formViewModel.uiState.collectAsState()
+  val focus1 = remember { FocusRequester() }
+  val focus2 = remember { FocusRequester() }
 
   LaunchedEffect(
     Unit
@@ -180,12 +181,15 @@ fun EditViewContent(
       label = "Titulo",
       onValueChange = { formViewModel.onTitleChange(it) },
       isError = state.title.length > 80 || state.titleError?.isNotBlank() ?: false,
+      focusRequester = focus1,
+      nextFocusRequester = focus2
     )
     MainTextArea(
       value = state.content,
       label = "Nota",
       onValueChange = { formViewModel.onContentChange(it) },
       isError = state.contentError?.isNotBlank() ?: false,
+      focusRequester = focus2,
     )
     Spacer(
       modifier = Modifier
