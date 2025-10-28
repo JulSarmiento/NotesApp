@@ -1,7 +1,5 @@
 package com.julhdev.notes.views
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,11 +9,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -23,7 +19,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -113,7 +108,6 @@ fun HomeViewContent(noteViewModel: NoteViewModel, navController: NavController) 
   val onDeleteNote: (Note) -> Unit = { note ->
     noteViewModel.deleteNote(note)
   }
-
   Column(
     modifier = Modifier
       .padding(16.dp)
@@ -125,11 +119,7 @@ fun HomeViewContent(noteViewModel: NoteViewModel, navController: NavController) 
     )
     MainTitle(
       text = "Tus Notas",
-      color = MaterialTheme.colorScheme.onSecondary,
-    )
-    Spacer(
-      modifier = Modifier
-        .height(10.dp)
+      color = MaterialTheme.colorScheme.secondary,
     )
     Column(
       modifier = Modifier
@@ -144,7 +134,6 @@ fun HomeViewContent(noteViewModel: NoteViewModel, navController: NavController) 
   }
 }
 
-
 /**
  * HomeNotesContent Composable
  * @param notes de tipo List<Note> que representa la lista de notas disponibles
@@ -154,6 +143,10 @@ fun HomeViewContent(noteViewModel: NoteViewModel, navController: NavController) 
  */
 @Composable
 fun HomeNotesContent(notes: List<Note>, onDeleteNote: (Note) -> Unit, navController: NavController) {
+  Spacer(
+    modifier = Modifier
+      .height(10.dp)
+  )
   LazyColumn(
     modifier = Modifier
       .padding(all = 10.dp)
@@ -198,10 +191,9 @@ fun HomeNotesContent(notes: List<Note>, onDeleteNote: (Note) -> Unit, navControl
 fun HomeEmptyContent() {
   Column(
     horizontalAlignment = Alignment.CenterHorizontally,
-    verticalArrangement = Arrangement.Center,
     modifier = Modifier
-      .alpha(0.7f)
       .fillMaxSize()
+      .padding(top = 20.dp)
   ) {
     PngImage(
       image = R.drawable.empty_note,

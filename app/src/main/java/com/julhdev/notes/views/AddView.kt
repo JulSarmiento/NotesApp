@@ -1,21 +1,23 @@
 package com.julhdev.notes.views
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -24,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.julhdev.notes.components.IconButton
@@ -56,7 +59,7 @@ fun AddView(
   themeViewModel: ThemeViewModel,
   formViewModel: FormViewModel
 ) {
-  var showDialog by remember { mutableStateOf(false ) }
+  var showDialog by remember { mutableStateOf(false) }
   val theme = themeViewModel.isDark.collectAsState().value
   val state by formViewModel.uiState.collectAsState()
   val scaffoldState = remember { SnackbarHostState() }
@@ -68,6 +71,7 @@ fun AddView(
         is FormEvent.SubmitSuccess -> {
           showDialog = true
         }
+
         is FormEvent.ShowMessage -> {
           scaffoldState.showSnackbar(event.msg)
         }
@@ -121,18 +125,18 @@ fun AddView(
         onTitleChange = formViewModel::onTitleChange,
         onContentChange = formViewModel::onContentChange,
         onSubmit = { formViewModel.submit() },
+        formViewModel = formViewModel,
+        navController = navController,
       )
 
-      if(showDialog){
+      if (showDialog) {
         MainDialog(
           title = "Nota guardada",
           content = "La nota se ha guardado correctamente.",
-          onDismiss = { showDialog = false },
-          onConfirm = {
+          onDismiss = {
             showDialog = false
             navController.popBackStack()
-          },
-        )
+          })
       }
     }
   }
@@ -153,38 +157,73 @@ fun AddViewContent(
   onTitleChange: (String) -> Unit,
   onContentChange: (String) -> Unit,
   onSubmit: () -> Unit,
+  formViewModel: FormViewModel,
+  navController: NavController,
 ) {
+
+  val focus1 = remember { FocusRequester() }
+  val focus2 = remember { FocusRequester() }
+
+  Spacer(
+    modifier = Modifier
+      .padding(top = 16.dp)
+  )
   SubTitle(
     text = "Crea una nueva nota aquí:",
+    color = MaterialTheme.colorScheme.secondary,
     modifier = Modifier
       .padding(16.dp)
   )
-  Spacer(
-    modifier = Modifier
-      .padding(8.dp)
-  )
   Column(
     horizontalAlignment = Alignment.CenterHorizontally,
+    verticalArrangement = Arrangement.Center,
     modifier = Modifier
       .padding(16.dp)
   ) {
     MainTextField(
       value = state.title,
       label = "Titulo",
-      onValueChange = onTitleChange
+      onValueChange = onTitleChange,
+      isError = state.title.length > 80 || state.titleError?.isNotBlank() ?: false,
+      focusRequester = focus1,
+      nextFocusRequester = focus2
     )
     MainTextArea(
       value = state.content,
       label = "Nota",
-      onValueChange = onContentChange
+      onValueChange = onContentChange,
+      isError = state.contentError?.isNotBlank() ?: false,
+      focusRequester = focus2,
+    )
+    Spacer(
+      modifier = Modifier
+        .padding(8.dp)
+    )
+  }
+  Row(
+    modifier = Modifier
+      .fillMaxSize()
+      .padding(16.dp),
+    horizontalArrangement = Arrangement.Center,
+    verticalAlignment = Alignment.Bottom
+  ) {
+    MainBtn(
+      text = "Cancelar",
+      icon = Icons.Filled.Cancel,
+      description = "Icono de cancelar",
+      onClick = {
+        formViewModel.resetForm()
+        navController.popBackStack()
+      },
     )
     Spacer(
       modifier = Modifier
         .padding(8.dp)
     )
     MainBtn(
-      text = "Guardar Nota",
-      enabled = state.title.isNotBlank() && state.content.isNotBlank(),
+      text = "Guardar",
+      icon = Icons.Filled.Save,
+      description = "Icono de guardar",
       onClick = { onSubmit() },
     )
   }
