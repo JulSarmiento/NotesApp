@@ -1,11 +1,15 @@
 package com.julhdev.notes.views
 
-import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -67,6 +71,7 @@ fun EditView(
         is FormEvent.SubmitSuccess -> {
           showDialog = true
         }
+
         is FormEvent.ShowMessage -> {
           snackBarHostState.showSnackbar(event.msg)
         }
@@ -116,7 +121,7 @@ fun EditView(
         .padding(innerPadding)
     ) {
 
-      EditViewContent(noteId, formViewModel)
+      EditViewContent(noteId, formViewModel, navController)
 
       if (showDialog) {
         MainDialog(
@@ -145,6 +150,7 @@ fun EditView(
 fun EditViewContent(
   noteId: Int,
   formViewModel: FormViewModel,
+  navController: NavController,
 ) {
   val state by formViewModel.uiState.collectAsState()
 
@@ -153,18 +159,19 @@ fun EditViewContent(
   ) {
     formViewModel.loadNote(noteId)
   }
-
+  Spacer(
+    modifier = Modifier
+      .padding(top = 16.dp)
+  )
   SubTitle(
-    text = "Editar la nota: $noteId",
+    text = "Edita tu nota aquí:",
+    color = MaterialTheme.colorScheme.secondary,
     modifier = Modifier
       .padding(16.dp)
   )
-  Spacer(
-    modifier = Modifier
-      .padding(8.dp)
-  )
   Column(
     horizontalAlignment = Alignment.CenterHorizontally,
+    verticalArrangement = Arrangement.Center,
     modifier = Modifier
       .padding(16.dp)
   ) {
@@ -184,8 +191,31 @@ fun EditViewContent(
       modifier = Modifier
         .padding(8.dp)
     )
+  }
+  Row(
+    modifier = Modifier
+      .fillMaxSize()
+      .padding(16.dp),
+    horizontalArrangement = Arrangement.Center,
+    verticalAlignment = Alignment.Bottom
+  ) {
     MainBtn(
-      text = "Actualizar Nota",
+      text = "Cancelar",
+      icon = Icons.Filled.Cancel,
+      description = "Icono de cancelar",
+      onClick = {
+        formViewModel.resetForm()
+        navController.popBackStack()
+      },
+    )
+    Spacer(
+      modifier = Modifier
+        .padding(8.dp)
+    )
+    MainBtn(
+      text = "Guardar",
+      icon = Icons.Filled.Save,
+      description = "Icono de guardar",
       onClick = { formViewModel.submit() },
     )
   }

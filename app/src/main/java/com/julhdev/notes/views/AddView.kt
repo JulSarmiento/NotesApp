@@ -1,21 +1,23 @@
 package com.julhdev.notes.views
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -121,6 +123,8 @@ fun AddView(
         onTitleChange = formViewModel::onTitleChange,
         onContentChange = formViewModel::onContentChange,
         onSubmit = { formViewModel.submit() },
+        formViewModel = formViewModel,
+        navController = navController,
       )
 
       if(showDialog){
@@ -153,18 +157,22 @@ fun AddViewContent(
   onTitleChange: (String) -> Unit,
   onContentChange: (String) -> Unit,
   onSubmit: () -> Unit,
+  formViewModel: FormViewModel,
+  navController: NavController,
 ) {
+  Spacer(
+    modifier = Modifier
+      .padding(top = 16.dp)
+  )
   SubTitle(
     text = "Crea una nueva nota aquí:",
+    color = MaterialTheme.colorScheme.secondary,
     modifier = Modifier
       .padding(16.dp)
   )
-  Spacer(
-    modifier = Modifier
-      .padding(8.dp)
-  )
   Column(
     horizontalAlignment = Alignment.CenterHorizontally,
+    verticalArrangement = Arrangement.Center,
     modifier = Modifier
       .padding(16.dp)
   ) {
@@ -184,8 +192,31 @@ fun AddViewContent(
       modifier = Modifier
         .padding(8.dp)
     )
+  }
+  Row(
+    modifier = Modifier
+      .fillMaxSize()
+      .padding(16.dp),
+    horizontalArrangement = Arrangement.Center,
+    verticalAlignment = Alignment.Bottom
+  ){
     MainBtn(
-      text = "Guardar Nota",
+      text = "Cancelar",
+      icon = Icons.Filled.Cancel,
+      description = "Icono de cancelar",
+      onClick = {
+        formViewModel.resetForm()
+        navController.popBackStack()
+      },
+    )
+    Spacer(
+      modifier = Modifier
+        .padding(8.dp)
+    )
+    MainBtn(
+      text = "Guardar",
+      icon = Icons.Filled.Save,
+      description = "Icono de guardar",
       onClick = { onSubmit() },
     )
   }

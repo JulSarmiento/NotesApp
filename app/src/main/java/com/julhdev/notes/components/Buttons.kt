@@ -31,7 +31,9 @@ fun MainBtn(
   text: String,
   modifier: Modifier = Modifier,
   enabled: Boolean = true,
-  onClick: () -> Unit
+  onClick: () -> Unit,
+  icon: ImageVector,
+  description: String,
 ) {
   Button(
     onClick = onClick,
@@ -41,6 +43,11 @@ fun MainBtn(
       contentColor = MaterialTheme.colorScheme.onPrimary
     )
   ) {
+    Icon(
+      imageVector = icon,
+      contentDescription = description,
+      tint = MaterialTheme.colorScheme.onPrimary
+    )
     Text(
       text = text,
       letterSpacing = 0.5.sp,

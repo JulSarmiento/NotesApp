@@ -113,7 +113,6 @@ fun HomeViewContent(noteViewModel: NoteViewModel, navController: NavController) 
   val onDeleteNote: (Note) -> Unit = { note ->
     noteViewModel.deleteNote(note)
   }
-
   Column(
     modifier = Modifier
       .padding(16.dp)
@@ -125,11 +124,7 @@ fun HomeViewContent(noteViewModel: NoteViewModel, navController: NavController) 
     )
     MainTitle(
       text = "Tus Notas",
-      color = MaterialTheme.colorScheme.onSecondary,
-    )
-    Spacer(
-      modifier = Modifier
-        .height(10.dp)
+      color = MaterialTheme.colorScheme.secondary,
     )
     Column(
       modifier = Modifier
@@ -144,7 +139,6 @@ fun HomeViewContent(noteViewModel: NoteViewModel, navController: NavController) 
   }
 }
 
-
 /**
  * HomeNotesContent Composable
  * @param notes de tipo List<Note> que representa la lista de notas disponibles
@@ -154,6 +148,10 @@ fun HomeViewContent(noteViewModel: NoteViewModel, navController: NavController) 
  */
 @Composable
 fun HomeNotesContent(notes: List<Note>, onDeleteNote: (Note) -> Unit, navController: NavController) {
+  Spacer(
+    modifier = Modifier
+      .height(10.dp)
+  )
   LazyColumn(
     modifier = Modifier
       .padding(all = 10.dp)
@@ -198,10 +196,9 @@ fun HomeNotesContent(notes: List<Note>, onDeleteNote: (Note) -> Unit, navControl
 fun HomeEmptyContent() {
   Column(
     horizontalAlignment = Alignment.CenterHorizontally,
-    verticalArrangement = Arrangement.Center,
     modifier = Modifier
-      .alpha(0.7f)
       .fillMaxSize()
+      .padding(top = 20.dp)
   ) {
     PngImage(
       image = R.drawable.empty_note,
