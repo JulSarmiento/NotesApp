@@ -4,20 +4,15 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DIALOG" />
-        <DropdownSelection timestamp="2025-10-28T14:31:33.264636700Z">
+        <DropdownSelection timestamp="2025-11-08T19:59:31.324212800Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\jasa1\.android\avd\Moto_e14.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\jasa1\.android\avd\Pixel_9_Pro_XL.avd" />
             </handle>
           </Target>
         </DropdownSelection>
         <DialogSelection>
           <targets>
-            <Target type="DEFAULT_BOOT">
-              <handle>
-                <DeviceId pluginId="PhysicalDevice" identifier="serial=ZY22K7MMN4" />
-              </handle>
-            </Target>
             <Target type="DEFAULT_BOOT">
               <handle>
                 <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\jasa1\.android\avd\Moto_e14.avd" />
