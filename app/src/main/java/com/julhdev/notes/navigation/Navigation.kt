@@ -14,7 +14,9 @@ import com.julhdev.notes.viewmodel.ThemeViewModel
 import com.julhdev.notes.views.AddView
 import com.julhdev.notes.views.EditView
 import com.julhdev.notes.views.HomeView
+import com.julhdev.notes.views.LoginView
 import com.julhdev.notes.views.OnBoardingView
+import com.julhdev.notes.views.RegisterView
 import com.julhdev.notes.views.SplashView
 
 
@@ -44,6 +46,12 @@ fun NavManager(
     }
     composable(Routes.ONBOARDING) {
       OnBoardingView(navController, onBoardingViewModel)
+    }
+    composable(Routes.LOGIN){
+      LoginView(navController)
+    }
+    composable(Routes.REGISTER) {
+      RegisterView(navController)
     }
     composable(Routes.HOME) {
       HomeView(navController, noteViewModel, themeViewModel)

@@ -37,6 +37,7 @@ import com.julhdev.notes.components.MainTextField
 import com.julhdev.notes.components.MainTitle
 import com.julhdev.notes.components.SubTitle
 import com.julhdev.notes.components.SwitchButton
+import com.julhdev.notes.components.TopBar
 import com.julhdev.notes.data.model.FormState
 import com.julhdev.notes.viewmodel.FormEvent
 import com.julhdev.notes.viewmodel.FormViewModel
@@ -55,91 +56,66 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddView(
-  navController: NavController,
-  themeViewModel: ThemeViewModel,
-  formViewModel: FormViewModel
+    navController: NavController,
+    themeViewModel: ThemeViewModel,
+    formViewModel: FormViewModel
 ) {
-  var showDialog by remember { mutableStateOf(false) }
-  val theme = themeViewModel.isDark.collectAsState().value
-  val state by formViewModel.uiState.collectAsState()
-  val scaffoldState = remember { SnackbarHostState() }
+    var showDialog by remember { mutableStateOf(false) }
+    val theme = themeViewModel.isDark.collectAsState().value
+    val state by formViewModel.uiState.collectAsState()
+    val scaffoldState = remember { SnackbarHostState() }
 
-  LaunchedEffect(Unit) {
-    formViewModel.resetForm()
-    formViewModel.events.collect { event ->
-      when (event) {
-        is FormEvent.SubmitSuccess -> {
-          showDialog = true
-        }
+    LaunchedEffect(Unit) {
+        formViewModel.resetForm()
+        formViewModel.events.collect { event ->
+            when (event) {
+                is FormEvent.SubmitSuccess -> {
+                    showDialog = true
+                }
 
-        is FormEvent.ShowMessage -> {
-          scaffoldState.showSnackbar(event.msg)
-        }
-      }
-    }
-  }
-
-  Scaffold(
-    snackbarHost = {
-      SnackbarHost(scaffoldState)
-    },
-    topBar = {
-      TopAppBar(
-        title = {
-          MainTitle(
-            text = "Dashi's Notes",
-            color = MaterialTheme.colorScheme.onPrimary
-          )
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-          containerColor = MaterialTheme.colorScheme.primary,
-        ),
-        navigationIcon = {
-          IconButton(
-            icon = Icons.AutoMirrored.Filled.ArrowBack,
-            description = "Back",
-            onClick = {
-              navController.popBackStack()
+                is FormEvent.ShowMessage -> {
+                    scaffoldState.showSnackbar(event.msg)
+                }
             }
-          )
-        },
-        actions = {
-          SwitchButton(
-            isDark = theme,
-            onToggle = {
-              CoroutineScope(Dispatchers.Main).launch {
-                themeViewModel.saveIsDark(!theme)
-              }
-            }
-          )
         }
-      )
     }
-  ) { innerPadding ->
-    Column(
-      modifier = Modifier
-        .padding(innerPadding)
-    ) {
-      AddViewContent(
-        state = state,
-        onTitleChange = formViewModel::onTitleChange,
-        onContentChange = formViewModel::onContentChange,
-        onSubmit = { formViewModel.submit() },
-        formViewModel = formViewModel,
-        navController = navController,
-      )
 
-      if (showDialog) {
-        MainDialog(
-          title = "Nota guardada",
-          content = "La nota se ha guardado correctamente.",
-          onDismiss = {
-            showDialog = false
-            navController.popBackStack()
-          })
-      }
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(scaffoldState)
+        },
+        topBar = {
+            TopBar(
+                navController,
+                themeViewModel,
+                true
+            )
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+        ) {
+            AddViewContent(
+                state = state,
+                onTitleChange = formViewModel::onTitleChange,
+                onContentChange = formViewModel::onContentChange,
+                onSubmit = { formViewModel.submit() },
+                formViewModel = formViewModel,
+                navController = navController,
+            )
+
+            if (showDialog) {
+                MainDialog(
+                    title = "Nota guardada",
+                    content = "La nota se ha guardado correctamente.",
+                    onDismiss = {
+                        showDialog = false
+                        navController.popBackStack()
+                    })
+            }
+        }
     }
-  }
 
 }
 
@@ -153,78 +129,78 @@ fun AddView(
  */
 @Composable
 fun AddViewContent(
-  state: FormState,
-  onTitleChange: (String) -> Unit,
-  onContentChange: (String) -> Unit,
-  onSubmit: () -> Unit,
-  formViewModel: FormViewModel,
-  navController: NavController,
+    state: FormState,
+    onTitleChange: (String) -> Unit,
+    onContentChange: (String) -> Unit,
+    onSubmit: () -> Unit,
+    formViewModel: FormViewModel,
+    navController: NavController,
 ) {
 
-  val focus1 = remember { FocusRequester() }
-  val focus2 = remember { FocusRequester() }
+    val focus1 = remember { FocusRequester() }
+    val focus2 = remember { FocusRequester() }
 
-  Spacer(
-    modifier = Modifier
-      .padding(top = 16.dp)
-  )
-  SubTitle(
-    text = "Crea una nueva nota aquí:",
-    color = MaterialTheme.colorScheme.secondary,
-    modifier = Modifier
-      .padding(16.dp)
-  )
-  Column(
-    horizontalAlignment = Alignment.CenterHorizontally,
-    verticalArrangement = Arrangement.Center,
-    modifier = Modifier
-      .padding(16.dp)
-  ) {
-    MainTextField(
-      value = state.title,
-      label = "Titulo",
-      onValueChange = onTitleChange,
-      isError = state.title.length > 80 || state.titleError?.isNotBlank() ?: false,
-      focusRequester = focus1,
-      nextFocusRequester = focus2
-    )
-    MainTextArea(
-      value = state.content,
-      label = "Nota",
-      onValueChange = onContentChange,
-      isError = state.contentError?.isNotBlank() ?: false,
-      focusRequester = focus2,
-    )
     Spacer(
-      modifier = Modifier
-        .padding(8.dp)
+        modifier = Modifier
+            .padding(top = 16.dp)
     )
-  }
-  Row(
-    modifier = Modifier
-      .fillMaxSize()
-      .padding(16.dp),
-    horizontalArrangement = Arrangement.Center,
-    verticalAlignment = Alignment.Bottom
-  ) {
-    MainBtn(
-      text = "Cancelar",
-      icon = Icons.Filled.Cancel,
-      description = "Icono de cancelar",
-      onClick = {
-        formViewModel.resetForm()
-        navController.popBackStack()
-      },
+    SubTitle(
+        text = "Crea una nueva nota aquí:",
+        color = MaterialTheme.colorScheme.secondary,
+        modifier = Modifier
+            .padding(16.dp)
     )
-    Spacer(
-      modifier = Modifier
-        .padding(8.dp)
-    )
-    MainBtn(
-      text = "Guardar",
-      icon = Icons.Filled.Save,
-      description = "Icono de guardar",
-      onClick = { onSubmit() },
-    )
-  }
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .padding(16.dp)
+    ) {
+        MainTextField(
+            value = state.title,
+            label = "Titulo",
+            onValueChange = onTitleChange,
+            isError = state.title.length > 80 || state.titleError?.isNotBlank() ?: false,
+            focusRequester = focus1,
+            nextFocusRequester = focus2
+        )
+        MainTextArea(
+            value = state.content,
+            label = "Nota",
+            onValueChange = onContentChange,
+            isError = state.contentError?.isNotBlank() ?: false,
+            focusRequester = focus2,
+        )
+        Spacer(
+            modifier = Modifier
+                .padding(8.dp)
+        )
+    }
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.Bottom
+    ) {
+        MainBtn(
+            text = "Cancelar",
+            icon = Icons.Filled.Cancel,
+            description = "Icono de cancelar",
+            onClick = {
+                formViewModel.resetForm()
+                navController.popBackStack()
+            },
+        )
+        Spacer(
+            modifier = Modifier
+                .padding(8.dp)
+        )
+        MainBtn(
+            text = "Guardar",
+            icon = Icons.Filled.Save,
+            description = "Icono de guardar",
+            onClick = { onSubmit() },
+        )
+    }
 }

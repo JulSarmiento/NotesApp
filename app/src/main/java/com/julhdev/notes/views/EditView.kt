@@ -37,6 +37,7 @@ import com.julhdev.notes.components.MainTextField
 import com.julhdev.notes.components.MainTitle
 import com.julhdev.notes.components.SubTitle
 import com.julhdev.notes.components.SwitchButton
+import com.julhdev.notes.components.TopBar
 import com.julhdev.notes.viewmodel.FormEvent
 import com.julhdev.notes.viewmodel.FormViewModel
 import com.julhdev.notes.viewmodel.ThemeViewModel
@@ -85,35 +86,10 @@ fun EditView(
       SnackbarHost(snackBarHostState)
     },
     topBar = {
-      TopAppBar(
-        title = {
-          MainTitle(
-            text = "Dashi's Notes",
-            color = MaterialTheme.colorScheme.onPrimary
-          )
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-          containerColor = MaterialTheme.colorScheme.primary,
-        ),
-        navigationIcon = {
-          IconButton(
-            icon = Icons.AutoMirrored.Filled.ArrowBack,
-            description = "Back",
-            onClick = {
-              navController.popBackStack()
-            }
-          )
-        },
-        actions = {
-          SwitchButton(
-            isDark = theme,
-            onToggle = {
-              CoroutineScope(Dispatchers.Main).launch {
-                themeViewModel.saveIsDark(!theme)
-              }
-            }
-          )
-        }
+      TopBar(
+        navController,
+        themeViewModel,
+        true
       )
     },
   ) { innerPadding ->

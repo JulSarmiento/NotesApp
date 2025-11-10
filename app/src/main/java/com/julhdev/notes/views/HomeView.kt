@@ -30,6 +30,7 @@ import com.julhdev.notes.components.NoteCard
 import com.julhdev.notes.components.PngImage
 import com.julhdev.notes.components.SubTitle
 import com.julhdev.notes.components.SwitchButton
+import com.julhdev.notes.components.TopBar
 import com.julhdev.notes.data.local.Note
 import com.julhdev.notes.navigation.Routes
 import com.julhdev.notes.viewmodel.NoteViewModel
@@ -53,33 +54,15 @@ fun HomeView(
   themeViewModel: ThemeViewModel
 ) {
 
-  val theme = themeViewModel.isDark.collectAsState().value
 
   Scaffold(
     topBar = {
-      TopAppBar(
-        title = {
-          MainTitle(
-            text = "Dashi's Notes",
-            color = MaterialTheme.colorScheme.onPrimary
-          )
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-          containerColor = MaterialTheme.colorScheme.primary,
-        ),
-        actions = {
-          SwitchButton(
-            isDark = theme,
-            onToggle = {
-              CoroutineScope(Dispatchers.Main).launch {
-                themeViewModel.saveIsDark(!theme)
-              }
-            }
-          )
-        }
+      TopBar(
+        navController = navController,
+        themeViewModel = themeViewModel,
+        showBackBtn = false
       )
     },
-
     floatingActionButton = {
       FloatingButton(
         onClick = {
