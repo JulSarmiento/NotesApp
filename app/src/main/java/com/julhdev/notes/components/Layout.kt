@@ -50,7 +50,7 @@ fun TopBar(
             )
         },
         navigationIcon = {
-            if(showBackBtn) {
+            if (showBackBtn) {
                 IconButton(
                     icon = Icons.AutoMirrored.Filled.ArrowBack,
                     description = "Back",

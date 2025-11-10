@@ -53,8 +53,6 @@ fun HomeView(
   noteViewModel: NoteViewModel,
   themeViewModel: ThemeViewModel
 ) {
-
-
   Scaffold(
     topBar = {
       TopBar(
