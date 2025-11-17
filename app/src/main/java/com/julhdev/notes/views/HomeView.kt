@@ -33,6 +33,7 @@ import com.julhdev.notes.components.SwitchButton
 import com.julhdev.notes.components.TopBar
 import com.julhdev.notes.data.local.Note
 import com.julhdev.notes.navigation.Routes
+import com.julhdev.notes.viewmodel.AuthViewModel
 import com.julhdev.notes.viewmodel.NoteViewModel
 import com.julhdev.notes.viewmodel.ThemeViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -43,22 +44,29 @@ import me.saket.swipe.SwipeableActionsBox
 
 /**
  * HomeView Composable
+ * @param navController de tipo NavController que representa el controlador de navegación de la aplicación.
+ * @param noteViewModel de tipo NoteViewModel que representa el ViewModel de notas.
+ * @param themeViewModel de tipo ThemeViewModel que representa el ViewModel de temas
+ * @param authViewModel de tipo AuthViewModel que representa el ViewModel de autenticación
  * @return componente que representa la vista principal de la aplicación de notas.
- * @usage HomeView()
+ * @usage HomeView( navController = navController, noteViewModel = noteViewModel, themeViewModel = themeViewModel, authViewModel = authViewModel)
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeView(
   navController: NavController,
   noteViewModel: NoteViewModel,
-  themeViewModel: ThemeViewModel
+  themeViewModel: ThemeViewModel,
+  authViewModel: AuthViewModel
 ) {
   Scaffold(
     topBar = {
       TopBar(
         navController = navController,
         themeViewModel = themeViewModel,
-        showBackBtn = false
+        showBackBtn = false,
+        showLogoutBtn = true,
+        authViewModel = authViewModel
       )
     },
     floatingActionButton = {

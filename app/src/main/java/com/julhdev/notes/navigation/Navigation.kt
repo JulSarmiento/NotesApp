@@ -56,14 +56,14 @@ fun NavManager(
       RegisterView(navController, themeViewModel, authViewModel)
     }
     composable(Routes.HOME) {
-      HomeView(navController, noteViewModel, themeViewModel)
+      HomeView(navController, noteViewModel, themeViewModel, authViewModel)
     }
     composable(Routes.ADD) {
-      AddView(navController, themeViewModel, formViewModel)
+      AddView(navController, themeViewModel, formViewModel, authViewModel)
     }
     composable("${Routes.EDIT}/{id}", arguments = listOf(navArgument("id") { type = NavType.IntType })) {
       val id = it.arguments?.getInt("id") ?: -1
-      EditView(id, navController, formViewModel, themeViewModel)
+      EditView(id, navController, formViewModel, themeViewModel, authViewModel)
     }
   }
 }

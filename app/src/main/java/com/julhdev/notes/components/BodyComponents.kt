@@ -59,6 +59,22 @@ fun timeFormat(time: Long): String {
 }
 
 /**
+ * SubTitle Composable
+ * @param text de tipo String que representa el texto del subtítulo
+ * @usage SubTitle(text = "Subtítulo")
+ */
+@Composable
+fun NotificationMessage(
+  text: String
+) {
+  Text(
+    text = text,
+    style = MaterialTheme.typography.bodyMedium,
+    color = MaterialTheme.colorScheme.error
+  )
+}
+
+/**
  * NoteCard Composable
  * @param title de tipo String que representa el título de la nota
  * @param content de tipo String que representa el contenido de la nota
@@ -160,8 +176,7 @@ fun MainTextField(
     keyboardOptions = KeyboardOptions(
       keyboardType = keyboardType,
       capitalization = KeyboardCapitalization.Sentences,
-      imeAction = if (nextFocusRequester != null) ImeAction.Next else ImeAction.Done
-
+      imeAction = if (nextFocusRequester != null) ImeAction.Next else ImeAction.Done,
     ),
     keyboardActions = KeyboardActions(
       onNext = {

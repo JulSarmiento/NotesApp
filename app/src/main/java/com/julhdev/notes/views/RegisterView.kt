@@ -15,68 +15,90 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Login
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.julhdev.notes.components.MainBtn
 import com.julhdev.notes.components.MainTextField
 import com.julhdev.notes.components.MainTitle
+import com.julhdev.notes.components.NotificationMessage
 import com.julhdev.notes.components.TopBar
+import com.julhdev.notes.navigation.Routes
 import com.julhdev.notes.viewmodel.AuthViewModel
 import com.julhdev.notes.viewmodel.ThemeViewModel
 
+/**
+ * Composable para la vista de Registro de usuarios
+ * @param navController Controlador de navegación de Jetpack Compose
+ * @param themeViewModel Modelo de vista para el tema
+ * @param authViewModel Modelo de vista para la autenticación
+ * @usage [RegisterView]
+ */
 @Composable
 fun RegisterView(
   navController: NavController,
   themeViewModel: ThemeViewModel,
   authViewModel: AuthViewModel
 ) {
+  val visiblePassword = remember { mutableStateOf(false) }
 
   val focus1 = remember { FocusRequester() }
   val focus2 = remember { FocusRequester() }
   val focus3 = remember { FocusRequester() }
+
+  var username: String by remember { mutableStateOf("") }
+  var email: String by remember { mutableStateOf("") }
+  var password: String by remember { mutableStateOf("") }
+  var confirmPassword: String by remember { mutableStateOf("") }
 
   Scaffold(
     topBar = {
       TopBar(
         navController,
         themeViewModel,
-        showBackBtn = true
+        showBackBtn = true,
+        showLogoutBtn = false,
+        authViewModel
       )
     }
   ) { innerPadding ->
     Column(
       modifier = Modifier
-          .fillMaxSize()
-          .padding(innerPadding)
-          .padding(20.dp),
+        .fillMaxSize()
+        .padding(innerPadding)
+        .padding(20.dp),
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Center,
     ) {
       Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(max = 550.dp)
-            .background(
-                color = MaterialTheme.colorScheme.surfaceVariant,
-                shape = MaterialTheme.shapes.medium
-            )
-            .padding(10.dp)
+          .fillMaxWidth()
+          .heightIn(max = 650.dp)
+          .background(
+            color = MaterialTheme.colorScheme.surfaceVariant,
+            shape = MaterialTheme.shapes.medium
+          )
+          .padding(10.dp)
       ) {
         Column(
           modifier = Modifier
-              .fillMaxWidth()
-              .padding(10.dp),
+            .fillMaxWidth()
+            .padding(10.dp),
           horizontalAlignment = Alignment.CenterHorizontally,
           verticalArrangement = Arrangement.Center,
         ) {
@@ -89,6 +111,15 @@ fun RegisterView(
               .align(Alignment.CenterHorizontally)
               .padding(top = 10.dp)
           )
+          if (authViewModel.errorMessage) {
+            NotificationMessage(
+              text = authViewModel.uiError ?: "Ha ocurrido un error"
+            )
+            Spacer(
+              modifier = Modifier
+                .height(20.dp)
+            )
+          }
           MainTitle(
             text = "Crea tu cuenta",
             color = MaterialTheme.colorScheme.primary
@@ -98,11 +129,11 @@ fun RegisterView(
               .height(10.dp)
           )
           MainTextField(
-            value = "",
+            value = username,
             label = " Usuario",
             isError = false,
             focusRequester = focus2,
-            onValueChange = { /*TODO*/ },
+            onValueChange = { username = it },
             nextFocusRequester = focus2
           )
           Spacer(
@@ -110,9 +141,9 @@ fun RegisterView(
               .height(5.dp)
           )
           MainTextField(
-            value = "",
+            value = email,
             label = "Email",
-            onValueChange = { /*TODO*/ },
+            onValueChange = { email = it },
             isError = false,
             focusRequester = focus1,
             nextFocusRequester = focus2,
@@ -120,26 +151,38 @@ fun RegisterView(
           )
           Spacer(
             modifier = Modifier
-              .height(5.dp)          )
+              .height(5.dp)
+          )
           MainTextField(
-            value = "",
+            value = password,
             label = "Contraseña",
             isError = false,
+            visualTransformation = if (visiblePassword.value) null else PasswordVisualTransformation(),
+
             focusRequester = focus2,
-            onValueChange = { /*TODO*/ },
-            nextFocusRequester = focus2
+            onValueChange = { password = it },
+            nextFocusRequester = focus2,
+            trailingIcon = if (password.isNotEmpty()) Icons.Default.RemoveRedEye else null,
+            trailingIconClickAction = {
+              visiblePassword.value = !visiblePassword.value
+            }
           )
           Spacer(
             modifier = Modifier
               .height(5.dp)
           )
           MainTextField(
-            value = "",
+            value = confirmPassword,
             label = "Confirmar Contraseña",
-            isError = false,
+            isError = confirmPassword != password,
+            visualTransformation = if (visiblePassword.value) null else PasswordVisualTransformation(),
             focusRequester = focus2,
-            onValueChange = { /*TODO*/ },
-            nextFocusRequester = focus3
+            onValueChange = { confirmPassword = it },
+            nextFocusRequester = focus3,
+            trailingIcon = if (password.isNotEmpty()) Icons.Default.RemoveRedEye else null,
+            trailingIconClickAction = {
+              visiblePassword.value = !visiblePassword.value
+            }
           )
           Spacer(
             modifier = Modifier
@@ -147,7 +190,11 @@ fun RegisterView(
           )
           MainBtn(
             text = "Crear",
-            onClick = { /*TODO*/ },
+            onClick = {
+              authViewModel.register(email, password, username) {
+                navController.navigate(Routes.HOME)
+              }
+            },
             icon = null,
             description = "Icono de iniciar sesión"
           )

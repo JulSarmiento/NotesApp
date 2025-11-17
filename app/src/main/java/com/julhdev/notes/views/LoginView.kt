@@ -37,10 +37,19 @@ import androidx.navigation.NavController
 import com.julhdev.notes.components.MainBtn
 import com.julhdev.notes.components.MainTextField
 import com.julhdev.notes.components.MainTitle
+import com.julhdev.notes.components.NotificationMessage
 import com.julhdev.notes.components.TopBar
+import com.julhdev.notes.navigation.Routes
 import com.julhdev.notes.viewmodel.AuthViewModel
 import com.julhdev.notes.viewmodel.ThemeViewModel
 
+/**
+ * Composable para la vista de Login de usuario
+ * @param navController Controlador de navegación de la aplicación
+ * @param themeViewModel Modelo de vista para el tema de la aplicación
+ * @param authViewModel Modelo de vista para la autenticación de usuario
+ * @usage LoginView(navController, themeViewModel, authViewModel)
+ */
 @Composable
 fun LoginView(
   navController: NavController,
@@ -61,7 +70,9 @@ fun LoginView(
     topBar = {
       TopBar(
         navController,
-        themeViewModel
+        themeViewModel,
+        showLogoutBtn = false,
+        authViewModel = authViewModel
       )
     }
   ) { innerPadding ->
@@ -76,7 +87,7 @@ fun LoginView(
       Box(
         modifier = Modifier
           .fillMaxWidth()
-          .heightIn(max = 450.dp)
+          .heightIn(max = 550.dp)
           .background(
             color = MaterialTheme.colorScheme.surfaceVariant,
             shape = MaterialTheme.shapes.medium
@@ -103,6 +114,15 @@ fun LoginView(
             modifier = Modifier
               .height(20.dp)
           )
+          if (authViewModel.errorMessage) {
+            NotificationMessage(
+              text = authViewModel.uiError ?: "Ha ocurrido un error"
+            )
+            Spacer(
+              modifier = Modifier
+                .height(20.dp)
+            )
+          }
           MainTextField(
             value = email,
             label = "Email",
@@ -135,7 +155,11 @@ fun LoginView(
           )
           MainBtn(
             text = "Iniciar Sesión",
-            onClick = { /*TODO*/ },
+            onClick = {
+              authViewModel.login(email = email, password = password) {
+                navController.navigate(Routes.HOME)
+              }
+            },
             icon = Icons.AutoMirrored.Filled.Login,
             description = "Icono de iniciar sesión"
           )
