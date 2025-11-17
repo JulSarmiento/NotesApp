@@ -12,6 +12,7 @@ import com.julhdev.notes.viewmodel.AuthViewModel
 import com.julhdev.notes.viewmodel.FormViewModel
 import com.julhdev.notes.viewmodel.NoteViewModel
 import com.julhdev.notes.viewmodel.OnBoardingViewModel
+import com.julhdev.notes.viewmodel.SplashViewModel
 import com.julhdev.notes.viewmodel.ThemeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -24,12 +25,20 @@ class MainActivity : ComponentActivity() {
     val themeViewModel: ThemeViewModel by viewModels()
     val formViewModel: FormViewModel by viewModels()
     val authViewModel: AuthViewModel by viewModels()
+    val splashViewModel: SplashViewModel by viewModels()
     enableEdgeToEdge()
     setContent {
       NotesTheme(
         darkTheme = themeViewModel.isDark.collectAsState().value
       ) {
-        NavManager(onBoardingViewModel, noteViewModel, themeViewModel, formViewModel, authViewModel)
+        NavManager(
+          onBoardingViewModel,
+          noteViewModel,
+          themeViewModel,
+          formViewModel,
+          authViewModel,
+          splashViewModel
+        )
       }
     }
   }

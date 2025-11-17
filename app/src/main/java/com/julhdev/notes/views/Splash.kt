@@ -16,6 +16,7 @@ import androidx.navigation.NavController
 import com.julhdev.notes.R
 import com.julhdev.notes.components.MainImage
 import com.julhdev.notes.navigation.Routes
+import com.julhdev.notes.viewmodel.SplashViewModel
 import kotlinx.coroutines.delay
 
 /**
@@ -25,17 +26,25 @@ import kotlinx.coroutines.delay
  * @usage SplashView(navController = navController, store = store)
  */
 @Composable
-fun SplashView(navController: NavController, store: Boolean) {
+fun SplashView(
+  navController: NavController,
+  store: Boolean,
+  splashViewModel: SplashViewModel
+) {
+  val destination = if (store) Routes.LOGIN else Routes.ONBOARDING
 
-  var screen by remember { mutableStateOf("") }
-  screen = if (store) Routes.LOGIN else Routes.ONBOARDING
+  var animationFinished by remember { mutableStateOf(false) }
 
-  LaunchedEffect(
-    Unit
-  ) {
+  LaunchedEffect(Unit) {
     delay(2000)
-    navController.navigate(screen) {
-      popUpTo(Routes.SPLASH) { inclusive = true }
+    animationFinished = true
+  }
+
+  LaunchedEffect(splashViewModel.ready, animationFinished) {
+    if (splashViewModel.ready && animationFinished) {
+      navController.navigate(destination) {
+        popUpTo(Routes.SPLASH) { inclusive = true }
+      }
     }
   }
 
@@ -46,9 +55,7 @@ fun SplashView(navController: NavController, store: Boolean) {
         .fillMaxSize()
         .padding(innerPadding)
     ) {
-      MainImage(
-        image = R.raw.loading,
-      )
+      MainImage(image = R.raw.loading)
     }
   }
 }

@@ -191,9 +191,9 @@ fun RegisterView(
           MainBtn(
             text = "Crear",
             onClick = {
-              authViewModel.register(email, password, username) {
-                navController.navigate(Routes.HOME)
-              }
+//              authViewModel.register(email, password, username) {
+//                navController.navigate(Routes.HOME)
+//              }
             },
             icon = null,
             description = "Icono de iniciar sesión"

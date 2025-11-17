@@ -11,6 +11,7 @@ import com.julhdev.notes.viewmodel.AuthViewModel
 import com.julhdev.notes.viewmodel.FormViewModel
 import com.julhdev.notes.viewmodel.NoteViewModel
 import com.julhdev.notes.viewmodel.OnBoardingViewModel
+import com.julhdev.notes.viewmodel.SplashViewModel
 import com.julhdev.notes.viewmodel.ThemeViewModel
 import com.julhdev.notes.views.AddView
 import com.julhdev.notes.views.EditView
@@ -32,7 +33,8 @@ fun NavManager(
   noteViewModel: NoteViewModel,
   themeViewModel: ThemeViewModel,
   formViewModel: FormViewModel,
-  authViewModel: AuthViewModel
+  authViewModel: AuthViewModel,
+  splashViewModel: SplashViewModel
 ) {
 
   val isOnBoardingCompleted = onBoardingViewModel.completed.collectAsState()
@@ -44,12 +46,12 @@ fun NavManager(
   )
   {
     composable(Routes.SPLASH) {
-      SplashView(navController, isOnBoardingCompleted.value == true)
+      SplashView(navController, isOnBoardingCompleted.value == true, splashViewModel)
     }
     composable(Routes.ONBOARDING) {
       OnBoardingView(navController, onBoardingViewModel)
     }
-    composable(Routes.LOGIN){
+    composable(Routes.LOGIN) {
       LoginView(navController, themeViewModel, authViewModel)
     }
     composable(Routes.REGISTER) {
@@ -61,7 +63,10 @@ fun NavManager(
     composable(Routes.ADD) {
       AddView(navController, themeViewModel, formViewModel, authViewModel)
     }
-    composable("${Routes.EDIT}/{id}", arguments = listOf(navArgument("id") { type = NavType.IntType })) {
+    composable(
+      "${Routes.EDIT}/{id}",
+      arguments = listOf(navArgument("id") { type = NavType.IntType })
+    ) {
       val id = it.arguments?.getInt("id") ?: -1
       EditView(id, navController, formViewModel, themeViewModel, authViewModel)
     }
