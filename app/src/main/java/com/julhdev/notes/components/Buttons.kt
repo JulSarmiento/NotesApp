@@ -32,7 +32,7 @@ fun MainBtn(
   modifier: Modifier = Modifier,
   enabled: Boolean = true,
   onClick: () -> Unit,
-  icon: ImageVector,
+  icon: ImageVector? = null,
   description: String,
 ) {
   Button(
@@ -43,11 +43,13 @@ fun MainBtn(
       contentColor = MaterialTheme.colorScheme.onPrimary
     )
   ) {
-    Icon(
-      imageVector = icon,
-      contentDescription = description,
-      tint = MaterialTheme.colorScheme.onPrimary
-    )
+    if(icon != null) {
+      Icon(
+        imageVector = icon,
+        contentDescription = description,
+        tint = MaterialTheme.colorScheme.onPrimary
+      )
+    }
     Text(
       text = text,
       letterSpacing = 0.5.sp,

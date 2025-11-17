@@ -17,8 +17,6 @@ object Routes {
   const val HOME = "home"
   const val ADD = "add"
   const val EDIT = "edit"
-
   const val LOGIN = "login"
-
   const val REGISTER = "register"
 }

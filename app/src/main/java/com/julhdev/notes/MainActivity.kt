@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.collectAsState
 import com.julhdev.notes.navigation.NavManager
 import com.julhdev.notes.ui.theme.NotesTheme
+import com.julhdev.notes.viewmodel.AuthViewModel
 import com.julhdev.notes.viewmodel.FormViewModel
 import com.julhdev.notes.viewmodel.NoteViewModel
 import com.julhdev.notes.viewmodel.OnBoardingViewModel
@@ -22,12 +23,13 @@ class MainActivity : ComponentActivity() {
     val noteViewModel: NoteViewModel by viewModels()
     val themeViewModel: ThemeViewModel by viewModels()
     val formViewModel: FormViewModel by viewModels()
+    val authViewModel: AuthViewModel by viewModels()
     enableEdgeToEdge()
     setContent {
       NotesTheme(
         darkTheme = themeViewModel.isDark.collectAsState().value
       ) {
-        NavManager(onBoardingViewModel, noteViewModel, themeViewModel, formViewModel)
+        NavManager(onBoardingViewModel, noteViewModel, themeViewModel, formViewModel, authViewModel)
       }
     }
   }

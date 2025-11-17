@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "188386419550",
+    "project_id": "dashi-notes",
+    "storage_bucket": "dashi-notes.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:188386419550:android:fb3398314f41d2b88ae5cf",
+        "android_client_info": {
+          "package_name": "com.julhdev.notes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "188386419550-dqaie5jlqll28flr4velm4gh6h5pflnc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.julhdev.notes",
+            "certificate_hash": "4913fc544ce9af9f4db6f8f6da8655158f891294"
+          }
+        },
+        {
+          "client_id": "188386419550-888t0ep3npv3egvj4j5f37thqvoihl5n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDobg4iBj4neYIJOz9JYsQpCyErMFAadvw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "188386419550-888t0ep3npv3egvj4j5f37thqvoihl5n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

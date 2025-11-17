@@ -19,14 +19,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -118,19 +124,41 @@ fun MainTextField(
   label: String,
   isError: Boolean = false,
   focusRequester: FocusRequester = remember { FocusRequester() },
-  nextFocusRequester: FocusRequester?
+  nextFocusRequester: FocusRequester?,
+  keyboardType: KeyboardType = KeyboardType.Text,
+  visualTransformation: VisualTransformation? = null,
+  trailingIcon: ImageVector? = null,
+  trailingIconClickAction: () -> Unit = {}
 ) {
   val focusManager = LocalFocusManager.current
+  var activeBtn: Boolean by remember { mutableStateOf(false) }
+
   OutlinedTextField(
     value = value,
     onValueChange = onValueChange,
     label = { Text(text = label) },
     isError = isError,
+    visualTransformation = visualTransformation ?: VisualTransformation.None,
+    singleLine = true,
+    trailingIcon = {
+      if (trailingIcon != null) {
+        Icon(
+          imageVector = trailingIcon,
+          contentDescription = "Done Icon",
+          tint = if(activeBtn) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+          modifier = Modifier.clickable {
+            trailingIconClickAction()
+            activeBtn = !activeBtn
+          }
+        )
+      }
+    },
     modifier = Modifier
       .fillMaxWidth()
       .padding(bottom = 15.dp)
       .focusRequester(focusRequester),
     keyboardOptions = KeyboardOptions(
+      keyboardType = keyboardType,
       capitalization = KeyboardCapitalization.Sentences,
       imeAction = if (nextFocusRequester != null) ImeAction.Next else ImeAction.Done
 
