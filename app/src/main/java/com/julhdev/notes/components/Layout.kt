@@ -61,7 +61,7 @@ fun TopBar(
           icon = Icons.AutoMirrored.Filled.Logout,
           description = "Logout",
           onClick = {
-//            authViewModel.logout()
+            authViewModel.logout()
             navController.navigate(Routes.LOGIN)
           }
         )

@@ -67,7 +67,7 @@ class FirebaseAuthDataSource @Inject constructor(
    * @usage Ejemplo de uso:
    * authDataSource.logout()
    */
-  suspend
+
   fun logout() {
     auth.signOut()
   }

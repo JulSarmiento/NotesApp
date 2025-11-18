@@ -16,7 +16,7 @@ class AuthRepository @Inject constructor(
    * Prepara la autenticación con Firebase.
    * @return [Result] con el resultado de la operación.
    */
-  suspend fun warmUpAuth(): Result<Unit> {
+  fun warmUpAuth(): Result<Unit> {
     return try {
       dataSource.warmUpAuth()
       Result.success(Unit)
@@ -66,7 +66,7 @@ class AuthRepository @Inject constructor(
   /**
    * Cierra la sesión del usuario actual.
    */
-  suspend fun logout() {
+  fun logout() {
     dataSource.logout()
   }
 

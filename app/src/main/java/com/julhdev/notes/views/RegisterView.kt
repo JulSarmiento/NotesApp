@@ -12,13 +12,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Login
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.RemoveRedEye
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -85,6 +90,35 @@ fun RegisterView(
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Center,
     ) {
+
+      if(authViewModel.isLoading) {
+        Box(
+          modifier = Modifier
+            .fillMaxSize(),
+          contentAlignment = Alignment.Center
+        ) {
+          Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+          ) {
+            Surface(
+              shape = RoundedCornerShape(10.dp),
+              tonalElevation = 8.dp,
+              modifier = Modifier.wrapContentSize()
+            ) {
+              Column(
+                modifier = Modifier
+                  .padding(20.dp)
+                  .widthIn(min = 120.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+              ) {
+                CircularProgressIndicator()
+                Spacer(modifier = Modifier.height(20.dp))
+              }
+            }
+          }
+        }
+      }
       Box(
         modifier = Modifier
           .fillMaxWidth()
@@ -158,7 +192,6 @@ fun RegisterView(
             label = "Contraseña",
             isError = false,
             visualTransformation = if (visiblePassword.value) null else PasswordVisualTransformation(),
-
             focusRequester = focus2,
             onValueChange = { password = it },
             nextFocusRequester = focus2,
@@ -191,9 +224,9 @@ fun RegisterView(
           MainBtn(
             text = "Crear",
             onClick = {
-//              authViewModel.register(email, password, username) {
-//                navController.navigate(Routes.HOME)
-//              }
+              authViewModel.register(email, password, username) {
+                navController.navigate(Routes.HOME)
+              }
             },
             icon = null,
             description = "Icono de iniciar sesión"

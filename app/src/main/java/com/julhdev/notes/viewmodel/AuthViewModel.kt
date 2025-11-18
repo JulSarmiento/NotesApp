@@ -5,15 +5,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
 import com.julhdev.notes.data.core.AppError
 import com.julhdev.notes.data.repository.AuthRepository
+import com.julhdev.notes.data.repository.UsersRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-  private val repository: AuthRepository
+  private val repository: AuthRepository,
+  private val usersRepository: UsersRepository,
+  private val auth: FirebaseAuth
 ) : ViewModel() {
 
   var uiError by mutableStateOf<String?>(null)
@@ -22,6 +26,15 @@ class AuthViewModel @Inject constructor(
   var isLogged by mutableStateOf(false)
     private set
   var errorMessage: Boolean by mutableStateOf(false)
+
+  /**
+   * Cierra la sesión del usuario
+   * @return Unit
+   * @usage AuthViewModel().logout()
+   */
+  fun logout() {
+    repository.logout()
+  }
 
   /**
    * Inicia sesión con un usuario de firebase
@@ -72,55 +85,30 @@ class AuthViewModel @Inject constructor(
     viewModelScope.launch {
       isLoading = true
       val result = repository.register(email, password, username)
-      isLoading = false
-      result.onSuccess {
-        isLogged = true
-        uiError = null
-        onResult()
-      }.onFailure { ex ->
+      if (result.isSuccess) {
+        val user = result.getOrNull() ?: auth.currentUser
+        try {
+          usersRepository.saveUser(username, user)
+          isLogged = true
+          uiError = null
+          onResult()
+        } catch (ex: Exception) {
+          val appError = ex.AppError()
+          uiError = appError.userMessage
+          errorMessage = true
+        }
+      } else {
+        val ex = result.exceptionOrNull()!!
         val appError = ex.AppError()
-        println("Error en login: ${appError.userMessage}")
         uiError = appError.userMessage
         errorMessage = true
       }
+      isLoading = false
     }
   }
 }
 
 
-//
-//  /**
-//   * Guarda un usuario en la base de datos de firebase
-//   * @param username Nombre de usuario
-//   * @return Unit
-//   * @usage AuthViewModel().saveUser(username)
-//   */
-//  fun saveUser(username: String) {
-//    val id = auth.currentUser?.uid
-//    val email = auth.currentUser?.email
-//    val user = UserModel(
-//      id = id.toString(),
-//      userName = username,
-//      email = email.toString()
-//    )
-//
-//    FirebaseFirestore.getInstance().collection("Users")
-//      .add(user)
-//      .addOnSuccessListener {
-//        Log.d("Success", "DocumentSnapshot added with ID: ${it.id}")
-//      }
-//      .addOnFailureListener { e ->
-//        Log.w("Error", "Error adding document", e)
-//        errorMessage = true
-//      }
-//  }
-//
-//  /**
-//   * Cierra la sesión del usuario
-//   * @return Unit
-//   * @usage AuthViewModel().logout()
-//   */
-//  fun logout() {
-//    auth.signOut()
-//  }
+
+
 
