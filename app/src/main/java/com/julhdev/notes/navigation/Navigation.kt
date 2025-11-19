@@ -11,7 +11,6 @@ import com.julhdev.notes.viewmodel.AuthViewModel
 import com.julhdev.notes.viewmodel.FormViewModel
 import com.julhdev.notes.viewmodel.NoteViewModel
 import com.julhdev.notes.viewmodel.OnBoardingViewModel
-import com.julhdev.notes.viewmodel.SplashViewModel
 import com.julhdev.notes.viewmodel.ThemeViewModel
 import com.julhdev.notes.views.AddView
 import com.julhdev.notes.views.EditView
@@ -34,7 +33,6 @@ fun NavManager(
   themeViewModel: ThemeViewModel,
   formViewModel: FormViewModel,
   authViewModel: AuthViewModel,
-  splashViewModel: SplashViewModel
 ) {
 
   val isOnBoardingCompleted = onBoardingViewModel.completed.collectAsState()
@@ -46,7 +44,7 @@ fun NavManager(
   )
   {
     composable(Routes.SPLASH) {
-      SplashView(navController, isOnBoardingCompleted.value == true, splashViewModel)
+      SplashView(navController, isOnBoardingCompleted.value == true)
     }
     composable(Routes.ONBOARDING) {
       OnBoardingView(navController, onBoardingViewModel)

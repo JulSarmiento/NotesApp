@@ -13,31 +13,13 @@ class AuthRepository @Inject constructor(
 ) {
 
   /**
-   * Prepara la autenticación con Firebase.
-   * @return [Result] con el resultado de la operación.
-   */
-  fun warmUpAuth(): Result<Unit> {
-    return try {
-      dataSource.warmUpAuth()
-      Result.success(Unit)
-    } catch (e: Exception) {
-      Result.failure(e)
-    }
-  }
-
-  /**
    * Autentica un usuario con correo electrónico y contraseña.
    * @param email Correo electrónico del usuario.
    * @param password Contraseña del usuario.
    * @return [Result] con el usuario autenticado o un error.
    */
-  suspend fun login(email: String, password: String): Result<FirebaseUser?> {
-    return try {
-      val user = dataSource.login(email, password)
-      Result.success(user)
-    } catch (e: Exception) {
-      Result.failure(e)
-    }
+  suspend fun login(email: String, password: String):  Result<FirebaseUser?> {
+    return dataSource.login(email, password)
   }
 
   /**
@@ -47,12 +29,7 @@ class AuthRepository @Inject constructor(
    * @return [Result] con el usuario registrado o un error.
    */
   suspend fun register(email: String, password: String, username: String): Result<FirebaseUser?> {
-    return try {
-      val user = dataSource.register(email, password)
-      Result.success(user)
-      } catch (e: Exception) {
-      Result.failure(e)
-    }
+    return dataSource.register(email, password, username)
   }
 
   /**

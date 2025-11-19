@@ -10,14 +10,13 @@ import com.julhdev.notes.data.core.AppError
 import com.julhdev.notes.data.repository.AuthRepository
 import com.julhdev.notes.data.repository.UsersRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
   private val repository: AuthRepository,
-  private val usersRepository: UsersRepository,
-  private val auth: FirebaseAuth
 ) : ViewModel() {
 
   var uiError by mutableStateOf<String?>(null)
@@ -49,7 +48,6 @@ class AuthViewModel @Inject constructor(
     password: String,
     onResult: () -> Unit
   ) {
-
     viewModelScope.launch {
       isLoading = true
       val result = repository.login(email, password)
@@ -85,25 +83,17 @@ class AuthViewModel @Inject constructor(
     viewModelScope.launch {
       isLoading = true
       val result = repository.register(email, password, username)
-      if (result.isSuccess) {
-        val user = result.getOrNull() ?: auth.currentUser
-        try {
-          usersRepository.saveUser(username, user)
-          isLogged = true
-          uiError = null
-          onResult()
-        } catch (ex: Exception) {
-          val appError = ex.AppError()
-          uiError = appError.userMessage
-          errorMessage = true
-        }
-      } else {
-        val ex = result.exceptionOrNull()!!
+      println("Result: $result")
+      isLoading = false
+      result.onSuccess {
+        isLogged = true
+        uiError = null
+        onResult()
+      }.onFailure { ex ->
         val appError = ex.AppError()
         uiError = appError.userMessage
         errorMessage = true
       }
-      isLoading = false
     }
   }
 }

@@ -16,7 +16,6 @@ import androidx.navigation.NavController
 import com.julhdev.notes.R
 import com.julhdev.notes.components.MainImage
 import com.julhdev.notes.navigation.Routes
-import com.julhdev.notes.viewmodel.SplashViewModel
 import kotlinx.coroutines.delay
 
 /**
@@ -29,7 +28,6 @@ import kotlinx.coroutines.delay
 fun SplashView(
   navController: NavController,
   store: Boolean,
-  splashViewModel: SplashViewModel
 ) {
   val destination = if (store) Routes.LOGIN else Routes.ONBOARDING
 
@@ -40,8 +38,8 @@ fun SplashView(
     animationFinished = true
   }
 
-  LaunchedEffect(splashViewModel.ready, animationFinished) {
-    if (splashViewModel.ready && animationFinished) {
+  LaunchedEffect(animationFinished) {
+    if (animationFinished) {
       navController.navigate(destination) {
         popUpTo(Routes.SPLASH) { inclusive = true }
       }

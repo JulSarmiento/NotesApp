@@ -8,9 +8,7 @@ package com.julhdev.notes.data.core
  * @see AppError.Ratelimit
  * @see AppError.Auth
  */
-sealed class AppError(
-  open var userMessage: String
-) {
+sealed class AppError( open var userMessage: String ) {
   object NetworkError : AppError("Sin conexión. Intenta de nuevo.")
   object Ratelimit: AppError("Demasiados intentos. Intenta más tarde.")
 

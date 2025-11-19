@@ -8,15 +8,20 @@ package com.julhdev.notes.data.model
  * @usage UserModel(userId, userName, email)
  */
 data class UserModel(
-  val id: String,
+  val id: String?,
   val userName: String,
-  val email: String
+  val email: String?
 ) {
-  fun toMap(): Map<String, Any> {
-    return mapOf(
-      "id" to id,
-      "userName" to userName,
-      "email" to email
+
+  /**
+   * Funcion que mapea el modelo de datos a un mapa
+   * @return MutableMap<String, Any>
+   */
+  fun toMap(): MutableMap<String, String?> {
+    return mutableMapOf(
+      "id" to this.id,
+      "userName" to this.userName,
+      "email" to this.email
     )
   }
 }

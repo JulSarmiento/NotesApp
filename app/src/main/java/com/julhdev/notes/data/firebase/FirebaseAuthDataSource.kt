@@ -4,7 +4,9 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,12 +20,9 @@ import javax.inject.Singleton
  * val authDataSource = FirebaseAuthDataSource(firebaseAuth)
  */
 class FirebaseAuthDataSource @Inject constructor(
-  private val auth: FirebaseAuth
+  private val auth: FirebaseAuth,
+  private val userStore: UserFirebaseFirestoreDataSource
 ) {
-
-  fun warmUpAuth(): Task<AuthResult?> {
-    return auth.signInAnonymously()
-  }
 
   /**
    * Inicia sesión con un correo electrónico y una contraseña.
@@ -34,8 +33,15 @@ class FirebaseAuthDataSource @Inject constructor(
    * @usage Ejemplo de uso:
    * val currentUser = authDataSource.login("john.mclean@examplepetstore.com", "password123")
    */
-  suspend fun login(email: String, password: String): FirebaseUser? {
-    return auth.signInWithEmailAndPassword(email, password).await().user
+  suspend fun login(email: String, password: String): Result<FirebaseUser?> {
+    return try {
+      withContext(Dispatchers.IO) {
+        val result = auth.signInWithEmailAndPassword(email, password).await()
+        Result.success(result.user)
+      }
+    } catch (e: Exception) {
+      Result.failure(e)
+    }
   }
 
   /**
@@ -47,8 +53,17 @@ class FirebaseAuthDataSource @Inject constructor(
    * @usage Ejemplo de uso:
    * val newUser = authDataSource.register("john.archibald.campbell@example-pet-store.com", "password456")
    */
-  suspend fun register(email: String, password: String): FirebaseUser? {
-    return auth.createUserWithEmailAndPassword(email, password).await().user
+  suspend fun register(email: String, password: String, username: String): Result<FirebaseUser?> {
+    return try {
+      withContext(Dispatchers.IO) {
+        val result = auth.createUserWithEmailAndPassword(email, password).await()
+        val user = result.user
+        userStore.saveUser(username = username, currentUser = user)
+        Result.success(result.user)
+      }
+    } catch (e: Exception) {
+      Result.failure(e)
+    }
   }
 
   /**
@@ -67,7 +82,6 @@ class FirebaseAuthDataSource @Inject constructor(
    * @usage Ejemplo de uso:
    * authDataSource.logout()
    */
-
   fun logout() {
     auth.signOut()
   }
