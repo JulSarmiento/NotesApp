@@ -26,6 +26,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,6 +46,7 @@ import com.julhdev.notes.components.MainTitle
 import com.julhdev.notes.components.NotificationMessage
 import com.julhdev.notes.components.TopBar
 import com.julhdev.notes.navigation.Routes
+import com.julhdev.notes.utils.resources.Resource
 import com.julhdev.notes.viewmodel.AuthViewModel
 import com.julhdev.notes.viewmodel.ThemeViewModel
 
@@ -60,7 +63,17 @@ fun RegisterView(
   themeViewModel: ThemeViewModel,
   authViewModel: AuthViewModel
 ) {
+
+  DisposableEffect(Unit) {
+    onDispose {
+      authViewModel.cleanError()
+    }
+  }
+
   val visiblePassword = remember { mutableStateOf(false) }
+
+  val state = authViewModel.state.collectAsState()
+
 
   val focus1 = remember { FocusRequester() }
   val focus2 = remember { FocusRequester() }
@@ -91,34 +104,34 @@ fun RegisterView(
       verticalArrangement = Arrangement.Center,
     ) {
 
-      if(authViewModel.isLoading) {
-        Box(
-          modifier = Modifier
-            .fillMaxSize(),
-          contentAlignment = Alignment.Center
-        ) {
-          Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-          ) {
-            Surface(
-              shape = RoundedCornerShape(10.dp),
-              tonalElevation = 8.dp,
-              modifier = Modifier.wrapContentSize()
-            ) {
-              Column(
-                modifier = Modifier
-                  .padding(20.dp)
-                  .widthIn(min = 120.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-              ) {
-                CircularProgressIndicator()
-                Spacer(modifier = Modifier.height(20.dp))
-              }
-            }
-          }
-        }
-      }
+//      if(authViewModel.isLoading) {
+//        Box(
+//          modifier = Modifier
+//            .fillMaxSize(),
+//          contentAlignment = Alignment.Center
+//        ) {
+//          Column(
+//            horizontalAlignment = Alignment.CenterHorizontally,
+//            verticalArrangement = Arrangement.Center
+//          ) {
+//            Surface(
+//              shape = RoundedCornerShape(10.dp),
+//              tonalElevation = 8.dp,
+//              modifier = Modifier.wrapContentSize()
+//            ) {
+//              Column(
+//                modifier = Modifier
+//                  .padding(20.dp)
+//                  .widthIn(min = 120.dp),
+//                horizontalAlignment = Alignment.CenterHorizontally
+//              ) {
+//                CircularProgressIndicator()
+//                Spacer(modifier = Modifier.height(20.dp))
+//              }
+//            }
+//          }
+//        }
+//      }
       Box(
         modifier = Modifier
           .fillMaxWidth()
@@ -145,9 +158,9 @@ fun RegisterView(
               .align(Alignment.CenterHorizontally)
               .padding(top = 10.dp)
           )
-          if (authViewModel.errorMessage) {
+          if (state.value is Resource.Error) {
             NotificationMessage(
-              text = authViewModel.uiError ?: "Ha ocurrido un error"
+              text = authViewModel.uiError
             )
             Spacer(
               modifier = Modifier

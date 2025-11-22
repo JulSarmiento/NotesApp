@@ -21,7 +21,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildToolsVersion  = "34.0.0"
+    buildToolsVersion  = "35.0.0"
 
     buildTypes {
         release {
@@ -56,28 +56,30 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.material.icons.extended)
 
+    // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
+    // Room
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 
+    // Navigation
     implementation(libs.androidx.navigation.compose)
 
+    // SharedPreferences
     implementation(libs.androidx.datastore.preferences)
 
+    // Swipe component
     implementation(libs.me.saket.swipe)
 
+    // Lottie animations
     implementation(libs.com.airbnb.lottie)
 
+    // firebase
     implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.analytics)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
-
-    implementation(libs.google.play.service)
-    implementation(libs.task)
-
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

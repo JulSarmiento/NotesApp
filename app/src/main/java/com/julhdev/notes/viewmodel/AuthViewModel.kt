@@ -1,17 +1,18 @@
 package com.julhdev.notes.viewmodel
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseAuth
-import com.julhdev.notes.data.core.AppError
+import com.google.firebase.auth.FirebaseUser
 import com.julhdev.notes.data.repository.AuthRepository
-import com.julhdev.notes.data.repository.UsersRepository
+import com.julhdev.notes.utils.ErrorMapper.map
+import com.julhdev.notes.utils.resources.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,12 +20,24 @@ class AuthViewModel @Inject constructor(
   private val repository: AuthRepository,
 ) : ViewModel() {
 
-  var uiError by mutableStateOf<String?>(null)
-    private set
-  var isLoading by mutableStateOf(false)
-  var isLogged by mutableStateOf(false)
-    private set
-  var errorMessage: Boolean by mutableStateOf(false)
+  private val _state = MutableStateFlow<Resource<FirebaseUser?>>(Resource.Loading())
+  val state = _state.asStateFlow()
+
+  var isLoading = false
+
+  var isError = false
+
+  var uiError: String = ""
+
+  /**
+   * Obtiene el usuario actual
+   * @return FirebaseUser?
+   * @usage AuthViewModel().getCurrentUser()
+   */
+  fun cleanError() {
+    isError = false
+    uiError = ""
+  }
 
   /**
    * Cierra la sesión del usuario
@@ -48,20 +61,27 @@ class AuthViewModel @Inject constructor(
     password: String,
     onResult: () -> Unit
   ) {
-    viewModelScope.launch {
+    viewModelScope.launch(Dispatchers.IO) {
       isLoading = true
-      val result = repository.login(email, password)
-      isLoading = false
-      result.onSuccess {
-        isLogged = true
-        uiError = null
-        onResult()
-      }.onFailure { ex ->
-        val appError = ex.AppError()
-        println("Error en login: ${appError.userMessage}")
-        uiError = appError.userMessage
-        errorMessage = true
+      when (val result = repository.login(email, password)) {
+        is Resource.Success -> {
+          _state.value = result
+          withContext(Dispatchers.Main.immediate) {
+            onResult()
+          }
+        }
+
+        is Resource.Error -> {
+          _state.value = result
+          isError = true
+          uiError = map(result.message)
+        }
+
+        is Resource.Loading -> {
+          /*TODO*/
+        }
       }
+      isLoading = false
     }
   }
 
@@ -80,23 +100,31 @@ class AuthViewModel @Inject constructor(
     username: String,
     onResult: () -> Unit
   ) {
-    viewModelScope.launch {
+    viewModelScope.launch(Dispatchers.IO) {
       isLoading = true
       val result = repository.register(email, password, username)
-      println("Result: $result")
-      isLoading = false
-      result.onSuccess {
-        isLogged = true
-        uiError = null
-        onResult()
-      }.onFailure { ex ->
-        val appError = ex.AppError()
-        uiError = appError.userMessage
-        errorMessage = true
+      when (result) {
+        is Resource.Success -> {
+          _state.value = result
+          withContext(Dispatchers.Main.immediate) {
+            onResult()
+          }
+        }
+        is Resource.Error -> {
+          _state.value = result
+          result.message?.let { Log.d("AYUDAAA", it) }
+          isError = true
+          uiError = map(result.message)
+        }
+
+        is Resource.Loading -> {
+          /*TODO*/
+        }
       }
     }
   }
 }
+
 
 
 
