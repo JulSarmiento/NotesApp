@@ -23,6 +23,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +39,8 @@ import com.julhdev.notes.components.PasswordTextField
 import com.julhdev.notes.components.TopBar
 import com.julhdev.notes.navigation.Routes
 import com.julhdev.notes.utils.resources.Resource
+import com.julhdev.notes.utils.validateEmail
+import com.julhdev.notes.utils.validateUsername
 import com.julhdev.notes.viewmodel.AuthViewModel
 import com.julhdev.notes.viewmodel.ThemeViewModel
 
@@ -69,11 +72,11 @@ fun RegisterView(
   val focusPassword = remember { FocusRequester() }
   val focusConfirmPassword = remember { FocusRequester() }
 
-  val visiblePassword = remember { mutableStateOf(false) }
-  var username: String by remember { mutableStateOf("") }
-  var email: String by remember { mutableStateOf("") }
-  var password: String by remember { mutableStateOf("") }
-  var confirmPassword: String by remember { mutableStateOf("") }
+  val visiblePassword = rememberSaveable { mutableStateOf(false) }
+  var username: String by rememberSaveable { mutableStateOf("") }
+  var email: String by rememberSaveable { mutableStateOf("") }
+  var password: String by rememberSaveable { mutableStateOf("") }
+  var confirmPassword: String by rememberSaveable { mutableStateOf("") }
 
   Scaffold(
     topBar = {
@@ -123,7 +126,7 @@ fun RegisterView(
           )
           if (state.value is Resource.Error) {
             NotificationMessage(
-              text = authViewModel.uiError
+              text = authViewModel.uiError.value
             )
             Spacer(
               modifier = Modifier
@@ -139,9 +142,9 @@ fun RegisterView(
               .height(10.dp)
           )
           MainTextField(
-            value = username,
+            value = username.trim(),
             label = " Usuario",
-            isError = false,
+            isError = !validateUsername(username),
             focusRequester = focusUsername,
             onValueChange = { username = it },
             nextFocusRequester = focusEmail,
@@ -151,10 +154,10 @@ fun RegisterView(
               .height(5.dp)
           )
           EmailTextField(
-            value = email,
+            value = email.trim(),
             label = "Email",
             onValueChange = { email = it },
-            isError = false,
+            isError = !validateEmail(email),
             focusRequester = focusEmail,
             nextFocusRequester = focusPassword,
           )
@@ -163,9 +166,9 @@ fun RegisterView(
               .height(5.dp)
           )
           PasswordTextField(
-            value = password,
+            value = password.trim(),
             label = "Contraseña",
-            isError = false,
+            isError = password.length >= 6,
             focusRequester = focusPassword,
             onValueChange = { password = it },
             nextFocusRequester = focusConfirmPassword,
@@ -179,7 +182,7 @@ fun RegisterView(
               .height(5.dp)
           )
           PasswordTextField(
-            value = confirmPassword,
+            value = confirmPassword.trim(),
             label = "Confirmar Contraseña",
             isError = confirmPassword != password,
             focusRequester = focusConfirmPassword,

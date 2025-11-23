@@ -25,6 +25,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +39,8 @@ import com.julhdev.notes.components.PasswordTextField
 import com.julhdev.notes.components.TopBar
 import com.julhdev.notes.navigation.Routes
 import com.julhdev.notes.utils.resources.Resource
+import com.julhdev.notes.utils.validateEmail
+import com.julhdev.notes.utils.validatePasswordFormat
 import com.julhdev.notes.viewmodel.AuthViewModel
 import com.julhdev.notes.viewmodel.ThemeViewModel
 
@@ -68,8 +71,10 @@ fun LoginView(
 
   val visiblePassword = remember { mutableStateOf(false) }
 
-  var email by remember { mutableStateOf("") }
-  var password by remember { mutableStateOf("") }
+  var email by rememberSaveable { mutableStateOf("") }
+  var password by rememberSaveable { mutableStateOf("") }
+
+  var formError by rememberSaveable { mutableStateOf("") }
 
   Scaffold(
     topBar = {
@@ -120,9 +125,9 @@ fun LoginView(
             modifier = Modifier
               .height(20.dp)
           )
-          if (state.value is Resource.Error) {
+          if (state.value is Resource.Error || formError.isNotEmpty()) {
             NotificationMessage(
-              text = authViewModel.uiError
+              text = formError.ifEmpty { authViewModel.uiError.value }
             )
             Spacer(
               modifier = Modifier
@@ -161,8 +166,14 @@ fun LoginView(
             text = "Iniciar Sesión",
             enabled = !isLoading.value,
             onClick = {
-              authViewModel.login(email = email, password = password) {
-                navController.navigate(Routes.HOME)
+              if (!validateEmail(email)) {
+                formError = "El formato del correo electronico no es válido."
+              } else if (!validatePasswordFormat(password)) {
+                formError = "La contraseña debe tener al menos 6 caracteres validos."
+              } else {
+                authViewModel.login(email = email, password = password) {
+                  navController.navigate(Routes.HOME)
+                }
               }
             }
           )
@@ -178,7 +189,7 @@ fun LoginView(
               .align(Alignment.CenterHorizontally)
               .background(MaterialTheme.colorScheme.surfaceVariant)
               .clickable {
-                navController.navigate("register")
+                navController.navigate(Routes.HOME)
               }
           )
         }

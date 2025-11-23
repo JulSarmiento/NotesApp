@@ -1,18 +1,12 @@
 package com.julhdev.notes.utils
 
-import com.google.firebase.auth.FirebaseAuthException
-import kotlinx.coroutines.flow.StateFlow
-import java.util.Locale
-
 /**
  * Normaliza y mapea un código de error de Firebase a un mensaje en español.
  * Acepta formatos como "auth/invalid-email", "ERROR_INVALID_EMAIL", "invalid-email", etc.
  * @return Un mensaje en español que describe el error.
  */
 object ErrorMapper {
-
   private const val DEFAULT_MSG = "Ocurrió un error desconocido."
-
   fun map(errorCode: String?): String {
     return when (errorCode) {
       "ERROR_EMAIL_ALREADY_IN_USE" -> "El correo electrónico ya está en uso."

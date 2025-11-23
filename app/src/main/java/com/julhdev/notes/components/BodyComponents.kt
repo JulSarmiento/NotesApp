@@ -60,9 +60,10 @@ fun timeFormat(time: Long): String {
 }
 
 /**
- * SubTitle Composable
- * @param text de tipo String que representa el texto del subtítulo
- * @usage SubTitle(text = "Subtítulo")
+ * NotificationMessage Composable
+ * Muestra un mensaje de error o notificación.
+ * @param text de tipo String que representa el mensaje a mostrar
+ * @usage NotificationMessage(text = "Ha ocurrido un error")
  */
 @Composable
 fun NotificationMessage(
@@ -164,7 +165,7 @@ fun PasswordTextField(
     visualTransformation = if (activeBtn) VisualTransformation.None else PasswordVisualTransformation(),
     singleLine = true,
     trailingIcon = {
-      if(trailingIcon != null){
+      if (trailingIcon != null) {
         Icon(
           imageVector = trailingIcon,
           contentDescription = "Done Icon",

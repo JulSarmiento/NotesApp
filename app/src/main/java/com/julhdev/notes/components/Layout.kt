@@ -61,7 +61,11 @@ fun TopBar(
           description = "Logout",
           onClick = {
             authViewModel.logout()
-            navController.navigate(Routes.LOGIN)
+            navController.navigate(Routes.LOGIN){
+              popUpTo(navController.graph.startDestinationId) {
+                inclusive = true
+              }
+            }
           }
         )
       }

@@ -26,9 +26,11 @@ class AuthViewModel @Inject constructor(
   private val _isLoading = MutableStateFlow(false)
   val isLoading = _isLoading.asStateFlow()
 
-  var isError = false
+  private val _uiError = MutableStateFlow("")
+  var uiError = _uiError.asStateFlow()
 
-  var uiError: String = ""
+  private val _isError = MutableStateFlow(false)
+  var isError = _isError.asStateFlow()
 
   /**
    * Obtiene el usuario actual
@@ -36,8 +38,8 @@ class AuthViewModel @Inject constructor(
    * @usage AuthViewModel().getCurrentUser()
    */
   fun cleanError() {
-    isError = false
-    uiError = ""
+    _isError.value = false
+    _uiError.value = ""
   }
 
   /**
@@ -48,6 +50,7 @@ class AuthViewModel @Inject constructor(
   fun logout() {
     repository.logout()
   }
+
 
   /**
    * Inicia sesión con un usuario de firebase
@@ -75,8 +78,8 @@ class AuthViewModel @Inject constructor(
 
         is Resource.Error -> {
           _state.value = result
-          isError = true
-          uiError = map(result.message)
+          _isError.value = true
+          _uiError.value = map(result.message)
           _isLoading.value = false
         }
 
@@ -103,6 +106,7 @@ class AuthViewModel @Inject constructor(
     username: String,
     onResult: () -> Unit
   ) {
+
     viewModelScope.launch(Dispatchers.IO) {
       _isLoading.value = true
       when ( val result = repository.register(email, password, username)) {
@@ -115,8 +119,8 @@ class AuthViewModel @Inject constructor(
         }
         is Resource.Error -> {
           _state.value = result
-          isError = true
-          uiError = map(result.message)
+          _isError.value = true
+          _uiError.value = map(result.message)
           _isLoading.value = false
         }
 
