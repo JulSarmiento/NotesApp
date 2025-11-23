@@ -40,10 +40,13 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.julhdev.notes.components.EmailTextField
+import com.julhdev.notes.components.FormBtn
 import com.julhdev.notes.components.MainBtn
 import com.julhdev.notes.components.MainTextField
 import com.julhdev.notes.components.MainTitle
 import com.julhdev.notes.components.NotificationMessage
+import com.julhdev.notes.components.PasswordTextField
 import com.julhdev.notes.components.TopBar
 import com.julhdev.notes.navigation.Routes
 import com.julhdev.notes.utils.resources.Resource
@@ -70,15 +73,15 @@ fun RegisterView(
     }
   }
 
-  val visiblePassword = remember { mutableStateOf(false) }
-
   val state = authViewModel.state.collectAsState()
+  val isLoading = authViewModel.isLoading.collectAsState()
 
+  val focusUsername = remember { FocusRequester() }
+  val focusEmail = remember { FocusRequester() }
+  val focusPassword = remember { FocusRequester() }
+  val focusConfirmPassword = remember { FocusRequester() }
 
-  val focus1 = remember { FocusRequester() }
-  val focus2 = remember { FocusRequester() }
-  val focus3 = remember { FocusRequester() }
-
+  val visiblePassword = remember { mutableStateOf(false) }
   var username: String by remember { mutableStateOf("") }
   var email: String by remember { mutableStateOf("") }
   var password: String by remember { mutableStateOf("") }
@@ -104,34 +107,6 @@ fun RegisterView(
       verticalArrangement = Arrangement.Center,
     ) {
 
-//      if(authViewModel.isLoading) {
-//        Box(
-//          modifier = Modifier
-//            .fillMaxSize(),
-//          contentAlignment = Alignment.Center
-//        ) {
-//          Column(
-//            horizontalAlignment = Alignment.CenterHorizontally,
-//            verticalArrangement = Arrangement.Center
-//          ) {
-//            Surface(
-//              shape = RoundedCornerShape(10.dp),
-//              tonalElevation = 8.dp,
-//              modifier = Modifier.wrapContentSize()
-//            ) {
-//              Column(
-//                modifier = Modifier
-//                  .padding(20.dp)
-//                  .widthIn(min = 120.dp),
-//                horizontalAlignment = Alignment.CenterHorizontally
-//              ) {
-//                CircularProgressIndicator()
-//                Spacer(modifier = Modifier.height(20.dp))
-//              }
-//            }
-//          }
-//        }
-//      }
       Box(
         modifier = Modifier
           .fillMaxWidth()
@@ -179,35 +154,33 @@ fun RegisterView(
             value = username,
             label = " Usuario",
             isError = false,
-            focusRequester = focus2,
+            focusRequester = focusUsername,
             onValueChange = { username = it },
-            nextFocusRequester = focus2
+            nextFocusRequester = focusEmail,
           )
           Spacer(
             modifier = Modifier
               .height(5.dp)
           )
-          MainTextField(
+          EmailTextField(
             value = email,
             label = "Email",
             onValueChange = { email = it },
             isError = false,
-            focusRequester = focus1,
-            nextFocusRequester = focus2,
-            keyboardType = KeyboardType.Email
+            focusRequester = focusEmail,
+            nextFocusRequester = focusPassword,
           )
           Spacer(
             modifier = Modifier
               .height(5.dp)
           )
-          MainTextField(
+          PasswordTextField(
             value = password,
             label = "Contraseña",
             isError = false,
-            visualTransformation = if (visiblePassword.value) null else PasswordVisualTransformation(),
-            focusRequester = focus2,
+            focusRequester = focusPassword,
             onValueChange = { password = it },
-            nextFocusRequester = focus2,
+            nextFocusRequester = focusConfirmPassword,
             trailingIcon = if (password.isNotEmpty()) Icons.Default.RemoveRedEye else null,
             trailingIconClickAction = {
               visiblePassword.value = !visiblePassword.value
@@ -217,14 +190,13 @@ fun RegisterView(
             modifier = Modifier
               .height(5.dp)
           )
-          MainTextField(
+          PasswordTextField(
             value = confirmPassword,
             label = "Confirmar Contraseña",
             isError = confirmPassword != password,
-            visualTransformation = if (visiblePassword.value) null else PasswordVisualTransformation(),
-            focusRequester = focus2,
+            focusRequester = focusConfirmPassword,
             onValueChange = { confirmPassword = it },
-            nextFocusRequester = focus3,
+            nextFocusRequester = null,
             trailingIcon = if (password.isNotEmpty()) Icons.Default.RemoveRedEye else null,
             trailingIconClickAction = {
               visiblePassword.value = !visiblePassword.value
@@ -234,15 +206,14 @@ fun RegisterView(
             modifier = Modifier
               .height(5.dp)
           )
-          MainBtn(
+          FormBtn(
             text = "Crear",
+            enabled = !isLoading.value,
             onClick = {
               authViewModel.register(email, password, username) {
                 navController.navigate(Routes.HOME)
               }
-            },
-            icon = null,
-            description = "Icono de iniciar sesión"
+            }
           )
         }
       }

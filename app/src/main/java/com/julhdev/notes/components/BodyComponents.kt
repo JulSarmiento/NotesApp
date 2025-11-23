@@ -32,6 +32,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -127,23 +128,29 @@ fun NoteCard(
 }
 
 /**
- * MainTextArea Composable
+ * PasswordTextField Composable
+ * Composable para gestionar el área de texto de contraseña
  * @param value de tipo String que representa el valor del área de texto
  * @param onValueChange de tipo (String) -> Unit que representa la función a ejecutar al cambiar el valor del área de texto
  * @param label de tipo String que representa la etiqueta del área de texto
- * @usage MainTextArea(value = noteContent, onValueChange = { noteContent = it }, label = "Contenido de la Nota")
+ * @param isError de tipo Boolean que representa si el área de texto tiene errores
+ * @param focusRequester de tipo FocusRequester que representa el foco del área de texto
+ * @param nextFocusRequester de tipo FocusRequester que representa el siguiente foco del área de texto
+ * @param keyboardType de tipo KeyboardType que representa el tipo de teclado del área de texto
+ * @param trailingIcon de tipo ImageVector que representa el icono del área de texto
+ * @param trailingIconClickAction de tipo () -> Unit que representa la acción a realizar al hacer clic en el icono del área de texto
+ * @usage PasswordTextField(value = noteContent, onValueChange = { noteContent = it }, label = "Contenido de la Nota")
  */
 @Composable
-fun MainTextField(
+fun PasswordTextField(
   value: String,
   onValueChange: (String) -> Unit,
   label: String,
   isError: Boolean = false,
   focusRequester: FocusRequester = remember { FocusRequester() },
   nextFocusRequester: FocusRequester?,
-  keyboardType: KeyboardType = KeyboardType.Text,
-  visualTransformation: VisualTransformation? = null,
-  trailingIcon: ImageVector? = null,
+  keyboardType: KeyboardType = KeyboardType.Password,
+  trailingIcon: ImageVector?,
   trailingIconClickAction: () -> Unit = {}
 ) {
   val focusManager = LocalFocusManager.current
@@ -154,17 +161,17 @@ fun MainTextField(
     onValueChange = onValueChange,
     label = { Text(text = label) },
     isError = isError,
-    visualTransformation = visualTransformation ?: VisualTransformation.None,
+    visualTransformation = if (activeBtn) VisualTransformation.None else PasswordVisualTransformation(),
     singleLine = true,
     trailingIcon = {
-      if (trailingIcon != null) {
+      if(trailingIcon != null){
         Icon(
           imageVector = trailingIcon,
           contentDescription = "Done Icon",
-          tint = if(activeBtn) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+          tint = if (activeBtn) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
           modifier = Modifier.clickable {
             trailingIconClickAction()
-            activeBtn = !activeBtn
+            !activeBtn
           }
         )
       }
@@ -175,6 +182,99 @@ fun MainTextField(
       .focusRequester(focusRequester),
     keyboardOptions = KeyboardOptions(
       keyboardType = keyboardType,
+      imeAction = if (nextFocusRequester != null) ImeAction.Next else ImeAction.Done,
+    ),
+    keyboardActions = KeyboardActions(
+      onNext = {
+        nextFocusRequester?.requestFocus()
+      },
+      onDone = {
+        focusManager.clearFocus()
+      }
+    )
+  )
+}
+
+/**
+ * EmailTextField Composable
+ * Composable para gestionar el área de texto de email
+ * @param value de tipo String que representa el valor del área de texto
+ * @param onValueChange de tipo (String) -> Unit que representa la función a ejecutar al cambiar el valor del área de texto
+ * @param label de tipo String que representa la etiqueta del área de texto
+ * @param isError de tipo Boolean que representa si el área de texto tiene errores
+ * @param focusRequester de tipo FocusRequester que representa el foco del área de texto
+ * @param nextFocusRequester de tipo FocusRequester que representa el siguiente foco del área de texto
+ * @usage EmailTextField(value = noteContent, onValueChange = { noteContent = it }, label = "Contenido de la Nota")
+ */
+@Composable
+fun EmailTextField(
+  value: String,
+  onValueChange: (String) -> Unit,
+  label: String,
+  isError: Boolean = false,
+  focusRequester: FocusRequester = remember { FocusRequester() },
+  nextFocusRequester: FocusRequester?,
+) {
+  val focusManager = LocalFocusManager.current
+
+  OutlinedTextField(
+    value = value,
+    onValueChange = onValueChange,
+    label = { Text(text = label) },
+    isError = isError,
+    singleLine = true,
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(bottom = 15.dp)
+      .focusRequester(focusRequester),
+    keyboardOptions = KeyboardOptions(
+      keyboardType = KeyboardType.Email,
+      imeAction = if (nextFocusRequester != null) ImeAction.Next else ImeAction.Done,
+    ),
+    keyboardActions = KeyboardActions(
+      onNext = {
+        nextFocusRequester?.requestFocus()
+      },
+      onDone = {
+        focusManager.clearFocus()
+      }
+    )
+  )
+}
+
+/**
+ * MainTextArea Composable
+ * @param value de tipo String que representa el valor del área de texto
+ * @param onValueChange de tipo (String) -> Unit que representa la función a ejecutar al cambiar el valor del área de texto
+ * @param label de tipo String que representa la etiqueta del área de texto
+ * @param isError de tipo Boolean que representa si el área de texto tiene errores
+ * @param focusRequester de tipo FocusRequester que representa el foco del área de texto
+ * @param nextFocusRequester de tipo FocusRequester que representa el siguiente foco del área de texto
+ * @usage MainTextArea(value = noteContent, onValueChange = { noteContent = it }, label = "Contenido de la Nota")
+ */
+@Composable
+fun MainTextField(
+  value: String,
+  onValueChange: (String) -> Unit,
+  label: String,
+  isError: Boolean = false,
+  focusRequester: FocusRequester = remember { FocusRequester() },
+  nextFocusRequester: FocusRequester?,
+) {
+  val focusManager = LocalFocusManager.current
+
+  OutlinedTextField(
+    value = value,
+    onValueChange = onValueChange,
+    label = { Text(text = label) },
+    isError = isError,
+    singleLine = true,
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(bottom = 15.dp)
+      .focusRequester(focusRequester),
+    keyboardOptions = KeyboardOptions(
+      keyboardType = KeyboardType.Text,
       capitalization = KeyboardCapitalization.Sentences,
       imeAction = if (nextFocusRequester != null) ImeAction.Next else ImeAction.Done,
     ),

@@ -23,7 +23,8 @@ class AuthViewModel @Inject constructor(
   private val _state = MutableStateFlow<Resource<FirebaseUser?>>(Resource.Loading())
   val state = _state.asStateFlow()
 
-  var isLoading = false
+  private val _isLoading = MutableStateFlow(false)
+  val isLoading = _isLoading.asStateFlow()
 
   var isError = false
 
@@ -62,26 +63,28 @@ class AuthViewModel @Inject constructor(
     onResult: () -> Unit
   ) {
     viewModelScope.launch(Dispatchers.IO) {
-      isLoading = true
+      _isLoading.value = true
       when (val result = repository.login(email, password)) {
         is Resource.Success -> {
           _state.value = result
           withContext(Dispatchers.Main.immediate) {
             onResult()
           }
+          _isLoading.value = false
         }
 
         is Resource.Error -> {
           _state.value = result
           isError = true
           uiError = map(result.message)
+          _isLoading.value = false
         }
 
         is Resource.Loading -> {
           /*TODO*/
+          _isLoading.value = false
         }
       }
-      isLoading = false
     }
   }
 
@@ -101,7 +104,7 @@ class AuthViewModel @Inject constructor(
     onResult: () -> Unit
   ) {
     viewModelScope.launch(Dispatchers.IO) {
-      isLoading = true
+      _isLoading.value = true
       val result = repository.register(email, password, username)
       when (result) {
         is Resource.Success -> {
@@ -122,6 +125,7 @@ class AuthViewModel @Inject constructor(
         }
       }
     }
+    _isLoading.value = false
   }
 }
 

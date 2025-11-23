@@ -42,10 +42,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.julhdev.notes.components.EmailTextField
+import com.julhdev.notes.components.FormBtn
 import com.julhdev.notes.components.MainBtn
 import com.julhdev.notes.components.MainTextField
 import com.julhdev.notes.components.MainTitle
 import com.julhdev.notes.components.NotificationMessage
+import com.julhdev.notes.components.PasswordTextField
 import com.julhdev.notes.components.TopBar
 import com.julhdev.notes.navigation.Routes
 import com.julhdev.notes.utils.resources.Resource
@@ -71,17 +74,16 @@ fun LoginView(
       authViewModel.cleanError()
     }
   }
+  val state = authViewModel.state.collectAsState()
+  val isLoading = authViewModel.isLoading.collectAsState()
 
-  val focus1 = remember { FocusRequester() }
-  val focus2 = remember { FocusRequester() }
+  val focusEmail = remember { FocusRequester() }
+  val focusPassword = remember { FocusRequester() }
 
   val visiblePassword = remember { mutableStateOf(false) }
 
   var email by remember { mutableStateOf("") }
   var password by remember { mutableStateOf("") }
-
-  val state = authViewModel.state.collectAsState()
-
 
   Scaffold(
     topBar = {
@@ -101,35 +103,6 @@ fun LoginView(
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Center,
     ) {
-
-//      if(authViewModel.isLoading ) {
-//        Box(
-//          modifier = Modifier
-//            .fillMaxSize(),
-//          contentAlignment = Alignment.Center
-//        ) {
-//          Column(
-//            horizontalAlignment = Alignment.CenterHorizontally,
-//            verticalArrangement = Arrangement.Center
-//          ) {
-//            Surface(
-//              shape = RoundedCornerShape(10.dp),
-//              tonalElevation = 8.dp,
-//              modifier = Modifier.wrapContentSize()
-//            ) {
-//              Column(
-//                modifier = Modifier
-//                  .padding(20.dp)
-//                  .widthIn(min = 120.dp),
-//                horizontalAlignment = Alignment.CenterHorizontally
-//              ) {
-//                CircularProgressIndicator()
-//                Spacer(modifier = Modifier.height(20.dp))
-//              }
-//            }
-//          }
-//        }
-//      }
 
       Box(
         modifier = Modifier
@@ -170,27 +143,25 @@ fun LoginView(
                 .height(20.dp)
             )
           }
-          MainTextField(
+          EmailTextField(
             value = email,
             label = "Email",
             onValueChange = { email = it },
             isError = false,
-            focusRequester = focus1,
-            nextFocusRequester = focus2,
-            keyboardType = KeyboardType.Email
+            focusRequester = focusEmail,
+            nextFocusRequester = focusPassword,
           )
           Spacer(
             modifier = Modifier
               .height(10.dp)
           )
-          MainTextField(
+          PasswordTextField(
             value = password,
             label = "Contraseña",
             isError = false,
-            visualTransformation = if (visiblePassword.value) null else PasswordVisualTransformation(),
-            focusRequester = focus2,
+            focusRequester = focusPassword,
             onValueChange = { password = it },
-            nextFocusRequester = focus2,
+            nextFocusRequester = null,
             trailingIcon = if (password.isNotEmpty()) Icons.Default.RemoveRedEye else null,
             trailingIconClickAction = {
               visiblePassword.value = !visiblePassword.value
@@ -200,15 +171,14 @@ fun LoginView(
             modifier = Modifier
               .height(10.dp)
           )
-          MainBtn(
+          FormBtn(
             text = "Iniciar Sesión",
+            enabled = !isLoading.value,
             onClick = {
               authViewModel.login(email = email, password = password) {
                 navController.navigate(Routes.HOME)
               }
-            },
-            icon = Icons.AutoMirrored.Filled.Login,
-            description = "Icono de iniciar sesión"
+            }
           )
           Spacer(
             modifier = Modifier

@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -19,6 +20,46 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+
+
+/**
+ * FormBtn Composable
+ * @param text de tipo String que representa el texto del botón
+ * @param onClick de tipo () -> Unit que representa la acción a realizar al hacer clic en el botón
+ * @usage FormBtn(text = "Login", onClick = { /* acción a realizar */ })
+ */
+@Composable
+fun FormBtn(
+  text: String,
+  modifier: Modifier = Modifier,
+  enabled: Boolean = true,
+  isLoading: Boolean = false,
+  onClick: () -> Unit,
+) {
+  Button(
+    onClick = onClick,
+    enabled = enabled,
+    colors = ButtonDefaults.buttonColors(
+      containerColor = MaterialTheme.colorScheme.primary,
+      contentColor = MaterialTheme.colorScheme.onPrimary
+    )
+  ) {
+    if(isLoading) {
+      CircularProgressIndicator(
+        color = MaterialTheme.colorScheme.primary
+      )
+    } else {
+      Text(
+        text = text,
+        letterSpacing = 0.5.sp,
+        fontWeight = FontWeight.Medium,
+        modifier = Modifier
+          .padding(horizontal = 10.dp)
+          .then(modifier)
+      )
+    }
+  }
+}
 
 /**
  * MainBtn Composable
