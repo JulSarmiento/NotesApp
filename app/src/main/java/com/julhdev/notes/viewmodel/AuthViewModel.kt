@@ -105,27 +105,27 @@ class AuthViewModel @Inject constructor(
   ) {
     viewModelScope.launch(Dispatchers.IO) {
       _isLoading.value = true
-      val result = repository.register(email, password, username)
-      when (result) {
+      when ( val result = repository.register(email, password, username)) {
         is Resource.Success -> {
           _state.value = result
           withContext(Dispatchers.Main.immediate) {
             onResult()
           }
+          _isLoading.value = false
         }
         is Resource.Error -> {
           _state.value = result
-          result.message?.let { Log.d("AYUDAAA", it) }
           isError = true
           uiError = map(result.message)
+          _isLoading.value = false
         }
 
         is Resource.Loading -> {
           /*TODO*/
+          _isLoading.value = false
         }
       }
     }
-    _isLoading.value = false
   }
 }
 

@@ -171,7 +171,7 @@ fun PasswordTextField(
           tint = if (activeBtn) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
           modifier = Modifier.clickable {
             trailingIconClickAction()
-            !activeBtn
+            activeBtn = !activeBtn
           }
         )
       }

@@ -8,7 +8,7 @@ import com.julhdev.notes.utils.safeApiCall
 import javax.inject.Inject
 
 /**
- * Repopsitorio de Firebase Authentication.
+ * Repositorio de Firebase Authentication.
  * @param auth [AuthDataSource]
  * @param userStore [UserFirestoreDataSource]
  */
