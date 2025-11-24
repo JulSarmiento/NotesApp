@@ -6,10 +6,10 @@ import android.util.Patterns
 fun validateNotNull(value: String?, field: String): String? =
   when {
     value.isNullOrBlank() -> when (field) {
-      "username" -> "Usuario no puede estar vacío"
-      "email" -> "Email no puede estar vacío"
-      "password" -> "Password no puede estar vacío"
-      "confirmPassword" -> "La confirmacion de la contraseña no puede estar vacío"
+      "username" -> "El campo 'Usuario' no puede estar vacío"
+      "email" -> "El campo 'Email' no puede estar vacío"
+      "password" -> "El campo 'Contraseña' no puede estar vacío."
+      "confirmPassword" -> "El campo 'Confirmar contraseña' no puede estar vacío"
       else -> null
     }
     else -> null
