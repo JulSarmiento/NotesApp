@@ -1,6 +1,10 @@
 package com.julhdev.notes.components
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DarkMode
@@ -39,14 +43,19 @@ fun FormBtn(
   Button(
     onClick = onClick,
     enabled = enabled,
+    modifier = Modifier
+      .width(200.dp)
+      .height(45.dp),
     colors = ButtonDefaults.buttonColors(
       containerColor = MaterialTheme.colorScheme.primary,
       contentColor = MaterialTheme.colorScheme.onPrimary
     )
   ) {
-    if(isLoading) {
+    if (isLoading) {
       CircularProgressIndicator(
-        color = MaterialTheme.colorScheme.primary
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier
+          .size(30.dp)
       )
     } else {
       Text(
@@ -84,7 +93,7 @@ fun MainBtn(
       contentColor = MaterialTheme.colorScheme.onPrimary
     )
   ) {
-    if(icon != null) {
+    if (icon != null) {
       Icon(
         imageVector = icon,
         contentDescription = description,

@@ -2,6 +2,19 @@ package com.julhdev.notes.utils
 
 import android.util.Patterns
 
+
+fun validateNotNull(value: String?, field: String): String? =
+  when {
+    value.isNullOrBlank() -> when (field) {
+      "username" -> "Usuario no puede estar vacío"
+      "email" -> "Email no puede estar vacío"
+      "password" -> "Password no puede estar vacío"
+      "confirmPassword" -> "La confirmacion de la contraseña no puede estar vacío"
+      else -> null
+    }
+    else -> null
+  }
+
 /**
  * Valida el nombre de usuario
  * @param username Nombre de usuario a validar
@@ -13,6 +26,7 @@ fun validateUsername(
   return username.length >= 4
 }
 
+
 /**
  * Valida el formato de una contraseña
  * @param password Contraseña a validar
@@ -21,7 +35,7 @@ fun validateUsername(
 fun validatePasswordFormat(
   password: String
 ): Boolean {
-  return password.length >= 6
+  return password.length < 6
 }
 
 /**

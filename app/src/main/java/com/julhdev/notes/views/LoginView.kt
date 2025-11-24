@@ -40,6 +40,7 @@ import com.julhdev.notes.components.TopBar
 import com.julhdev.notes.navigation.Routes
 import com.julhdev.notes.utils.resources.Resource
 import com.julhdev.notes.utils.validateEmail
+import com.julhdev.notes.utils.validateNotNull
 import com.julhdev.notes.utils.validatePasswordFormat
 import com.julhdev.notes.viewmodel.AuthViewModel
 import com.julhdev.notes.viewmodel.ThemeViewModel
@@ -73,6 +74,9 @@ fun LoginView(
 
   var email by rememberSaveable { mutableStateOf("") }
   var password by rememberSaveable { mutableStateOf("") }
+
+  var emailError by rememberSaveable { mutableStateOf(false) }
+  var passwordError by rememberSaveable { mutableStateOf(false) }
 
   var formError by rememberSaveable { mutableStateOf("") }
 
@@ -138,7 +142,7 @@ fun LoginView(
             value = email,
             label = "Email",
             onValueChange = { email = it },
-            isError = false,
+            isError = emailError,
             focusRequester = focusEmail,
             nextFocusRequester = focusPassword,
           )
@@ -149,7 +153,7 @@ fun LoginView(
           PasswordTextField(
             value = password,
             label = "Contraseña",
-            isError = false,
+            isError = passwordError,
             focusRequester = focusPassword,
             onValueChange = { password = it },
             nextFocusRequester = null,
@@ -165,15 +169,24 @@ fun LoginView(
           FormBtn(
             text = "Iniciar Sesión",
             enabled = !isLoading.value,
+            isLoading = isLoading.value,
             onClick = {
+              formError = ""
+              formError = validateNotNull(email, "email")?.also { emailError = true }
+                ?: validateNotNull(password, "password")?.also { passwordError = true }
+                    ?: ""
+              if (formError.isNotEmpty()) return@FormBtn
               if (!validateEmail(email)) {
-                formError = "El formato del correo electronico no es válido."
-              } else if (!validatePasswordFormat(password)) {
-                formError = "La contraseña debe tener al menos 6 caracteres validos."
-              } else {
-                authViewModel.login(email = email, password = password) {
-                  navController.navigate(Routes.HOME)
-                }
+                formError = "El formato del correo electrónico no es válido."
+                emailError = true
+                return@FormBtn
+              }
+              if (validatePasswordFormat(password)) {
+                passwordError = true
+                return@FormBtn
+              }
+              authViewModel.login(email = email, password = password) {
+                navController.navigate(Routes.HOME)
               }
             }
           )
