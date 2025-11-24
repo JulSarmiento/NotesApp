@@ -171,6 +171,8 @@ fun LoginView(
             enabled = !isLoading.value,
             isLoading = isLoading.value,
             onClick = {
+              emailError = false
+              passwordError = false
               formError = ""
               formError = validateNotNull(email, "email")?.also { emailError = true }
                 ?: validateNotNull(password, "password")?.also { passwordError = true }
