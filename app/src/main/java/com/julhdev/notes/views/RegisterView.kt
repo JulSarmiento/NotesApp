@@ -205,12 +205,13 @@ fun RegisterView(
           FormBtn(
             text = "Crear",
             enabled = !isLoading.value,
+            isLoading = isLoading.value,
             onClick = {
               registerViewModel.validateAndSubmit(
                 username = username.trim(),
                 email = email.trim(),
                 password = password.trim(),
-                confirmPassword = confirmPassword
+                confirmPassword = confirmPassword.trim()
               ) { username, email, password ->
                 authViewModel.register(email, password, username) {
                   navController.navigate(Routes.HOME)

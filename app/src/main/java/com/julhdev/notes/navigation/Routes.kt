@@ -7,7 +7,7 @@ package com.julhdev.notes.navigation
  * - EDIT: Ruta para la vista de editar una nota existente, con un parámetro dinámico 'id'.
  * - SPLASH: Ruta para la vista de introducción (SplashView).
  * - ONBOARDING: Ruta para la vista de incorporación (OnboardingView).
- * - LOGGIN: Ruta para la vista de inicio de sesión (LogginView).
+ * - LOGIN: Ruta para la vista de inicio de sesión (LoginView).
  * - REGISTER: Ruta para la vista de registro de usuario (RegisterView).
  * @usage Utilizar estas constantes para navegar entre las diferentes vistas de la aplicación.
  */

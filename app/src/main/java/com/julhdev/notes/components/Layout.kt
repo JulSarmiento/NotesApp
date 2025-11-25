@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 
 /**
  * TopBar Composable
- * @param navController de tipo NavControllor  que representa el controlador de navegacion.
+ * @param navController de tipo NavController  que representa el controlador de navegacion.
  * @param themeViewModel de tipo ThemeViewModel que representa el viewModel del tema para la aplicacion.
  * @param showBackBtn de tipo Boolean para mostrar  o no el navigationIcon para regresar atras.
  * @param showLogoutBtn de tipo Boolean para mostrar  o no el navigationIcon para cerrar sesion.

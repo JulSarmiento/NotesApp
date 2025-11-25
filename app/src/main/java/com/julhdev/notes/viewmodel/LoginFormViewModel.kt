@@ -23,7 +23,7 @@ class LoginFormViewModel: ViewModel() {
    * @usage LoginFormViewModel().cleanState()
    */
   fun cleanState() {
-    state.copy(
+    state = state.copy(
       email = "",
       password = "",
       emailError = null,
@@ -54,10 +54,11 @@ class LoginFormViewModel: ViewModel() {
       passwordError = passwordValidationMsg
     )
 
-    cleanState()
 
     if (emailValidationMsg == null && passwordValidationMsg == null) {
       onSuccess(email, password)
     }
+    cleanState()
+
   }
 }

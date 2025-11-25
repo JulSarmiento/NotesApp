@@ -69,10 +69,11 @@ class RegisterFormViewModel: ViewModel() {
       confirmPasswordError = confirmErr
     )
 
-    cleanState()
 
     if (userErr == null && emailErr == null && passErr == null && confirmErr == null) {
       onSuccess(state.username, state.email, state.password)
     }
+    cleanState()
+
   }
 }
