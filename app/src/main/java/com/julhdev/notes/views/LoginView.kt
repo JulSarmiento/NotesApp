@@ -34,15 +34,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.julhdev.notes.components.EmailTextField
 import com.julhdev.notes.components.FormBtn
+import com.julhdev.notes.components.MainTitle
 import com.julhdev.notes.components.NotificationMessage
 import com.julhdev.notes.components.PasswordTextField
 import com.julhdev.notes.components.TopBar
 import com.julhdev.notes.navigation.Routes
 import com.julhdev.notes.utils.resources.Resource
-import com.julhdev.notes.utils.validateEmail
-import com.julhdev.notes.utils.validateNotNull
-import com.julhdev.notes.utils.validatePasswordFormat
 import com.julhdev.notes.viewmodel.AuthViewModel
+import com.julhdev.notes.viewmodel.LoginFormViewModel
 import com.julhdev.notes.viewmodel.ThemeViewModel
 
 /**
@@ -56,16 +55,20 @@ import com.julhdev.notes.viewmodel.ThemeViewModel
 fun LoginView(
   navController: NavController,
   themeViewModel: ThemeViewModel,
-  authViewModel: AuthViewModel
+  authViewModel: AuthViewModel,
+  loginFormViewModel: LoginFormViewModel
 ) {
 
   DisposableEffect(Unit) {
     onDispose {
       authViewModel.cleanError()
+      loginFormViewModel.cleanState()
     }
   }
   val state = authViewModel.state.collectAsState()
   val isLoading = authViewModel.isLoading.collectAsState()
+
+  val formState = loginFormViewModel.state
 
   val focusEmail = remember { FocusRequester() }
   val focusPassword = remember { FocusRequester() }
@@ -74,11 +77,6 @@ fun LoginView(
 
   var email by rememberSaveable { mutableStateOf("") }
   var password by rememberSaveable { mutableStateOf("") }
-
-  var emailError by rememberSaveable { mutableStateOf(false) }
-  var passwordError by rememberSaveable { mutableStateOf(false) }
-
-  var formError by rememberSaveable { mutableStateOf("") }
 
   Scaffold(
     topBar = {
@@ -129,20 +127,27 @@ fun LoginView(
             modifier = Modifier
               .height(20.dp)
           )
-          if (state.value is Resource.Error || formError.isNotEmpty()) {
-            NotificationMessage(
-              text = formError.ifEmpty { authViewModel.uiError.value }
-            )
-            Spacer(
-              modifier = Modifier
-                .height(20.dp)
-            )
-          }
+          NotificationMessage(
+            text = when {
+              state.value is Resource.Error -> authViewModel.uiError.collectAsState().value
+              formState.emailError != null -> formState.emailError
+              formState.passwordError != null -> formState.passwordError
+              else -> ""
+            }
+          )
+          MainTitle(
+            text = "Inicia Sesión",
+            color = MaterialTheme.colorScheme.primary
+          )
+          Spacer(
+            modifier = Modifier
+              .height(20.dp)
+          )
           EmailTextField(
             value = email,
             label = "Email",
             onValueChange = { email = it },
-            isError = emailError,
+            isError = formState.emailError != null,
             focusRequester = focusEmail,
             nextFocusRequester = focusPassword,
           )
@@ -153,9 +158,9 @@ fun LoginView(
           PasswordTextField(
             value = password,
             label = "Contraseña",
-            isError = passwordError,
+            isError = formState.passwordError != null,
             focusRequester = focusPassword,
-            onValueChange = { password = it },
+            onValueChange = { password = it},
             nextFocusRequester = null,
             trailingIcon = if (password.isNotEmpty()) Icons.Default.RemoveRedEye else null,
             trailingIconClickAction = {
@@ -171,24 +176,11 @@ fun LoginView(
             enabled = !isLoading.value,
             isLoading = isLoading.value,
             onClick = {
-              emailError = false
-              passwordError = false
-              formError = ""
-              formError = validateNotNull(email, "email")?.also { emailError = true }
-                ?: validateNotNull(password, "password")?.also { passwordError = true }
-                    ?: ""
-              if (formError.isNotEmpty()) return@FormBtn
-              if (!validateEmail(email)) {
-                formError = "El formato del correo electrónico no es válido."
-                emailError = true
-                return@FormBtn
-              }
-              if (validatePasswordFormat(password)) {
-                passwordError = true
-                return@FormBtn
-              }
-              authViewModel.login(email = email, password = password) {
-                navController.navigate(Routes.HOME)
+
+              loginFormViewModel.validateLoginForm(email, password) { email, password ->
+                authViewModel.login(email = email, password = password) {
+                  navController.navigate(Routes.HOME)
+                }
               }
             }
           )
@@ -204,7 +196,7 @@ fun LoginView(
               .align(Alignment.CenterHorizontally)
               .background(MaterialTheme.colorScheme.surfaceVariant)
               .clickable {
-                navController.navigate(Routes.HOME)
+                navController.navigate(Routes.REGISTER)
               }
           )
         }

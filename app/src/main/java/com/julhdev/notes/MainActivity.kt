@@ -10,8 +10,10 @@ import com.julhdev.notes.navigation.NavManager
 import com.julhdev.notes.ui.theme.NotesTheme
 import com.julhdev.notes.viewmodel.AuthViewModel
 import com.julhdev.notes.viewmodel.FormViewModel
+import com.julhdev.notes.viewmodel.LoginFormViewModel
 import com.julhdev.notes.viewmodel.NoteViewModel
 import com.julhdev.notes.viewmodel.OnBoardingViewModel
+import com.julhdev.notes.viewmodel.RegisterFormViewModel
 import com.julhdev.notes.viewmodel.ThemeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -24,6 +26,8 @@ class MainActivity : ComponentActivity() {
     val themeViewModel: ThemeViewModel by viewModels()
     val formViewModel: FormViewModel by viewModels()
     val authViewModel: AuthViewModel by viewModels()
+    val loginFormViewModel: LoginFormViewModel by viewModels()
+    val registerFormViewModel: RegisterFormViewModel by viewModels()
     enableEdgeToEdge()
     setContent {
       NotesTheme(
@@ -35,6 +39,8 @@ class MainActivity : ComponentActivity() {
           themeViewModel,
           formViewModel,
           authViewModel,
+          loginFormViewModel,
+          registerFormViewModel
         )
       }
     }

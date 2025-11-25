@@ -9,8 +9,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.julhdev.notes.viewmodel.AuthViewModel
 import com.julhdev.notes.viewmodel.FormViewModel
+import com.julhdev.notes.viewmodel.LoginFormViewModel
 import com.julhdev.notes.viewmodel.NoteViewModel
 import com.julhdev.notes.viewmodel.OnBoardingViewModel
+import com.julhdev.notes.viewmodel.RegisterFormViewModel
 import com.julhdev.notes.viewmodel.ThemeViewModel
 import com.julhdev.notes.views.AddView
 import com.julhdev.notes.views.EditView
@@ -33,6 +35,8 @@ fun NavManager(
   themeViewModel: ThemeViewModel,
   formViewModel: FormViewModel,
   authViewModel: AuthViewModel,
+  loginFormViewModel: LoginFormViewModel,
+  registerFormViewModel: RegisterFormViewModel
 ) {
 
   val isOnBoardingCompleted = onBoardingViewModel.completed.collectAsState()
@@ -50,10 +54,10 @@ fun NavManager(
       OnBoardingView(navController, onBoardingViewModel)
     }
     composable(Routes.LOGIN) {
-      LoginView(navController, themeViewModel, authViewModel)
+      LoginView(navController, themeViewModel, authViewModel, loginFormViewModel)
     }
     composable(Routes.REGISTER) {
-      RegisterView(navController, themeViewModel, authViewModel)
+      RegisterView(navController, themeViewModel, authViewModel, registerFormViewModel)
     }
     composable(Routes.HOME) {
       HomeView(navController, noteViewModel, themeViewModel, authViewModel)

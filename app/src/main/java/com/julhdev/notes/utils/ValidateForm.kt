@@ -2,7 +2,12 @@ package com.julhdev.notes.utils
 
 import android.util.Patterns
 
-
+/**
+ * Valida si un campo no está vacío
+ * @param value Valor a validar
+ * @param field Campo a validar
+ * @return String?
+ */
 fun validateNotNull(value: String?, field: String): String? =
   when {
     value.isNullOrBlank() -> when (field) {
@@ -35,7 +40,7 @@ fun validateUsername(
 fun validatePasswordFormat(
   password: String
 ): Boolean {
-  return password.length < 6
+  return password.length <= 5
 }
 
 /**

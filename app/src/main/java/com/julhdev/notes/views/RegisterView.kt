@@ -42,6 +42,7 @@ import com.julhdev.notes.utils.resources.Resource
 import com.julhdev.notes.utils.validateEmail
 import com.julhdev.notes.utils.validateUsername
 import com.julhdev.notes.viewmodel.AuthViewModel
+import com.julhdev.notes.viewmodel.RegisterFormViewModel
 import com.julhdev.notes.viewmodel.ThemeViewModel
 
 /**
@@ -55,7 +56,8 @@ import com.julhdev.notes.viewmodel.ThemeViewModel
 fun RegisterView(
   navController: NavController,
   themeViewModel: ThemeViewModel,
-  authViewModel: AuthViewModel
+  authViewModel: AuthViewModel,
+  registerViewModel: RegisterFormViewModel
 ) {
 
   DisposableEffect(Unit) {
@@ -66,6 +68,8 @@ fun RegisterView(
 
   val state = authViewModel.state.collectAsState()
   val isLoading = authViewModel.isLoading.collectAsState()
+
+  val formState = registerViewModel.state
 
   val focusUsername = remember { FocusRequester() }
   val focusEmail = remember { FocusRequester() }
@@ -124,15 +128,16 @@ fun RegisterView(
               .align(Alignment.CenterHorizontally)
               .padding(top = 10.dp)
           )
-          if (state.value is Resource.Error) {
-            NotificationMessage(
-              text = authViewModel.uiError.value
-            )
-            Spacer(
-              modifier = Modifier
-                .height(20.dp)
-            )
-          }
+          NotificationMessage(
+            text = when {
+              state.value is Resource.Error -> authViewModel.uiError.collectAsState().value
+              formState.usernameError != null -> formState.usernameError
+              formState.emailError != null -> formState.emailError
+              formState.passwordError != null -> formState.passwordError
+              formState.confirmPasswordError != null -> formState.confirmPasswordError
+              else -> ""
+            }
+          )
           MainTitle(
             text = "Crea tu cuenta",
             color = MaterialTheme.colorScheme.primary
@@ -144,7 +149,7 @@ fun RegisterView(
           MainTextField(
             value = username.trim(),
             label = " Usuario",
-            isError = !validateUsername(username),
+            isError = formState.usernameError != null,
             focusRequester = focusUsername,
             onValueChange = { username = it },
             nextFocusRequester = focusEmail,
@@ -157,7 +162,7 @@ fun RegisterView(
             value = email.trim(),
             label = "Email",
             onValueChange = { email = it },
-            isError = !validateEmail(email),
+            isError = formState.emailError != null,
             focusRequester = focusEmail,
             nextFocusRequester = focusPassword,
           )
@@ -168,7 +173,7 @@ fun RegisterView(
           PasswordTextField(
             value = password.trim(),
             label = "Contraseña",
-            isError = password.length >= 6,
+            isError = formState.passwordError != null,
             focusRequester = focusPassword,
             onValueChange = { password = it },
             nextFocusRequester = focusConfirmPassword,
@@ -184,7 +189,7 @@ fun RegisterView(
           PasswordTextField(
             value = confirmPassword.trim(),
             label = "Confirmar Contraseña",
-            isError = confirmPassword != password,
+            isError = formState.confirmPasswordError != null,
             focusRequester = focusConfirmPassword,
             onValueChange = { confirmPassword = it },
             nextFocusRequester = null,
@@ -201,8 +206,15 @@ fun RegisterView(
             text = "Crear",
             enabled = !isLoading.value,
             onClick = {
-              authViewModel.register(email, password, username) {
-                navController.navigate(Routes.HOME)
+              registerViewModel.validateAndSubmit(
+                username = username.trim(),
+                email = email.trim(),
+                password = password.trim(),
+                confirmPassword = confirmPassword
+              ) { username, email, password ->
+                authViewModel.register(email, password, username) {
+                  navController.navigate(Routes.HOME)
+                }
               }
             }
           )
