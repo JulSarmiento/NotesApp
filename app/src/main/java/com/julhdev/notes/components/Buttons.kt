@@ -1,12 +1,17 @@
 package com.julhdev.notes.components
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -20,10 +25,62 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+
+/**
+ * FormBtn Composable
+ * @param text de tipo String que representa el texto del botón
+ * @param onClick de tipo () -> Unit que representa la acción a realizar al hacer clic en el botón
+ * @param enabled de tipo Boolean que representa si el botón está habilitado o no
+ * @param isLoading de tipo Boolean que representa si se está cargando el botón
+ * @param modifier de tipo Modifier que se aplica al botón
+ * @usage FormBtn(text = "Login", onClick = { /* acción a realizar */ })
+ */
+@Composable
+fun FormBtn(
+  text: String,
+  modifier: Modifier = Modifier,
+  enabled: Boolean = true,
+  isLoading: Boolean = false,
+  onClick: () -> Unit,
+) {
+  Button(
+    onClick = onClick,
+    enabled = enabled,
+    modifier = Modifier
+      .width(200.dp)
+      .height(45.dp),
+    colors = ButtonDefaults.buttonColors(
+      containerColor = MaterialTheme.colorScheme.primary,
+      contentColor = MaterialTheme.colorScheme.onPrimary
+    )
+  ) {
+    if (isLoading) {
+      CircularProgressIndicator(
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier
+          .size(30.dp)
+      )
+    } else {
+      Text(
+        text = text,
+        letterSpacing = 0.5.sp,
+        fontWeight = FontWeight.Medium,
+        modifier = Modifier
+          .padding(horizontal = 10.dp)
+          .then(modifier)
+      )
+    }
+  }
+}
+
 /**
  * MainBtn Composable
  * @param text de tipo String que representa el texto del botón
  * @param onClick de tipo () -> Unit que representa la acción a realizar al hacer clic en el botón
+ * @param enabled de tipo Boolean que representa si el botón está habilitado o no
+ * @param modifier de tipo Modifier que se aplica al botón
+ * @param icon de tipo ImageVector que representa el icono del botón
+ * @param description de tipo String que representa la descripción del icono para accesibilidad
  * @usage MainBtn(text = "Login", onClick = { /* acción a realizar */ })
  */
 @Composable
@@ -32,7 +89,7 @@ fun MainBtn(
   modifier: Modifier = Modifier,
   enabled: Boolean = true,
   onClick: () -> Unit,
-  icon: ImageVector,
+  icon: ImageVector? = null,
   description: String,
 ) {
   Button(
@@ -43,11 +100,13 @@ fun MainBtn(
       contentColor = MaterialTheme.colorScheme.onPrimary
     )
   ) {
-    Icon(
-      imageVector = icon,
-      contentDescription = description,
-      tint = MaterialTheme.colorScheme.onPrimary
-    )
+    if (icon != null) {
+      Icon(
+        imageVector = icon,
+        contentDescription = description,
+        tint = MaterialTheme.colorScheme.onPrimary
+      )
+    }
     Text(
       text = text,
       letterSpacing = 0.5.sp,
@@ -64,6 +123,7 @@ fun MainBtn(
  * @param icon de tipo ImageVector que representa el icono del botón
  * @param onClick de tipo () -> Unit que representa la acción a realizar al hacer clic en el botón
  * @param description de tipo String que representa la descripción del icono para accesibilidad
+ * @param modifier de tipo Modifier que se aplica al botón
  * @usage IconButton(icon = Icons.Default.Home, onClick = { /* acción a realizar */ }, description = "Home Icon")
  */
 @Composable

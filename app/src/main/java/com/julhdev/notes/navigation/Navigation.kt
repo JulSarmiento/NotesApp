@@ -7,14 +7,19 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.julhdev.notes.viewmodel.AuthViewModel
 import com.julhdev.notes.viewmodel.FormViewModel
+import com.julhdev.notes.viewmodel.LoginFormViewModel
 import com.julhdev.notes.viewmodel.NoteViewModel
 import com.julhdev.notes.viewmodel.OnBoardingViewModel
+import com.julhdev.notes.viewmodel.RegisterFormViewModel
 import com.julhdev.notes.viewmodel.ThemeViewModel
 import com.julhdev.notes.views.AddView
 import com.julhdev.notes.views.EditView
 import com.julhdev.notes.views.HomeView
+import com.julhdev.notes.views.LoginView
 import com.julhdev.notes.views.OnBoardingView
+import com.julhdev.notes.views.RegisterView
 import com.julhdev.notes.views.SplashView
 
 
@@ -28,7 +33,10 @@ fun NavManager(
   onBoardingViewModel: OnBoardingViewModel,
   noteViewModel: NoteViewModel,
   themeViewModel: ThemeViewModel,
-  formViewModel: FormViewModel
+  formViewModel: FormViewModel,
+  authViewModel: AuthViewModel,
+  loginFormViewModel: LoginFormViewModel,
+  registerFormViewModel: RegisterFormViewModel
 ) {
 
   val isOnBoardingCompleted = onBoardingViewModel.completed.collectAsState()
@@ -45,15 +53,24 @@ fun NavManager(
     composable(Routes.ONBOARDING) {
       OnBoardingView(navController, onBoardingViewModel)
     }
+    composable(Routes.LOGIN) {
+      LoginView(navController, themeViewModel, authViewModel, loginFormViewModel)
+    }
+    composable(Routes.REGISTER) {
+      RegisterView(navController, themeViewModel, authViewModel, registerFormViewModel)
+    }
     composable(Routes.HOME) {
-      HomeView(navController, noteViewModel, themeViewModel)
+      HomeView(navController, noteViewModel, themeViewModel, authViewModel)
     }
     composable(Routes.ADD) {
-      AddView(navController, themeViewModel, formViewModel)
+      AddView(navController, themeViewModel, formViewModel, authViewModel)
     }
-    composable("${Routes.EDIT}/{id}", arguments = listOf(navArgument("id") { type = NavType.IntType })) {
+    composable(
+      "${Routes.EDIT}/{id}",
+      arguments = listOf(navArgument("id") { type = NavType.IntType })
+    ) {
       val id = it.arguments?.getInt("id") ?: -1
-      EditView(id, navController, formViewModel, themeViewModel)
+      EditView(id, navController, formViewModel, themeViewModel, authViewModel)
     }
   }
 }

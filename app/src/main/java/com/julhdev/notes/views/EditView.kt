@@ -37,6 +37,8 @@ import com.julhdev.notes.components.MainTextField
 import com.julhdev.notes.components.MainTitle
 import com.julhdev.notes.components.SubTitle
 import com.julhdev.notes.components.SwitchButton
+import com.julhdev.notes.components.TopBar
+import com.julhdev.notes.viewmodel.AuthViewModel
 import com.julhdev.notes.viewmodel.FormEvent
 import com.julhdev.notes.viewmodel.FormViewModel
 import com.julhdev.notes.viewmodel.ThemeViewModel
@@ -51,6 +53,7 @@ import kotlinx.coroutines.launch
  * @param navController El NavController para la navegación entre vistas.
  * @param formViewModel El ViewModel que maneja el estado del formulario.
  * @param themeViewModel El ViewModel que maneja el tema de la aplicación.
+ * @param authViewModel El ViewModel que maneja la autenticación del usuario.
  * @usage Incluir EditView en la navegación para permitir la edición de notas existentes.
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,11 +63,11 @@ fun EditView(
   navController: NavController,
   formViewModel: FormViewModel,
   themeViewModel: ThemeViewModel,
+  authViewModel: AuthViewModel
 ) {
 
   var showDialog by remember { mutableStateOf(false) }
   val snackBarHostState = remember { SnackbarHostState() }
-  val theme = themeViewModel.isDark.collectAsState().value
 
   LaunchedEffect(Unit) {
     formViewModel.events.collect { event ->
@@ -85,35 +88,12 @@ fun EditView(
       SnackbarHost(snackBarHostState)
     },
     topBar = {
-      TopAppBar(
-        title = {
-          MainTitle(
-            text = "Dashi's Notes",
-            color = MaterialTheme.colorScheme.onPrimary
-          )
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-          containerColor = MaterialTheme.colorScheme.primary,
-        ),
-        navigationIcon = {
-          IconButton(
-            icon = Icons.AutoMirrored.Filled.ArrowBack,
-            description = "Back",
-            onClick = {
-              navController.popBackStack()
-            }
-          )
-        },
-        actions = {
-          SwitchButton(
-            isDark = theme,
-            onToggle = {
-              CoroutineScope(Dispatchers.Main).launch {
-                themeViewModel.saveIsDark(!theme)
-              }
-            }
-          )
-        }
+      TopBar(
+        navController,
+        themeViewModel,
+        true,
+        showLogoutBtn = true,
+        authViewModel = authViewModel
       )
     },
   ) { innerPadding ->

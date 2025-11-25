@@ -25,17 +25,24 @@ import kotlinx.coroutines.delay
  * @usage SplashView(navController = navController, store = store)
  */
 @Composable
-fun SplashView(navController: NavController, store: Boolean) {
+fun SplashView(
+  navController: NavController,
+  store: Boolean,
+) {
+  val destination = if (store) Routes.LOGIN else Routes.ONBOARDING
 
-  var screen by remember { mutableStateOf("") }
-  screen = if (store) Routes.HOME else Routes.ONBOARDING
+  var animationFinished by remember { mutableStateOf(false) }
 
-  LaunchedEffect(
-    Unit
-  ) {
+  LaunchedEffect(Unit) {
     delay(2000)
-    navController.navigate(screen) {
-      popUpTo(Routes.SPLASH) { inclusive = true }
+    animationFinished = true
+  }
+
+  LaunchedEffect(animationFinished) {
+    if (animationFinished) {
+      navController.navigate(destination) {
+        popUpTo(Routes.SPLASH) { inclusive = true }
+      }
     }
   }
 
@@ -46,9 +53,7 @@ fun SplashView(navController: NavController, store: Boolean) {
         .fillMaxSize()
         .padding(innerPadding)
     ) {
-      MainImage(
-        image = R.raw.loading,
-      )
+      MainImage(image = R.raw.loading)
     }
   }
 }

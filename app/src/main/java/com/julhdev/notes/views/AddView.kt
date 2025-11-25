@@ -37,7 +37,9 @@ import com.julhdev.notes.components.MainTextField
 import com.julhdev.notes.components.MainTitle
 import com.julhdev.notes.components.SubTitle
 import com.julhdev.notes.components.SwitchButton
+import com.julhdev.notes.components.TopBar
 import com.julhdev.notes.data.model.FormState
+import com.julhdev.notes.viewmodel.AuthViewModel
 import com.julhdev.notes.viewmodel.FormEvent
 import com.julhdev.notes.viewmodel.FormViewModel
 import com.julhdev.notes.viewmodel.ThemeViewModel
@@ -50,17 +52,18 @@ import kotlinx.coroutines.launch
  * @param navController de tipo NavController que representa el controlador de navegación
  * @param themeViewModel de tipo ThemeViewModel que representa el ViewModel del tema
  * @param formViewModel de tipo FormViewModel que representa el ViewModel del formulario
- * @usage AddView(navController = navController, themeViewModel = themeViewModel, formViewModel = formViewModel)
+ * @param authViewModel de tipo AuthViewModel que representa el ViewModel de autenticación
+ * @usage AddView(navController = navController, themeViewModel = themeViewModel, formViewModel = formViewModel, authViewModel = authViewModel)
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddView(
   navController: NavController,
   themeViewModel: ThemeViewModel,
-  formViewModel: FormViewModel
+  formViewModel: FormViewModel,
+  authViewModel: AuthViewModel
 ) {
   var showDialog by remember { mutableStateOf(false) }
-  val theme = themeViewModel.isDark.collectAsState().value
   val state by formViewModel.uiState.collectAsState()
   val scaffoldState = remember { SnackbarHostState() }
 
@@ -84,35 +87,12 @@ fun AddView(
       SnackbarHost(scaffoldState)
     },
     topBar = {
-      TopAppBar(
-        title = {
-          MainTitle(
-            text = "Dashi's Notes",
-            color = MaterialTheme.colorScheme.onPrimary
-          )
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-          containerColor = MaterialTheme.colorScheme.primary,
-        ),
-        navigationIcon = {
-          IconButton(
-            icon = Icons.AutoMirrored.Filled.ArrowBack,
-            description = "Back",
-            onClick = {
-              navController.popBackStack()
-            }
-          )
-        },
-        actions = {
-          SwitchButton(
-            isDark = theme,
-            onToggle = {
-              CoroutineScope(Dispatchers.Main).launch {
-                themeViewModel.saveIsDark(!theme)
-              }
-            }
-          )
-        }
+      TopBar(
+        navController,
+        themeViewModel,
+        showBackBtn = true,
+        showLogoutBtn = true,
+        authViewModel = authViewModel
       )
     }
   ) { innerPadding ->
