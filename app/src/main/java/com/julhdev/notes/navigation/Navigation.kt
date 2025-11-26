@@ -48,7 +48,7 @@ fun NavManager(
   )
   {
     composable(Routes.SPLASH) {
-      SplashView(navController, isOnBoardingCompleted.value == true)
+      SplashView(navController, isOnBoardingCompleted.value, authViewModel)
     }
     composable(Routes.ONBOARDING) {
       OnBoardingView(navController, onBoardingViewModel)

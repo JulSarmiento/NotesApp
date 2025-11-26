@@ -38,5 +38,11 @@ class UserFirestoreDataSource @Inject constructor(
     Log.d("Login", "saveUser: $user")
     usersCollection.document(id).set(user)
   }
+
+
+  fun getUser(email: String): Boolean {
+    val userExist =  usersCollection.whereEqualTo("email", email).get()
+    return userExist.isSuccessful
+  }
 }
 

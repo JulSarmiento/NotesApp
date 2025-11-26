@@ -42,6 +42,19 @@ class AuthViewModel @Inject constructor(
     _uiError.value = ""
   }
 
+  fun currentUser() = repository.getCurrentUser()
+
+
+  /**
+   * Verifica si el usuario está autenticado.
+   * @return True si el usuario está autenticado, de lo contrario false.
+   * @usage Ejemplo de uso:
+   * val isUserLogged = authRepository.isUserLogged()
+   */
+  fun isUserLogged(): Boolean {
+    return repository.getCurrentUser() != null
+  }
+
   /**
    * Cierra la sesión del usuario
    * @return Unit
@@ -49,6 +62,26 @@ class AuthViewModel @Inject constructor(
    */
   fun logout() {
     repository.logout()
+  }
+
+  fun updatePassword(
+    newPassword: String,
+    user: FirebaseUser,
+    onResult: () -> Unit
+  ) {
+    viewModelScope.launch(Dispatchers.IO) {
+      _isLoading.value = true
+      try {
+        repository.updatePassword(newPassword, user)
+        onResult()
+        _isLoading.value = false
+      } catch (e: Exception) {
+        Log.d("TAG", "updatePassword: ${e.message}")
+        _isError.value = true
+        _uiError.value = e.message.toString()
+        _isLoading.value = false
+      }
+    }
   }
 
 
@@ -109,7 +142,7 @@ class AuthViewModel @Inject constructor(
 
     viewModelScope.launch(Dispatchers.IO) {
       _isLoading.value = true
-      when ( val result = repository.register(email, password, username)) {
+      when (val result = repository.register(email, password, username)) {
         is Resource.Success -> {
           _state.value = result
           withContext(Dispatchers.Main.immediate) {
@@ -117,6 +150,7 @@ class AuthViewModel @Inject constructor(
           }
           _isLoading.value = false
         }
+
         is Resource.Error -> {
           _state.value = result
           _isError.value = true

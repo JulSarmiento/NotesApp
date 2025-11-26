@@ -1,7 +1,10 @@
 package com.julhdev.notes.data.firebase
 
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.julhdev.notes.utils.resources.Resource
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -49,6 +52,22 @@ class AuthDataSource @Inject constructor(
   fun getCurrentUser(): FirebaseUser? {
     return auth.currentUser
   }
+
+  /**
+   * Actualiza la contraseña de un usuario.
+   * @param newPassword Nueva contraseña del usuario.
+   * @param user Usuario actual.
+   * @return Task<Void> si la actualización de contraseña es exitosa, de lo contrario null.
+   */
+  suspend fun updatePassword(newPassword: String, user: FirebaseUser): Void? {
+    return user.updatePassword(newPassword).await()
+  }
+
+  suspend fun reAuthenticateUser(email: String, password: String): Void? {
+    val credential = EmailAuthProvider.getCredential(email, password)
+    return auth.currentUser?.reauthenticate(credential)?.await()
+  }
+
 
   /**
    * Cierra la sesión actual del usuario.
