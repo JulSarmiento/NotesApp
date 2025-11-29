@@ -64,15 +64,75 @@ class AuthViewModel @Inject constructor(
     repository.logout()
   }
 
+  fun sendEmailToResetPassword(email: String) {
+    viewModelScope.launch(Dispatchers.IO) {
+      withContext(Dispatchers.Main) {
+        _isLoading.value = true
+      }
+      try {
+        repository.resetPassword(email)
+        withContext(Dispatchers.Main) {
+          _isLoading.value = false
+        }
+      } catch (e: Exception) {
+        withContext(Dispatchers.Main) {
+          Log.d("TAG", "sendEmailToResetPassword: ${e.message}")
+        }
+          _isError.value = true
+          _uiError.value = e.message.toString()
+          _isLoading.value = false
+        }
+    }
+  }
+
+  fun handlePasswordResetLink(deepLink: String): String? {
+    return repository.handlePasswordResetLink(deepLink)
+  }
+
+
+  /**
+   * Obtiene el usuario de la base de datos de Firestore
+   * @param email Correo electrónico del usuario
+   * @param onResult Callback que se ejecuta al finalizar la operación
+   * @return Unit
+   * @usage AuthViewModel().getUser(email) {}
+   */
+  fun ifUserExist(email: String, onResult: () -> Unit) {
+    viewModelScope.launch(Dispatchers.IO) {
+      withContext(Dispatchers.Main) {
+        _isLoading.value = true
+      }
+      try {
+        val userExist = repository.ifUserExist(email)
+        withContext(Dispatchers.Main) {
+          if (userExist) {
+            _isLoading.value = false
+            onResult()
+          } else {
+            _isError.value = true
+            _uiError.value = "El usuario no existe"
+            _isLoading.value = false
+          }
+        }
+      } catch (e: Exception) {
+        withContext(Dispatchers.Main) {
+          _isError.value = true
+          _uiError.value = e.message.toString()
+          _isLoading.value = false
+        }
+      }
+    }
+  }
+
   fun updatePassword(
     newPassword: String,
-    user: FirebaseUser,
+    actionCode: String,
     onResult: () -> Unit
   ) {
     viewModelScope.launch(Dispatchers.IO) {
       _isLoading.value = true
       try {
-        repository.updatePassword(newPassword, user)
+        repository.updatePassword(newPassword, actionCode)
         onResult()
         _isLoading.value = false
       } catch (e: Exception) {

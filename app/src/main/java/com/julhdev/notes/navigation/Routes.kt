@@ -9,6 +9,8 @@ package com.julhdev.notes.navigation
  * - ONBOARDING: Ruta para la vista de incorporación (OnboardingView).
  * - LOGIN: Ruta para la vista de inicio de sesión (LoginView).
  * - REGISTER: Ruta para la vista de registro de usuario (RegisterView).
+ * - RECOVERYPASSWORD: Ruta para la vista de recuperación de contraseña (RecoveryPasswordView).
+ * - CHANGEPASSWORD: Ruta para la vista de cambio de contraseña (ChangePasswordView).
  * @usage Utilizar estas constantes para navegar entre las diferentes vistas de la aplicación.
  */
 object Routes {
@@ -19,4 +21,6 @@ object Routes {
   const val EDIT = "edit"
   const val LOGIN = "login"
   const val REGISTER = "register"
+  const val RECOVERYPASSWORD = "recovery"
+  const val CHANGEPASSWORD = "changePassword"
 }

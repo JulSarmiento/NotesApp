@@ -1,6 +1,7 @@
 package com.julhdev.notes.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -8,10 +9,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.julhdev.notes.viewmodel.AuthViewModel
+import com.julhdev.notes.viewmodel.ChangePasswordView
 import com.julhdev.notes.viewmodel.FormViewModel
 import com.julhdev.notes.viewmodel.LoginFormViewModel
 import com.julhdev.notes.viewmodel.NoteViewModel
 import com.julhdev.notes.viewmodel.OnBoardingViewModel
+import com.julhdev.notes.viewmodel.RecoveryPasswordView
 import com.julhdev.notes.viewmodel.RegisterFormViewModel
 import com.julhdev.notes.viewmodel.ThemeViewModel
 import com.julhdev.notes.views.AddView
@@ -36,11 +39,24 @@ fun NavManager(
   formViewModel: FormViewModel,
   authViewModel: AuthViewModel,
   loginFormViewModel: LoginFormViewModel,
-  registerFormViewModel: RegisterFormViewModel
+  registerFormViewModel: RegisterFormViewModel,
+  initialDeepLink: String?
 ) {
 
   val isOnBoardingCompleted = onBoardingViewModel.completed.collectAsState()
   val navController = rememberNavController()
+
+  LaunchedEffect(initialDeepLink) {
+    if (!initialDeepLink.isNullOrEmpty()) {
+      val actionCode = authViewModel.handlePasswordResetLink(initialDeepLink)
+
+      if (actionCode?.isNotBlank() == true) {
+        navController.navigate("${Routes.CHANGEPASSWORD}?actionCode=$actionCode") {
+          popUpTo(Routes.SPLASH) { inclusive = true }
+        }
+      }
+    }
+  }
 
   NavHost(
     navController = navController,
@@ -58,6 +74,19 @@ fun NavManager(
     }
     composable(Routes.REGISTER) {
       RegisterView(navController, themeViewModel, authViewModel, registerFormViewModel)
+    }
+    composable(Routes.RECOVERYPASSWORD) {
+      RecoveryPasswordView(navController, themeViewModel, authViewModel)
+    }
+    composable(
+      "${Routes.CHANGEPASSWORD}?actionCode={actionCode}",
+      arguments = listOf(navArgument("actionCode") {
+        type = NavType.StringType
+        defaultValue = ""
+      })
+    ) { backStackEntry ->
+      val actionCode = backStackEntry.arguments?.getString("actionCode") ?: ""
+      ChangePasswordView(navController, themeViewModel, authViewModel, actionCode)
     }
     composable(Routes.HOME) {
       HomeView(navController, noteViewModel, themeViewModel, authViewModel)

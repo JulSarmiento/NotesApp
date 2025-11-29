@@ -1,5 +1,6 @@
 package com.julhdev.notes.data.repository
 
+import android.util.Log
 import com.google.firebase.auth.FirebaseUser
 import com.julhdev.notes.data.firebase.AuthDataSource
 import com.julhdev.notes.data.firebase.UserFirestoreDataSource
@@ -49,6 +50,7 @@ class AuthRepository @Inject constructor(
   ): Resource<FirebaseUser?> {
     return safeApiCall {
       val user = auth.register(email, password)
+      Log.d("AYUDAAA", "register: $user")
       if (user != null) {
         userStore.saveUser(username, user)
       }
@@ -62,8 +64,8 @@ class AuthRepository @Inject constructor(
    * @param user Usuario actual.
    * @return [Result] con el resultado de la operación o un error.
    */
-  suspend fun updatePassword(newPassword: String, user: FirebaseUser): Void? {
-    return  auth.updatePassword(newPassword, user)
+  suspend fun updatePassword(newPassword: String, actioCode: String): Void? {
+    return  auth.updatePassword(newPassword, actioCode)
   }
 
   /**
@@ -76,6 +78,17 @@ class AuthRepository @Inject constructor(
     return safeApiCall { auth.reAuthenticateUser(email, password) }
   }
 
+  suspend fun ifUserExist(email: String): Boolean {
+    return userStore.ifUserExist(email)
+  }
+
+  suspend fun resetPassword(email: String): Resource<Unit> {
+    return safeApiCall { auth.resetPassword(email) }
+  }
+
+  fun handlePasswordResetLink(deepLink: String): String? {
+    return auth.handlePasswordResetLink(deepLink)
+  }
 
   /**
    * Cierra la sesión del usuario actual.

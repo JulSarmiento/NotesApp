@@ -199,6 +199,21 @@ fun LoginView(
                 navController.navigate(Routes.REGISTER)
               }
           )
+          Spacer(
+            modifier = Modifier
+              .height(5.dp)
+          )
+          Text(
+            text = "¿Olvidaste tu contraseña?",
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier
+              .padding(10.dp)
+              .align(Alignment.CenterHorizontally)
+              .background(MaterialTheme.colorScheme.surfaceVariant)
+              .clickable {
+                navController.navigate(Routes.RECOVERYPASSWORD)
+              }
+          )
         }
       }
     }

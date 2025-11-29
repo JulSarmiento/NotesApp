@@ -1,5 +1,6 @@
 package com.julhdev.notes.views
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -203,7 +204,7 @@ fun RegisterView(
               .height(5.dp)
           )
           FormBtn(
-            text = "Crear",
+            text = "Crear cuenta",
             enabled = !isLoading.value,
             isLoading = isLoading.value,
             onClick = {
