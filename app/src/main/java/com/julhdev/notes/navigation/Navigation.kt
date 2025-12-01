@@ -12,6 +12,7 @@ import com.julhdev.notes.viewmodel.FormViewModel
 import com.julhdev.notes.viewmodel.LoginFormViewModel
 import com.julhdev.notes.viewmodel.NoteViewModel
 import com.julhdev.notes.viewmodel.OnBoardingViewModel
+import com.julhdev.notes.views.RecoveryPasswordView
 import com.julhdev.notes.viewmodel.RegisterFormViewModel
 import com.julhdev.notes.viewmodel.ThemeViewModel
 import com.julhdev.notes.views.AddView
@@ -36,7 +37,7 @@ fun NavManager(
   formViewModel: FormViewModel,
   authViewModel: AuthViewModel,
   loginFormViewModel: LoginFormViewModel,
-  registerFormViewModel: RegisterFormViewModel
+  registerFormViewModel: RegisterFormViewModel,
 ) {
 
   val isOnBoardingCompleted = onBoardingViewModel.completed.collectAsState()
@@ -48,7 +49,7 @@ fun NavManager(
   )
   {
     composable(Routes.SPLASH) {
-      SplashView(navController, isOnBoardingCompleted.value == true)
+      SplashView(navController, isOnBoardingCompleted.value, authViewModel)
     }
     composable(Routes.ONBOARDING) {
       OnBoardingView(navController, onBoardingViewModel)
@@ -58,6 +59,9 @@ fun NavManager(
     }
     composable(Routes.REGISTER) {
       RegisterView(navController, themeViewModel, authViewModel, registerFormViewModel)
+    }
+    composable(Routes.RECOVERYPASSWORD) {
+      RecoveryPasswordView(navController, themeViewModel, authViewModel)
     }
     composable(Routes.HOME) {
       HomeView(navController, noteViewModel, themeViewModel, authViewModel)

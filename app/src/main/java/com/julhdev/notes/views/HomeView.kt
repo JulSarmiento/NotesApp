@@ -1,5 +1,6 @@
 package com.julhdev.notes.views
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -59,6 +60,7 @@ fun HomeView(
   themeViewModel: ThemeViewModel,
   authViewModel: AuthViewModel
 ) {
+
   Scaffold(
     topBar = {
       TopBar(

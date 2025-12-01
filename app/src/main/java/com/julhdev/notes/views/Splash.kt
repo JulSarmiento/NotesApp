@@ -1,5 +1,6 @@
 package com.julhdev.notes.views
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -16,6 +17,7 @@ import androidx.navigation.NavController
 import com.julhdev.notes.R
 import com.julhdev.notes.components.MainImage
 import com.julhdev.notes.navigation.Routes
+import com.julhdev.notes.viewmodel.AuthViewModel
 import kotlinx.coroutines.delay
 
 /**
@@ -27,22 +29,25 @@ import kotlinx.coroutines.delay
 @Composable
 fun SplashView(
   navController: NavController,
-  store: Boolean,
+  store: Boolean?,
+  authViewModel: AuthViewModel
 ) {
-  val destination = if (store) Routes.LOGIN else Routes.ONBOARDING
 
-  var animationFinished by remember { mutableStateOf(false) }
+  LaunchedEffect(authViewModel.isUserLogged(), store) {
+    if (store == null) return@LaunchedEffect
 
-  LaunchedEffect(Unit) {
     delay(2000)
-    animationFinished = true
-  }
 
-  LaunchedEffect(animationFinished) {
-    if (animationFinished) {
-      navController.navigate(destination) {
+    if (authViewModel.isUserLogged()) {
+      navController.navigate(Routes.HOME) {
         popUpTo(Routes.SPLASH) { inclusive = true }
       }
+      return@LaunchedEffect
+    }
+
+    val destination = if (store) Routes.LOGIN else Routes.ONBOARDING
+    navController.navigate(destination) {
+      popUpTo(Routes.SPLASH) { inclusive = true }
     }
   }
 

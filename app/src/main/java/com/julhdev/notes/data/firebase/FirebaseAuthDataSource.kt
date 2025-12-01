@@ -51,6 +51,22 @@ class AuthDataSource @Inject constructor(
   }
 
   /**
+   * Verifica si el usuario está autenticado.
+   * @param email Correo electrónico del usuario.
+   * @return True si el usuario está autenticado, de lo contrario false.
+   * @usage Ejemplo de uso:
+   * val isUserLogged = authDataSource.isUserLogged()
+   */
+  suspend fun resetPassword(email: String): Boolean {
+    return try {
+      auth.sendPasswordResetEmail(email).await()
+      true
+    } catch (e: Exception) {
+      false
+    }
+  }
+
+  /**
    * Cierra la sesión actual del usuario.
    * @throws Exception Si ocurre un error durante el cierre de sesión
    * @usage Ejemplo de uso:

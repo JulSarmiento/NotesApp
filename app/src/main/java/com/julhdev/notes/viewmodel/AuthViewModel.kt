@@ -15,6 +15,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/**
+ * ViewModel para la autenticación de usuario
+ * @param repository Repositorio para la autenticación de usuario
+ * @usage Ejemplo de uso:
+ * val authViewModel = AuthViewModel(authRepository)
+ */
 @HiltViewModel
 class AuthViewModel @Inject constructor(
   private val repository: AuthRepository,
@@ -22,13 +28,10 @@ class AuthViewModel @Inject constructor(
 
   private val _state = MutableStateFlow<Resource<FirebaseUser?>>(Resource.Loading())
   val state = _state.asStateFlow()
-
   private val _isLoading = MutableStateFlow(false)
   val isLoading = _isLoading.asStateFlow()
-
   private val _uiError = MutableStateFlow("")
   var uiError = _uiError.asStateFlow()
-
   private val _isError = MutableStateFlow(false)
   var isError = _isError.asStateFlow()
 
@@ -43,6 +46,23 @@ class AuthViewModel @Inject constructor(
   }
 
   /**
+   * Obtiene el usuario actual
+   * @return FirebaseUser?
+   * @usage AuthViewModel().currentUser()
+   */
+  fun currentUser() = repository.getCurrentUser()
+
+  /**
+   * Verifica si el usuario está autenticado.
+   * @return True si el usuario está autenticado, de lo contrario false.
+   * @usage Ejemplo de uso:
+   * val isUserLogged = authViewModel.isUserLogged()
+   */
+  fun isUserLogged(): Boolean {
+    return repository.getCurrentUser() != null
+  }
+
+  /**
    * Cierra la sesión del usuario
    * @return Unit
    * @usage AuthViewModel().logout()
@@ -51,6 +71,33 @@ class AuthViewModel @Inject constructor(
     repository.logout()
   }
 
+  /**
+   * Envía un correo electrónico para restablecer la contraseña de un usuario.
+   * @param email Correo electronico del usuario que recibira el enlace de restablecimiento
+   * @param onResult Callback que se ejecuta al finalizar la operación
+   * @return Unit
+   * @usage AuthViewModel().sendEmailToResetPassword("usuario@email.com") { /* código a ejecutar al finalizar */ }
+   */
+  fun sendEmailToResetPassword(email: String, onResult: () -> Unit) {
+    viewModelScope.launch(Dispatchers.IO) {
+      withContext(Dispatchers.Main) {
+        _isLoading.value = true
+      }
+      try {
+        repository.resetPassword(email)
+        withContext(Dispatchers.Main) {
+          _isLoading.value = false
+          onResult()
+        }
+      } catch (e: Exception) {
+        withContext(Dispatchers.Main) {
+          _isError.value = true
+          _uiError.value = e.message.toString()
+          _isLoading.value = false
+        }
+      }
+    }
+  }
 
   /**
    * Inicia sesión con un usuario de firebase
@@ -109,7 +156,7 @@ class AuthViewModel @Inject constructor(
 
     viewModelScope.launch(Dispatchers.IO) {
       _isLoading.value = true
-      when ( val result = repository.register(email, password, username)) {
+      when (val result = repository.register(email, password, username)) {
         is Resource.Success -> {
           _state.value = result
           withContext(Dispatchers.Main.immediate) {
@@ -117,6 +164,7 @@ class AuthViewModel @Inject constructor(
           }
           _isLoading.value = false
         }
+
         is Resource.Error -> {
           _state.value = result
           _isError.value = true

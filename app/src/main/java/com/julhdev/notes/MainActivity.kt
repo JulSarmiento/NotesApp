@@ -28,6 +28,7 @@ class MainActivity : ComponentActivity() {
     val authViewModel: AuthViewModel by viewModels()
     val loginFormViewModel: LoginFormViewModel by viewModels()
     val registerFormViewModel: RegisterFormViewModel by viewModels()
+
     enableEdgeToEdge()
     setContent {
       NotesTheme(

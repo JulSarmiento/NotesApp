@@ -1,5 +1,6 @@
 package com.julhdev.notes.data.repository
 
+import android.util.Log
 import com.google.firebase.auth.FirebaseUser
 import com.julhdev.notes.data.firebase.AuthDataSource
 import com.julhdev.notes.data.firebase.UserFirestoreDataSource
@@ -16,6 +17,16 @@ class AuthRepository @Inject constructor(
   private val auth: AuthDataSource,
   private val userStore: UserFirestoreDataSource
 ) {
+
+  /**
+   * Obtiene el usuario actual autenticado.
+   * @return [FirebaseUser] si el usuario está autenticado, de lo contrario null.
+   * @usage Ejemplo de uso:
+   * val currentUser = authRepository.getCurrentUser()
+   */
+  fun getCurrentUser(): FirebaseUser? {
+    return auth.getCurrentUser()
+  }
 
   /**
    * Autentica un usuario con correo electrónico y contraseña.
@@ -47,11 +58,14 @@ class AuthRepository @Inject constructor(
   }
 
   /**
-   * Obtiene el usuario actual autenticado.
-   * @return [FirebaseUser] o nulo si no hay usuario autenticado.
+   * Restablece la contraseña de un usuario.
+   * @param email Correo electrónico del usuario.
+   * @return [Resource<Unit>] con el resultado de la operación o un error.
+   * @usage Ejemplo de uso:
+   * val result = authRepository.resetPassword(email)
    */
-  fun getCurrentUser(): FirebaseUser? {
-    return auth.getCurrentUser()
+  suspend fun resetPassword(email: String): Resource<Unit> {
+    return safeApiCall { auth.resetPassword(email) }
   }
 
   /**
@@ -60,5 +74,4 @@ class AuthRepository @Inject constructor(
   fun logout() {
     auth.logout()
   }
-
 }

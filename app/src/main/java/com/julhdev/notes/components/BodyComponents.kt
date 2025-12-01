@@ -380,6 +380,10 @@ fun MainDialog(
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.secondary
           )
+          Spacer(
+            modifier = Modifier
+              .height(10.dp)
+          )
           Text(
             text = content,
             style = MaterialTheme.typography.bodyMedium,
