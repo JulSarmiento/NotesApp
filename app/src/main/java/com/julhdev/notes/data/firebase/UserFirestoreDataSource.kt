@@ -4,7 +4,6 @@ import android.util.Log
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.julhdev.notes.data.model.UserModel
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -39,19 +38,5 @@ class UserFirestoreDataSource @Inject constructor(
     Log.d("Login", "saveUser: $user")
     usersCollection.document(id).set(user)
   }
-
-
-  /**
-   * Obtiene el usuario de la base de datos de Firestore
-   * @param email Correo electrónico del usuario
-   * @return Boolean
-   * @usage getUser("email")
-   */
-  suspend fun ifUserExist(email: String): Boolean {
-    val userExist =  usersCollection.whereEqualTo("email", email).get().await()
-    Log.d("Login", "getUser: $userExist")
-    return userExist != null && !userExist.isEmpty
-  }
-
 }
 

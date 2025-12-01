@@ -1,6 +1,7 @@
 package com.julhdev.notes.viewmodel
 
 import android.util.Log
+import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseUser
@@ -15,6 +16,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+/**
+ * ViewModel para la autenticación de usuario
+ * @param repository Repositorio para la autenticación de usuario
+ * @usage Ejemplo de uso:
+ * val authViewModel = AuthViewModel(authRepository)
+ */
 @HiltViewModel
 class AuthViewModel @Inject constructor(
   private val repository: AuthRepository,
@@ -22,13 +29,10 @@ class AuthViewModel @Inject constructor(
 
   private val _state = MutableStateFlow<Resource<FirebaseUser?>>(Resource.Loading())
   val state = _state.asStateFlow()
-
   private val _isLoading = MutableStateFlow(false)
   val isLoading = _isLoading.asStateFlow()
-
   private val _uiError = MutableStateFlow("")
   var uiError = _uiError.asStateFlow()
-
   private val _isError = MutableStateFlow(false)
   var isError = _isError.asStateFlow()
 
@@ -42,8 +46,12 @@ class AuthViewModel @Inject constructor(
     _uiError.value = ""
   }
 
+  /**
+   * Obtiene el usuario actual
+   * @return FirebaseUser?
+   * @usage AuthViewModel().getCurrentUser()
+   */
   fun currentUser() = repository.getCurrentUser()
-
 
   /**
    * Verifica si el usuario está autenticado.
@@ -64,7 +72,14 @@ class AuthViewModel @Inject constructor(
     repository.logout()
   }
 
-  fun sendEmailToResetPassword(email: String) {
+  /**
+   * Actualiza la contraseña de un usuario
+   * @param email
+   * @param onResult Callback que se ejecuta al finalizar la operación
+   * @return Unit
+   * @usage AuthViewModel().updatePassword(newPassword, actionCode)
+   */
+  fun sendEmailToResetPassword(email: String, onResult: () -> Unit) {
     viewModelScope.launch(Dispatchers.IO) {
       withContext(Dispatchers.Main) {
         _isLoading.value = true
@@ -73,9 +88,11 @@ class AuthViewModel @Inject constructor(
         repository.resetPassword(email)
         withContext(Dispatchers.Main) {
           _isLoading.value = false
+          onResult()
         }
       } catch (e: Exception) {
         withContext(Dispatchers.Main) {
+
           Log.d("TAG", "sendEmailToResetPassword: ${e.message}")
         }
           _isError.value = true
@@ -84,66 +101,6 @@ class AuthViewModel @Inject constructor(
         }
     }
   }
-
-  fun handlePasswordResetLink(deepLink: String): String? {
-    return repository.handlePasswordResetLink(deepLink)
-  }
-
-
-  /**
-   * Obtiene el usuario de la base de datos de Firestore
-   * @param email Correo electrónico del usuario
-   * @param onResult Callback que se ejecuta al finalizar la operación
-   * @return Unit
-   * @usage AuthViewModel().getUser(email) {}
-   */
-  fun ifUserExist(email: String, onResult: () -> Unit) {
-    viewModelScope.launch(Dispatchers.IO) {
-      withContext(Dispatchers.Main) {
-        _isLoading.value = true
-      }
-      try {
-        val userExist = repository.ifUserExist(email)
-        withContext(Dispatchers.Main) {
-          if (userExist) {
-            _isLoading.value = false
-            onResult()
-          } else {
-            _isError.value = true
-            _uiError.value = "El usuario no existe"
-            _isLoading.value = false
-          }
-        }
-      } catch (e: Exception) {
-        withContext(Dispatchers.Main) {
-          _isError.value = true
-          _uiError.value = e.message.toString()
-          _isLoading.value = false
-        }
-      }
-    }
-  }
-
-  fun updatePassword(
-    newPassword: String,
-    actionCode: String,
-    onResult: () -> Unit
-  ) {
-    viewModelScope.launch(Dispatchers.IO) {
-      _isLoading.value = true
-      try {
-        repository.updatePassword(newPassword, actionCode)
-        onResult()
-        _isLoading.value = false
-      } catch (e: Exception) {
-        Log.d("TAG", "updatePassword: ${e.message}")
-        _isError.value = true
-        _uiError.value = e.message.toString()
-        _isLoading.value = false
-      }
-    }
-  }
-
 
   /**
    * Inicia sesión con un usuario de firebase

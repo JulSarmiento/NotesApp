@@ -1,7 +1,5 @@
 package com.julhdev.notes.data.firebase
 
-import android.net.Uri
-import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.tasks.await
@@ -54,27 +52,18 @@ class AuthDataSource @Inject constructor(
 
   /**
    * Actualiza la contraseña de un usuario.
-   * @param newPassword Nueva contraseña del usuario.
-   * @return Task<Void> si la actualización de contraseña es exitosa, de lo contrario null.
+   * @param email Correo electrónico del usuario.
+   * @return Void?
+   * @throws Exception Si ocurre un error durante la actualización de la contraseña.
    */
-  suspend fun updatePassword(newPassword: String, actionCode: String): Void? {
-    return auth.confirmPasswordReset(actionCode,newPassword).await()
+  suspend fun resetPassword(email: String): Boolean {
+    return try {
+      auth.sendPasswordResetEmail(email).await()
+      true
+    } catch (e: Exception) {
+      false
+    }
   }
-
-  suspend fun reAuthenticateUser(email: String, password: String): Void? {
-    val credential = EmailAuthProvider.getCredential(email, password)
-    return auth.currentUser?.reauthenticate(credential)?.await()
-  }
-
-  suspend fun resetPassword(email: String): Void? {
-    return auth.sendPasswordResetEmail(email).await()
-  }
-
-  fun handlePasswordResetLink(deepLink: String): String? {
-    return Uri.parse(deepLink).getQueryParameter("oobCode")
-  }
-
-
 
   /**
    * Cierra la sesión actual del usuario.

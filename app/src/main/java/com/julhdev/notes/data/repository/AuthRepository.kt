@@ -59,35 +59,14 @@ class AuthRepository @Inject constructor(
   }
 
   /**
-   * Actualiza la contraseña de un usuario.
-   * @param newPassword Nueva contraseña del usuario.
-   * @param user Usuario actual.
-   * @return [Result] con el resultado de la operación o un error.
-   */
-  suspend fun updatePassword(newPassword: String, actioCode: String): Void? {
-    return  auth.updatePassword(newPassword, actioCode)
-  }
-
-  /**
-   * Re-autentica un usuario con correo electrónico y contraseña.
+   * Restablece la contraseña de un usuario.
    * @param email Correo electrónico del usuario.
-   * @param password Contraseña del usuario.
    * @return [Result] con el resultado de la operación o un error.
+   * @usage Ejemplo de uso:
+   * val result = authRepository.resetPassword(email)
    */
-  suspend fun reAuthenticateUser(email: String, password: String): Resource<Unit> {
-    return safeApiCall { auth.reAuthenticateUser(email, password) }
-  }
-
-  suspend fun ifUserExist(email: String): Boolean {
-    return userStore.ifUserExist(email)
-  }
-
   suspend fun resetPassword(email: String): Resource<Unit> {
     return safeApiCall { auth.resetPassword(email) }
-  }
-
-  fun handlePasswordResetLink(deepLink: String): String? {
-    return auth.handlePasswordResetLink(deepLink)
   }
 
   /**
@@ -96,5 +75,4 @@ class AuthRepository @Inject constructor(
   fun logout() {
     auth.logout()
   }
-
 }

@@ -1,4 +1,4 @@
-package com.julhdev.notes.viewmodel
+package com.julhdev.notes.views
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -30,20 +29,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.julhdev.notes.components.EmailTextField
 import com.julhdev.notes.components.FormBtn
+import com.julhdev.notes.components.MainDialog
 import com.julhdev.notes.components.MainTitle
 import com.julhdev.notes.components.NotificationMessage
-import com.julhdev.notes.components.PasswordTextField
 import com.julhdev.notes.components.TopBar
 import com.julhdev.notes.navigation.Routes
-import com.julhdev.notes.utils.resources.Resource
+import com.julhdev.notes.viewmodel.AuthViewModel
+import com.julhdev.notes.viewmodel.ThemeViewModel
 
 @Composable
-fun ChangePasswordView(
+fun RecoveryPasswordView(
   navController: NavController,
   themeViewModel: ThemeViewModel,
-  authViewModel: AuthViewModel,
-  actionCode: String
+  authViewModel: AuthViewModel
 ) {
 
   DisposableEffect(Unit) {
@@ -51,27 +51,35 @@ fun ChangePasswordView(
       authViewModel.cleanError()
     }
   }
-  val state = authViewModel.state.collectAsState()
   val isLoading = authViewModel.isLoading.collectAsState()
+  var showDialog = remember { mutableStateOf(false) }
+  val focusEmail = remember { FocusRequester() }
+  var email by rememberSaveable { mutableStateOf("") }
 
-  val focusPassword = remember { FocusRequester() }
-  val focusConfirmPassword = remember { FocusRequester() }
-
-  val visiblePassword = remember { mutableStateOf(false) }
-
-  var password by rememberSaveable { mutableStateOf("") }
-  var confirmPassword by rememberSaveable { mutableStateOf("") }
 
   Scaffold(
     topBar = {
       TopBar(
         navController,
         themeViewModel,
+        showBackBtn = true,
         showLogoutBtn = false,
         authViewModel = authViewModel
       )
     }
   ) { innerPadding ->
+
+    if(showDialog.value) {
+      MainDialog(
+        title = "Correo enviado!",
+        content = "Se ha enviado un correo electrónico para restablecer tu contraseña. Por favor revisa tus bandejas de entrada.",
+        onDismiss = {
+          showDialog.value = false
+          navController.navigate(Routes.LOGIN)
+        }
+      )
+    }
+
     Column(
       modifier = Modifier
         .fillMaxSize()
@@ -113,57 +121,37 @@ fun ChangePasswordView(
           )
           NotificationMessage(
             text = when {
-              state.value is Resource.Error -> authViewModel.uiError.collectAsState().value
+              authViewModel.isError.collectAsState().value -> authViewModel.uiError.collectAsState().value
               else -> ""
             }
           )
           MainTitle(
-            text = "Nueva contraseña",
+            text = "Recupera tu contraseña",
             color = MaterialTheme.colorScheme.primary
           )
           Spacer(
             modifier = Modifier
               .height(20.dp)
           )
-          PasswordTextField(
-            value = password,
-            label = "Contraseña",
+          EmailTextField(
+            value = email,
+            label = "Email",
+            onValueChange = { email = it },
             isError = false,
-            focusRequester = focusPassword,
-            onValueChange = { password = it },
-            nextFocusRequester = focusConfirmPassword,
-            trailingIcon = if (password.isNotEmpty()) Icons.Default.RemoveRedEye else null,
-            trailingIconClickAction = {
-              visiblePassword.value = !visiblePassword.value
-            }
-          )
-          Spacer(
-            modifier = Modifier
-              .height(10.dp)
-          )
-          PasswordTextField(
-            value = confirmPassword,
-            label = "Confirmar Contraseña",
-            isError = confirmPassword != password,
-            focusRequester = focusConfirmPassword,
-            onValueChange = { confirmPassword = it },
+            focusRequester = focusEmail,
             nextFocusRequester = null,
-            trailingIcon = if (password.isNotEmpty()) Icons.Default.RemoveRedEye else null,
-            trailingIconClickAction = {
-              visiblePassword.value = !visiblePassword.value
-            }
           )
           Spacer(
             modifier = Modifier
               .height(10.dp)
           )
           FormBtn(
-            text = "Iniciar Sesión",
+            text = "Validar",
             enabled = !isLoading.value,
             isLoading = isLoading.value,
             onClick = {
-              authViewModel.updatePassword(password, actionCode) {
-                navController.navigate(Routes.HOME)
+              authViewModel.sendEmailToResetPassword(email = email) {
+                showDialog.value = true
               }
             }
           )
