@@ -1,7 +1,6 @@
 package com.julhdev.notes.viewmodel
 
 import android.util.Log
-import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseUser
@@ -49,7 +48,7 @@ class AuthViewModel @Inject constructor(
   /**
    * Obtiene el usuario actual
    * @return FirebaseUser?
-   * @usage AuthViewModel().getCurrentUser()
+   * @usage AuthViewModel().currentUser()
    */
   fun currentUser() = repository.getCurrentUser()
 
@@ -57,7 +56,7 @@ class AuthViewModel @Inject constructor(
    * Verifica si el usuario está autenticado.
    * @return True si el usuario está autenticado, de lo contrario false.
    * @usage Ejemplo de uso:
-   * val isUserLogged = authRepository.isUserLogged()
+   * val isUserLogged = authViewModel.isUserLogged()
    */
   fun isUserLogged(): Boolean {
     return repository.getCurrentUser() != null
@@ -73,11 +72,11 @@ class AuthViewModel @Inject constructor(
   }
 
   /**
-   * Actualiza la contraseña de un usuario
-   * @param email
+   * Envía un correo electrónico para restablecer la contraseña de un usuario.
+   * @param email Correo electronico del usuario que recibira el enlace de restablecimiento
    * @param onResult Callback que se ejecuta al finalizar la operación
    * @return Unit
-   * @usage AuthViewModel().updatePassword(newPassword, actionCode)
+   * @usage AuthViewModel().sendEmailToResetPassword("usuario@email.com") { /* código a ejecutar al finalizar */ }
    */
   fun sendEmailToResetPassword(email: String, onResult: () -> Unit) {
     viewModelScope.launch(Dispatchers.IO) {
@@ -92,13 +91,11 @@ class AuthViewModel @Inject constructor(
         }
       } catch (e: Exception) {
         withContext(Dispatchers.Main) {
-
-          Log.d("TAG", "sendEmailToResetPassword: ${e.message}")
-        }
           _isError.value = true
           _uiError.value = e.message.toString()
           _isLoading.value = false
         }
+      }
     }
   }
 

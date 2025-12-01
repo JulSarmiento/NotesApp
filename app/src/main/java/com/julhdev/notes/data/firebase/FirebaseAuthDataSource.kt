@@ -51,10 +51,11 @@ class AuthDataSource @Inject constructor(
   }
 
   /**
-   * Actualiza la contraseña de un usuario.
+   * Verifica si el usuario está autenticado.
    * @param email Correo electrónico del usuario.
-   * @return Void?
-   * @throws Exception Si ocurre un error durante la actualización de la contraseña.
+   * @return True si el usuario está autenticado, de lo contrario false.
+   * @usage Ejemplo de uso:
+   * val isUserLogged = authDataSource.isUserLogged()
    */
   suspend fun resetPassword(email: String): Boolean {
     return try {

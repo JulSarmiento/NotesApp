@@ -50,7 +50,6 @@ class AuthRepository @Inject constructor(
   ): Resource<FirebaseUser?> {
     return safeApiCall {
       val user = auth.register(email, password)
-      Log.d("AYUDAAA", "register: $user")
       if (user != null) {
         userStore.saveUser(username, user)
       }
@@ -61,7 +60,7 @@ class AuthRepository @Inject constructor(
   /**
    * Restablece la contraseña de un usuario.
    * @param email Correo electrónico del usuario.
-   * @return [Result] con el resultado de la operación o un error.
+   * @return [Resource<Unit>] con el resultado de la operación o un error.
    * @usage Ejemplo de uso:
    * val result = authRepository.resetPassword(email)
    */

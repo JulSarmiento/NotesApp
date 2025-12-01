@@ -60,7 +60,6 @@ fun HomeView(
   themeViewModel: ThemeViewModel,
   authViewModel: AuthViewModel
 ) {
-  Log.d("AYUDAAA", "HomeView: ${authViewModel.currentUser()?.email}")
 
   Scaffold(
     topBar = {
