@@ -49,10 +49,10 @@ import java.util.Locale
  * @usage TimeFormat(1625072400000L) // Devuelve "30/06/2021 15:00" (dependiendo de la zona horaria)
  */
 @Composable
-fun timeFormat(time: Long): String {
+fun timeFormat(time: String): String {
   val pattern = "dd/MM/yyyy HH:mm"
   val formatter = DateTimeFormatter.ofPattern(pattern, Locale.getDefault())
-  val formattedTime = Instant.ofEpochMilli(time)
+  val formattedTime = Instant.ofEpochMilli(time.toLong())
     .atZone(ZoneId.systemDefault())
     .toLocalDateTime()
     .format(formatter)
@@ -87,7 +87,7 @@ fun NotificationMessage(
 fun NoteCard(
   title: String,
   content: String,
-  time: Long,
+  time: String,
   onClick: () -> Unit
 ) {
   Box(

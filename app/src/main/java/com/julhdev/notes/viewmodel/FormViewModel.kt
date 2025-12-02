@@ -1,10 +1,12 @@
 package com.julhdev.notes.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.julhdev.notes.data.local.Note
+import com.google.firebase.auth.FirebaseUser
 import com.julhdev.notes.data.model.FormState
+import com.julhdev.notes.data.model.NoteModel
 import com.julhdev.notes.data.repository.NoteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -45,7 +47,7 @@ sealed class FormEvent {
 @HiltViewModel
 class FormViewModel @Inject constructor(
   private val repository: NoteRepository,
-  private val savedStateHandle: SavedStateHandle
+  private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
   private val _uiState = MutableStateFlow(FormState())
@@ -164,7 +166,7 @@ class FormViewModel @Inject constructor(
    * Maneja el estado de envío y envía eventos de éxito o error.
    * @usage Llamar a submit() cuando el usuario presione el botón de guardar en la UI.
    */
-  fun submit() = viewModelScope.launch {
+  fun submit(user: FirebaseUser?) = viewModelScope.launch {
     val current = _uiState.value
 
     val contentError = validateContentSync(current.content.trim())
@@ -184,18 +186,20 @@ class FormViewModel @Inject constructor(
     if (!current.isValid || current.isSubmitting) return@launch
     _uiState.update { it.copy(isSubmitting = true) }
     try {
-      val note = Note(
-        id = current.noteId ?: 0,
+      val note = NoteModel(
+        userId = user?.uid,
         title = current.title.trim(),
         content = current.content,
-        timestamp = System.currentTimeMillis()
+        timestamp = System.currentTimeMillis().toString()
       )
 
       withContext(Dispatchers.IO) {
         if (current.noteId != null) {
-          repository.updateNote(note)
+//          repository.updateNote(note, user)
+          Log.d("Updating note:", "$note")
         } else {
-          repository.addNote(note)
+          repository.addNote(note, user)
+          Log.d("Adding note:", "$note")
         }
       }
       resetForm()

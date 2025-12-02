@@ -1,7 +1,10 @@
 package com.julhdev.notes.data.repository
 
+import com.google.firebase.auth.FirebaseUser
+import com.julhdev.notes.data.firebase.UserFirestoreDataSource
 import com.julhdev.notes.data.local.Note
 import com.julhdev.notes.data.local.NoteDao
+import com.julhdev.notes.data.model.NoteModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.conflate
@@ -18,7 +21,8 @@ import javax.inject.Inject
  * @usage Inyectar NoteRepository en ViewModels o casos de uso para acceder a las operaciones de notas.
  */
 class NoteRepository @Inject constructor(
-  private val noteDao: NoteDao
+  private val noteDao: NoteDao,
+  private val noteStore: UserFirestoreDataSource
 ) {
 
   /**
@@ -27,8 +31,8 @@ class NoteRepository @Inject constructor(
    * @see Note
    * @usage noteRepository.addNote(note)
    */
-  suspend fun addNote(note: Note){
-    noteDao.insertNote(note)
+  fun addNote(note: NoteModel, user: FirebaseUser?){
+    noteStore.saveNote(note, user)
   }
 
   /**
@@ -57,7 +61,9 @@ class NoteRepository @Inject constructor(
    * @see Note
    * @usage val notesFlow: Flow<List<Note>> = noteRepository.getNotes()
    */
-  fun getNotes(): Flow<List<Note>> = noteDao.getNotes().flowOn(Dispatchers.IO).conflate()
+  fun getNotes(user: FirebaseUser?): Flow<List<NoteModel>> = noteStore.getNotes(user).flowOn(Dispatchers.IO).conflate()
+
+//  fun getNotes(): Flow<List<Note>> = noteDao.getNotes().flowOn(Dispatchers.IO).conflate()
 
   /**
    * Recupera una nota por su ID como un flujo.

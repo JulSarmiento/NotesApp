@@ -34,6 +34,15 @@ class AuthViewModel @Inject constructor(
   var uiError = _uiError.asStateFlow()
   private val _isError = MutableStateFlow(false)
   var isError = _isError.asStateFlow()
+  private val _currentUser = MutableStateFlow<FirebaseUser?>(null)
+  val currentUser = _currentUser.asStateFlow()
+
+  init {
+    if (repository.getCurrentUser() != null) {
+      _currentUser.value = repository.getCurrentUser()
+      Log.d("User", "${repository.getCurrentUser()}")
+    }
+  }
 
   /**
    * Obtiene el usuario actual

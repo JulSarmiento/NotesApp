@@ -15,7 +15,7 @@ data class UserModel(
 
   /**
    * Funcion que mapea el modelo de datos a un mapa
-   * @return MutableMap<String, Any>
+   * @return MutableMap<String, String?>
    */
   fun toMap(): MutableMap<String, String?> {
     return mutableMapOf(

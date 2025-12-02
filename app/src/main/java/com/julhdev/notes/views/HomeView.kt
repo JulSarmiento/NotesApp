@@ -1,6 +1,5 @@
 package com.julhdev.notes.views
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,9 +12,8 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -30,16 +28,13 @@ import com.julhdev.notes.components.MainTitle
 import com.julhdev.notes.components.NoteCard
 import com.julhdev.notes.components.PngImage
 import com.julhdev.notes.components.SubTitle
-import com.julhdev.notes.components.SwitchButton
 import com.julhdev.notes.components.TopBar
 import com.julhdev.notes.data.local.Note
+import com.julhdev.notes.data.model.NoteModel
 import com.julhdev.notes.navigation.Routes
 import com.julhdev.notes.viewmodel.AuthViewModel
 import com.julhdev.notes.viewmodel.NoteViewModel
 import com.julhdev.notes.viewmodel.ThemeViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
 
@@ -60,6 +55,11 @@ fun HomeView(
   themeViewModel: ThemeViewModel,
   authViewModel: AuthViewModel
 ) {
+
+  LaunchedEffect(Unit) {
+    noteViewModel.loadNotes(authViewModel.currentUser())
+  }
+
 
   Scaffold(
     topBar = {
@@ -133,7 +133,7 @@ fun HomeViewContent(noteViewModel: NoteViewModel, navController: NavController) 
  * @usage HomeNotesContent( notes = notes, onDeleteNote = { note -> noteViewModel.deleteNote(note) } )
  */
 @Composable
-fun HomeNotesContent(notes: List<Note>, onDeleteNote: (Note) -> Unit, navController: NavController) {
+fun HomeNotesContent(notes: List<NoteModel>, onDeleteNote: (Note) -> Unit, navController: NavController) {
   Spacer(
     modifier = Modifier
       .height(10.dp)
@@ -149,7 +149,7 @@ fun HomeNotesContent(notes: List<Note>, onDeleteNote: (Note) -> Unit, navControl
        ),
        background = MaterialTheme.colorScheme.primary,
        onSwipe = {
-          onDeleteNote(it)
+//          onDeleteNote(it)
        }
      )
       SwipeableActionsBox(
@@ -161,7 +161,7 @@ fun HomeNotesContent(notes: List<Note>, onDeleteNote: (Note) -> Unit, navControl
           content = it.content,
           time = it.timestamp,
           onClick = {
-            navController.navigate("${Routes.EDIT}/${it.id}")
+//            navController.navigate("${Routes.EDIT}/${it.id}")
           }
         )
       }
