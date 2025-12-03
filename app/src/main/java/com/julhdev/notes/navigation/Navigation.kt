@@ -71,9 +71,9 @@ fun NavManager(
     }
     composable(
       "${Routes.EDIT}/{id}",
-      arguments = listOf(navArgument("id") { type = NavType.IntType })
+      arguments = listOf(navArgument("id") { type = NavType.StringType })
     ) {
-      val id = it.arguments?.getInt("id") ?: -1
+      val id = it.arguments?.getString("id") ?: ""
       EditView(id, navController, formViewModel, themeViewModel, authViewModel)
     }
   }

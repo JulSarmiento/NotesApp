@@ -57,13 +57,8 @@ class AuthDataSource @Inject constructor(
    * @usage Ejemplo de uso:
    * val isUserLogged = authDataSource.isUserLogged()
    */
-  suspend fun resetPassword(email: String): Boolean {
-    return try {
-      auth.sendPasswordResetEmail(email).await()
-      true
-    } catch (e: Exception) {
-      false
-    }
+  suspend fun resetPassword(email: String): Void {
+    return auth.sendPasswordResetEmail(email).await()
   }
 
   /**

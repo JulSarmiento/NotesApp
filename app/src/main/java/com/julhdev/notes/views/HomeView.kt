@@ -1,6 +1,5 @@
 package com.julhdev.notes.views
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,9 +12,8 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -30,16 +28,13 @@ import com.julhdev.notes.components.MainTitle
 import com.julhdev.notes.components.NoteCard
 import com.julhdev.notes.components.PngImage
 import com.julhdev.notes.components.SubTitle
-import com.julhdev.notes.components.SwitchButton
 import com.julhdev.notes.components.TopBar
-import com.julhdev.notes.data.local.Note
+import com.julhdev.notes.data.model.NoteModel
+import com.julhdev.notes.data.model.UserModel
 import com.julhdev.notes.navigation.Routes
 import com.julhdev.notes.viewmodel.AuthViewModel
 import com.julhdev.notes.viewmodel.NoteViewModel
 import com.julhdev.notes.viewmodel.ThemeViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import me.saket.swipe.SwipeAction
 import me.saket.swipe.SwipeableActionsBox
 
@@ -60,6 +55,10 @@ fun HomeView(
   themeViewModel: ThemeViewModel,
   authViewModel: AuthViewModel
 ) {
+
+  LaunchedEffect(Unit) {
+    noteViewModel.loadNotes(authViewModel.currentUser())
+  }
 
   Scaffold(
     topBar = {
@@ -94,11 +93,12 @@ fun HomeView(
  * @usage HomeViewContent(noteViewModel = noteViewModel)
  */
 @Composable
-fun HomeViewContent(noteViewModel: NoteViewModel, navController: NavController) {
+fun HomeViewContent(
+  noteViewModel: NoteViewModel,
+  navController: NavController,
+) {
   val notes by noteViewModel.notes.collectAsState()
-  val onDeleteNote: (Note) -> Unit = { note ->
-    noteViewModel.deleteNote(note)
-  }
+
   Column(
     modifier = Modifier
       .padding(16.dp)
@@ -109,7 +109,7 @@ fun HomeViewContent(noteViewModel: NoteViewModel, navController: NavController) 
         .height(20.dp)
     )
     MainTitle(
-      text = "Tus Notas",
+      text = "Tus notas",
       color = MaterialTheme.colorScheme.secondary,
     )
     Column(
@@ -119,7 +119,7 @@ fun HomeViewContent(noteViewModel: NoteViewModel, navController: NavController) 
       if (notes.isEmpty()) {
         HomeEmptyContent()
       } else {
-        HomeNotesContent(notes, onDeleteNote, navController = navController)
+        HomeNotesContent(notes, noteViewModel, navController = navController)
       }
     }
   }
@@ -128,12 +128,16 @@ fun HomeViewContent(noteViewModel: NoteViewModel, navController: NavController) 
 /**
  * HomeNotesContent Composable
  * @param notes de tipo List<Note> que representa la lista de notas disponibles
- * @param onDeleteNote de tipo (Note) -> Unit que representa la función a ejecutar al eliminar una nota
+ * @param noteViewModel de tipo NoteViewModel que representa el ViewModel de notas
  * @return un componente que muestra una lista de notas disponibles.
- * @usage HomeNotesContent( notes = notes, onDeleteNote = { note -> noteViewModel.deleteNote(note) } )
+ * @usage HomeNotesContent( notes = notes, noteViewModel )
  */
 @Composable
-fun HomeNotesContent(notes: List<Note>, onDeleteNote: (Note) -> Unit, navController: NavController) {
+fun HomeNotesContent(
+  notes: List<NoteModel>,
+  noteViewModel: NoteViewModel,
+  navController: NavController
+) {
   Spacer(
     modifier = Modifier
       .height(10.dp)
@@ -143,15 +147,15 @@ fun HomeNotesContent(notes: List<Note>, onDeleteNote: (Note) -> Unit, navControl
       .padding(all = 10.dp)
   ) {
     items(notes) {
-     val delete = SwipeAction(
-       icon = rememberVectorPainter(
-         image = Icons.Default.Delete,
-       ),
-       background = MaterialTheme.colorScheme.primary,
-       onSwipe = {
-          onDeleteNote(it)
-       }
-     )
+      val delete = SwipeAction(
+        icon = rememberVectorPainter(
+          image = Icons.Default.Delete,
+        ),
+        background = MaterialTheme.colorScheme.primary,
+        onSwipe = {
+          noteViewModel.deleteNote(it.uid ?: "")
+        }
+      )
       SwipeableActionsBox(
         endActions = listOf(delete),
         swipeThreshold = 120.dp
@@ -161,7 +165,7 @@ fun HomeNotesContent(notes: List<Note>, onDeleteNote: (Note) -> Unit, navControl
           content = it.content,
           time = it.timestamp,
           onClick = {
-            navController.navigate("${Routes.EDIT}/${it.id}")
+            navController.navigate("${Routes.EDIT}/${it.uid}")
           }
         )
       }

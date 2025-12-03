@@ -1,6 +1,5 @@
 package com.julhdev.notes.data.repository
 
-import android.util.Log
 import com.google.firebase.auth.FirebaseUser
 import com.julhdev.notes.data.firebase.AuthDataSource
 import com.julhdev.notes.data.firebase.UserFirestoreDataSource

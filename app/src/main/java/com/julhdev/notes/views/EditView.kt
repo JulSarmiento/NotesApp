@@ -1,5 +1,6 @@
 package com.julhdev.notes.views
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -7,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -15,8 +15,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -29,22 +27,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.julhdev.notes.components.IconButton
+import com.google.firebase.logger.Logger
 import com.julhdev.notes.components.MainBtn
 import com.julhdev.notes.components.MainDialog
 import com.julhdev.notes.components.MainTextArea
 import com.julhdev.notes.components.MainTextField
-import com.julhdev.notes.components.MainTitle
 import com.julhdev.notes.components.SubTitle
-import com.julhdev.notes.components.SwitchButton
 import com.julhdev.notes.components.TopBar
 import com.julhdev.notes.viewmodel.AuthViewModel
 import com.julhdev.notes.viewmodel.FormEvent
 import com.julhdev.notes.viewmodel.FormViewModel
 import com.julhdev.notes.viewmodel.ThemeViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 /**
  * Vista de edición de notas.
@@ -59,7 +52,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditView(
-  noteId: Int,
+  noteId: String,
   navController: NavController,
   formViewModel: FormViewModel,
   themeViewModel: ThemeViewModel,
@@ -102,7 +95,7 @@ fun EditView(
         .padding(innerPadding)
     ) {
 
-      EditViewContent(noteId, formViewModel, navController)
+      EditViewContent(noteId, formViewModel, navController, authViewModel)
 
       if (showDialog) {
         MainDialog(
@@ -127,13 +120,15 @@ fun EditView(
  */
 @Composable
 fun EditViewContent(
-  noteId: Int,
+  noteId: String,
   formViewModel: FormViewModel,
   navController: NavController,
+  authViewModel: AuthViewModel
 ) {
   val state by formViewModel.uiState.collectAsState()
   val focus1 = remember { FocusRequester() }
   val focus2 = remember { FocusRequester() }
+  val currentUser by authViewModel.currentUser.collectAsState()
 
   LaunchedEffect(
     Unit
@@ -200,7 +195,7 @@ fun EditViewContent(
       text = "Guardar",
       icon = Icons.Filled.Save,
       description = "Icono de guardar",
-      onClick = { formViewModel.submit() },
+      onClick = { formViewModel.submit(currentUser) },
     )
   }
 }

@@ -35,7 +35,7 @@ class UserFirestoreDataSource @Inject constructor(
       userName = username,
       email = email
     ).toMap()
-    Log.d("Login", "saveUser: $user")
+    Log.d("Saving user:", "saveUser: $user")
     usersCollection.document(id).set(user)
   }
 }

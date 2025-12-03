@@ -101,7 +101,7 @@ fun OnBoardingViewContent(navController: NavController, onBoardingViewModel: OnB
       CoroutineScope(Dispatchers.IO).launch {
         onBoardingViewModel.saveBoarding(true)
       }
-      navController.navigate(Routes.HOME) {
+      navController.navigate(Routes.LOGIN) {
         popUpTo(Routes.ONBOARDING) { inclusive = true }
       }
     },
