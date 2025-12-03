@@ -97,7 +97,7 @@ fun EditView(
 
       Log.d("EditView", "noteId: $noteId")
 
-//      EditViewContent(noteId, formViewModel, navController, authViewModel)
+      EditViewContent(noteId, formViewModel, navController, authViewModel)
 
       if (showDialog) {
         MainDialog(

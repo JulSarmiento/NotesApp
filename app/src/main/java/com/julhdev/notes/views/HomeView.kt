@@ -101,9 +101,7 @@ fun HomeView(
 @Composable
 fun HomeViewContent(noteViewModel: NoteViewModel, navController: NavController, currentUser: UserModel?) {
   val notes by noteViewModel.notes.collectAsState()
-  val onDeleteNote: (Note) -> Unit = { note ->
-    noteViewModel.deleteNote(note)
-  }
+
   Column(
     modifier = Modifier
       .padding(16.dp)
@@ -124,7 +122,7 @@ fun HomeViewContent(noteViewModel: NoteViewModel, navController: NavController, 
       if (notes.isEmpty()) {
         HomeEmptyContent()
       } else {
-        HomeNotesContent(notes, onDeleteNote, navController = navController)
+        HomeNotesContent(notes, noteViewModel, navController = navController)
       }
     }
   }
@@ -138,7 +136,7 @@ fun HomeViewContent(noteViewModel: NoteViewModel, navController: NavController, 
  * @usage HomeNotesContent( notes = notes, onDeleteNote = { note -> noteViewModel.deleteNote(note) } )
  */
 @Composable
-fun HomeNotesContent(notes: List<NoteModel>, onDeleteNote: (Note) -> Unit, navController: NavController) {
+fun HomeNotesContent(notes: List<NoteModel>, noteViewModel: NoteViewModel, onDeleteNote: (String) -> Unit = {}, navController: NavController) {
   Spacer(
     modifier = Modifier
       .height(10.dp)
@@ -154,7 +152,7 @@ fun HomeNotesContent(notes: List<NoteModel>, onDeleteNote: (Note) -> Unit, navCo
        ),
        background = MaterialTheme.colorScheme.primary,
        onSwipe = {
-//          onDeleteNote(it)
+          noteViewModel.deleteNote(it.uid ?: "")
        }
      )
       SwipeableActionsBox(

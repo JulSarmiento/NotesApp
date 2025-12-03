@@ -31,7 +31,7 @@ class NoteRepository @Inject constructor(
    * @see Note
    * @usage noteRepository.addNote(note)
    */
-  fun addNote(note: NoteModel, user: FirebaseUser?){
+  fun addNote(note: NoteModel, user: FirebaseUser?) {
     noteStore.saveNote(note, user)
   }
 
@@ -41,8 +41,8 @@ class NoteRepository @Inject constructor(
    * @see Note
    * @usage noteRepository.updateNote(note)
    */
-  suspend fun updateNote(note: Note){
-    noteDao.updateNote(note)
+  fun updateNote(note: NoteModel, noteId: String, user: FirebaseUser?) {
+    noteStore.updateNote(note, noteId, user)
   }
 
   /**
@@ -51,8 +51,8 @@ class NoteRepository @Inject constructor(
    * @see Note
    * @usage noteRepository.deleteNote(note)
    */
-  suspend fun deleteNote(note: Note){
-    noteDao.deleteNote(note)
+  fun deleteNote(noteId: String) {
+    noteStore.deleteNote(noteId)
   }
 
   /**
@@ -61,7 +61,8 @@ class NoteRepository @Inject constructor(
    * @see Note
    * @usage val notesFlow: Flow<List<Note>> = noteRepository.getNotes()
    */
-  fun getNotes(user: FirebaseUser?): Flow<List<NoteModel>> = noteStore.getNotes(user).flowOn(Dispatchers.IO).conflate()
+  fun getNotes(user: FirebaseUser?): Flow<List<NoteModel>> =
+    noteStore.getNotes(user).flowOn(Dispatchers.IO).conflate()
 
   /**
    * Recupera una nota por su ID como un flujo.
@@ -70,5 +71,6 @@ class NoteRepository @Inject constructor(
    * @see Note
    * @usage val noteFlow: Flow<Note?> = noteRepository.getNoteById(id)
    */
-  fun getNoteById(id: String?): Flow<NoteModel?> = noteStore.getNoteById(id ?: "").flowOn(Dispatchers.IO).conflate()
+  fun getNoteById(id: String?): Flow<NoteModel?> =
+    noteStore.getNoteById(id ?: "").flowOn(Dispatchers.IO).conflate()
 }

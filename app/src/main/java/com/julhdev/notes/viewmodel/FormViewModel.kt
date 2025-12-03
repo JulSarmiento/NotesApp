@@ -195,7 +195,7 @@ class FormViewModel @Inject constructor(
 
       withContext(Dispatchers.IO) {
         if (current.noteId != null) {
-//          repository.updateNote(note, user)
+          repository.updateNote(note, current.noteId, user)
           Log.d("Updating note:", "$note")
         } else {
           repository.addNote(note, user)

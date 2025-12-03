@@ -3,6 +3,7 @@ package com.julhdev.notes.data.firebase
 import android.util.Log
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.julhdev.notes.data.model.NoteModel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -34,6 +35,14 @@ class NotesFirestoreDataSource @Inject constructor(
     notesCollection.add(noteMap)
   }
 
+  /**
+   * Actualiza la nota en la base de datos de Firestore
+   * @param note Nota a actualizar
+   * @param noteId Id de la nota a actualizar
+   * @param currentUser Usuario actual
+   * @return Task<Void?>
+   * @usage updateNote(note, noteId, currentUser)
+   */
   fun updateNote(note: NoteModel, noteId: String, currentUser: FirebaseUser?) {
     val id = currentUser?.uid ?: return
     val noteMap = NoteModel(
@@ -43,7 +52,7 @@ class NotesFirestoreDataSource @Inject constructor(
       timestamp = note.timestamp
     ).toMap()
     Log.d("Updating note:", "$noteMap")
-    notesCollection.document(noteId).set(noteMap)
+    notesCollection.document(noteId).set(noteMap, SetOptions.merge())
   }
 
   /**
@@ -82,6 +91,12 @@ class NotesFirestoreDataSource @Inject constructor(
     awaitClose { listener.remove() }
   }
 
+  /**
+   * Obtiene la nota de la base de datos de Firestore
+   * @param noteId Id de la nota a obtener
+   * @return Flow<NoteModel?>
+   * @usage getNoteById(noteId)
+   */
   fun getNoteById(noteId: String): Flow<NoteModel?> {
     return callbackFlow {
       val listener = notesCollection.document(noteId).addSnapshotListener { snapshot, error ->
@@ -103,4 +118,16 @@ class NotesFirestoreDataSource @Inject constructor(
       awaitClose { listener.remove() }
     }
   }
+
+  /**
+   * Elimina la nota de la base de datos de Firestore
+   * @param noteId Id de la nota a eliminar
+   * @return Task<Void?>
+   * @usage deleteNote(noteId)
+   */
+  fun deleteNote(noteId: String) {
+    Log.d("Deleting note:", noteId)
+    notesCollection.document(noteId).delete()
+  }
 }
+
