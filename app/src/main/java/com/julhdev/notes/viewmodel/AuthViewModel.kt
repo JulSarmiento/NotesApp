@@ -66,18 +66,6 @@ class AuthViewModel @Inject constructor(
   fun currentUser() = repository.getCurrentUser()
 
   /**
-   * Obtiene el usuario actual
-   * @return FirebaseUser?
-   * @usage AuthViewModel().getUser()
-   */
-  fun getUser(user: FirebaseUser?) {
-    viewModelScope.launch {
-      val result = repository.getUser(user)
-      _user.value = result
-    }
-  }
-
-  /**
    * Verifica si el usuario está autenticado.
    * @return True si el usuario está autenticado, de lo contrario false.
    * @usage Ejemplo de uso:

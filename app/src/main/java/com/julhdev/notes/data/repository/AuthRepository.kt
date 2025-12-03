@@ -1,10 +1,8 @@
 package com.julhdev.notes.data.repository
 
-import android.util.Log
 import com.google.firebase.auth.FirebaseUser
 import com.julhdev.notes.data.firebase.AuthDataSource
 import com.julhdev.notes.data.firebase.UserFirestoreDataSource
-import com.julhdev.notes.data.model.UserModel
 import com.julhdev.notes.utils.resources.Resource
 import com.julhdev.notes.utils.safeApiCall
 import javax.inject.Inject
@@ -27,17 +25,6 @@ class AuthRepository @Inject constructor(
    */
   fun getCurrentUser(): FirebaseUser? {
     return auth.getCurrentUser()
-  }
-
-  /**
-   * Obtiene el usuario actual autenticado.
-   * @return [UserModel] si el usuario está autenticado, de lo contrario null.
-   * @usage Ejemplo de uso:
-   * val currentUser = authRepository.getCurrentUser()
-   */
-  suspend fun getUser(user: FirebaseUser?): UserModel? {
-    val uid = user?.uid ?: return null
-    return userStore.getUser(uid)
   }
 
   /**

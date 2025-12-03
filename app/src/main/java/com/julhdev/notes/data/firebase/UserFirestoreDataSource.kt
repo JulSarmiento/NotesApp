@@ -4,7 +4,6 @@ import android.util.Log
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.julhdev.notes.data.model.UserModel
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -38,24 +37,6 @@ class UserFirestoreDataSource @Inject constructor(
     ).toMap()
     Log.d("Saving user:", "saveUser: $user")
     usersCollection.document(id).set(user)
-  }
-
-  /**
-   * Obtiene el usuario de la base de datos de Firestore
-   * @param uid Usuario actual
-   * @return UserModel
-   * @usage getUser(currentUser)
-   */
-  suspend fun getUser(uid: String): UserModel? {
-    val snapshot = usersCollection.document(uid).get().await()
-
-    val data = snapshot.data ?: return null
-
-    return UserModel(
-      id = uid,
-      userName = data["userName"] as String,
-      email = data["email"] as String
-    )
   }
 }
 
