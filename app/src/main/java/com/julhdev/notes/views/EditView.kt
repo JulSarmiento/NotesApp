@@ -1,5 +1,6 @@
 package com.julhdev.notes.views
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.google.firebase.logger.Logger
 import com.julhdev.notes.components.MainBtn
 import com.julhdev.notes.components.MainDialog
 import com.julhdev.notes.components.MainTextArea
@@ -50,7 +52,7 @@ import com.julhdev.notes.viewmodel.ThemeViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditView(
-  noteId: Int,
+  noteId: String,
   navController: NavController,
   formViewModel: FormViewModel,
   themeViewModel: ThemeViewModel,
@@ -93,7 +95,9 @@ fun EditView(
         .padding(innerPadding)
     ) {
 
-      EditViewContent(noteId, formViewModel, navController, authViewModel)
+      Log.d("EditView", "noteId: $noteId")
+
+//      EditViewContent(noteId, formViewModel, navController, authViewModel)
 
       if (showDialog) {
         MainDialog(
@@ -118,7 +122,7 @@ fun EditView(
  */
 @Composable
 fun EditViewContent(
-  noteId: Int,
+  noteId: String,
   formViewModel: FormViewModel,
   navController: NavController,
   authViewModel: AuthViewModel

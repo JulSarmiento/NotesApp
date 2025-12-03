@@ -70,5 +70,5 @@ class NoteRepository @Inject constructor(
    * @see Note
    * @usage val noteFlow: Flow<Note?> = noteRepository.getNoteById(id)
    */
-  fun getNoteById(id: Int): Flow<Note?> = noteDao.getNoteById(id).flowOn(Dispatchers.IO).conflate()
+  fun getNoteById(id: String?): Flow<NoteModel?> = noteStore.getNoteById(id ?: "").flowOn(Dispatchers.IO).conflate()
 }

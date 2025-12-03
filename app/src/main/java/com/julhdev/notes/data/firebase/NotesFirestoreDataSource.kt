@@ -81,4 +81,26 @@ class NotesFirestoreDataSource @Inject constructor(
       }
     awaitClose { listener.remove() }
   }
+
+  fun getNoteById(noteId: String): Flow<NoteModel?> {
+    return callbackFlow {
+      val listener = notesCollection.document(noteId).addSnapshotListener { snapshot, error ->
+        if (error != null) {
+          close(error)
+          return@addSnapshotListener
+        }
+        val note = snapshot?.let {
+          NoteModel(
+            uid = it.id,
+            userId = it.getString("userId"),
+            title = it.getString("title") ?: "",
+            content = it.getString("content") ?: "",
+            timestamp = it.getString("timestamp") ?: ""
+          )
+        }
+        trySend(note)
+      }
+      awaitClose { listener.remove() }
+    }
+  }
 }

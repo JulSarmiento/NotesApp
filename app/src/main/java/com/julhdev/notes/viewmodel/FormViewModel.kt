@@ -86,7 +86,7 @@ class FormViewModel @Inject constructor(
    * @param noteId El ID de la nota a cargar.
    * @usage Llamar a loadNote(noteId) para cargar los datos de una nota específica en el formulario.
    */
-  fun loadNote(noteId: Int) {
+  fun loadNote(noteId: String) {
     if (_uiState.value.noteId == noteId && _uiState.value.title.isNotBlank()) return
     savedStateHandle["editId"] = noteId
 
@@ -94,10 +94,10 @@ class FormViewModel @Inject constructor(
       repository.getNoteById(noteId).firstOrNull()?.let { note ->
         _uiState.update {
           it.copy(
-            noteId = note.id,
+            noteId = note.uid,
             title = note.title,
             content = note.content,
-            timeStamp = note.timestamp,
+            timeStamp = note.timestamp.toLong(),
             titleError = null,
             contentError = null
           )

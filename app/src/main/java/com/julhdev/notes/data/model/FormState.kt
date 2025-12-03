@@ -11,7 +11,7 @@ package com.julhdev.notes.data.model
  * @property isValid Indica si el formulario es válido (sin errores y campos no vacíos)
  */
 data class FormState(
-  val noteId: Int? = null,
+  val noteId: String? = null,
   val title: String = "",
   val content: String = "",
   val timeStamp: Long = 0L,
