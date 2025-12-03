@@ -44,7 +44,6 @@ class NoteViewModel @Inject constructor(
   /**
    * Elimina una entidad Note del repositorio.
    * @param noteId La entidad Note que se va a eliminar.
-   * @see Note
    * @usage Llamar a deleteNote(note) para eliminar una Note de la fuente de datos.
    */
   fun deleteNote(noteId: String) {

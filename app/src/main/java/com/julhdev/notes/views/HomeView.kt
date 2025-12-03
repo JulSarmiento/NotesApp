@@ -56,8 +56,6 @@ fun HomeView(
   authViewModel: AuthViewModel
 ) {
 
-  val currentUser by authViewModel.user.collectAsState()
-
   LaunchedEffect(Unit) {
     noteViewModel.loadNotes(authViewModel.currentUser())
   }
@@ -84,7 +82,7 @@ fun HomeView(
       modifier = Modifier
         .padding(innerPadding)
     ) {
-      HomeViewContent(noteViewModel, navController, currentUser)
+      HomeViewContent(noteViewModel, navController)
     }
   }
 }
@@ -98,7 +96,6 @@ fun HomeView(
 fun HomeViewContent(
   noteViewModel: NoteViewModel,
   navController: NavController,
-  currentUser: UserModel?
 ) {
   val notes by noteViewModel.notes.collectAsState()
 
@@ -131,15 +128,14 @@ fun HomeViewContent(
 /**
  * HomeNotesContent Composable
  * @param notes de tipo List<Note> que representa la lista de notas disponibles
- * @param onDeleteNote de tipo (Note) -> Unit que representa la función a ejecutar al eliminar una nota
+ * @param noteViewModel de tipo NoteViewModel que representa el ViewModel de notas
  * @return un componente que muestra una lista de notas disponibles.
- * @usage HomeNotesContent( notes = notes, onDeleteNote = { note -> noteViewModel.deleteNote(note) } )
+ * @usage HomeNotesContent( notes = notes, noteViewModel )
  */
 @Composable
 fun HomeNotesContent(
   notes: List<NoteModel>,
   noteViewModel: NoteViewModel,
-  onDeleteNote: (String) -> Unit = {},
   navController: NavController
 ) {
   Spacer(

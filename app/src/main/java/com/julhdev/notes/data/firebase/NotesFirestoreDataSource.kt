@@ -31,7 +31,6 @@ class NotesFirestoreDataSource @Inject constructor(
       content = note.content,
       timestamp = note.timestamp
     ).toMap()
-    Log.d("Saving note:", "$noteMap")
     notesCollection.add(noteMap)
   }
 
@@ -51,12 +50,11 @@ class NotesFirestoreDataSource @Inject constructor(
       content = note.content,
       timestamp = note.timestamp
     ).toMap()
-    Log.d("Updating note:", "$noteMap")
     notesCollection.document(noteId).set(noteMap, SetOptions.merge())
   }
 
   /**
-   * Obtiene el usuario de la base de datos de Firestore
+   * Obtiene las notas de la base de datos de Firestore
    * @param user Usuario actual
    * @return Flow<UserModel?>
    * @usage getUser(currentUser)
@@ -126,7 +124,6 @@ class NotesFirestoreDataSource @Inject constructor(
    * @usage deleteNote(noteId)
    */
   fun deleteNote(noteId: String) {
-    Log.d("Deleting note:", noteId)
     notesCollection.document(noteId).delete()
   }
 }

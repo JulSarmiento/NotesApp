@@ -95,8 +95,6 @@ fun EditView(
         .padding(innerPadding)
     ) {
 
-      Log.d("EditView", "noteId: $noteId")
-
       EditViewContent(noteId, formViewModel, navController, authViewModel)
 
       if (showDialog) {

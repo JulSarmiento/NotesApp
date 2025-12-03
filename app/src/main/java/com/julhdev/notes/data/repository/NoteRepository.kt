@@ -22,7 +22,7 @@ class NoteRepository @Inject constructor(
 
   /**
    * Agrega una nueva nota a la base de datos.
-   * @param noteStore La nota a agregar.
+   * @param note La nota a agregar.
    * @usage noteRepository.addNote(note)
    */
   fun addNote(note: NoteModel, user: FirebaseUser?) {
@@ -31,7 +31,7 @@ class NoteRepository @Inject constructor(
 
   /**
    * Actualiza una nota existente en la base de datos.
-   * @param noteStore La nota a actualizar.
+   * @param note La nota a actualizar.
    * @usage noteRepository.updateNote(note)
    */
   fun updateNote(note: NoteModel, noteId: String, user: FirebaseUser?) {
@@ -40,7 +40,7 @@ class NoteRepository @Inject constructor(
 
   /**
    * Elimina una nota de la base de datos.
-   * @param noteStore La nota a eliminar.
+   * @param noteId El ID de la nota a eliminar.
    * @usage noteRepository.deleteNote(note)
    */
   fun deleteNote(noteId: String) {
