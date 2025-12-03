@@ -1,5 +1,6 @@
 package com.julhdev.notes.views
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,6 +32,7 @@ import com.julhdev.notes.components.SubTitle
 import com.julhdev.notes.components.TopBar
 import com.julhdev.notes.data.local.Note
 import com.julhdev.notes.data.model.NoteModel
+import com.julhdev.notes.data.model.UserModel
 import com.julhdev.notes.navigation.Routes
 import com.julhdev.notes.viewmodel.AuthViewModel
 import com.julhdev.notes.viewmodel.NoteViewModel
@@ -56,7 +58,10 @@ fun HomeView(
   authViewModel: AuthViewModel
 ) {
 
+  val currentUser by authViewModel.user.collectAsState()
+
   LaunchedEffect(Unit) {
+    authViewModel.getUser(authViewModel.currentUser())
     noteViewModel.loadNotes(authViewModel.currentUser())
   }
 
@@ -83,7 +88,7 @@ fun HomeView(
       modifier = Modifier
         .padding(innerPadding)
     ) {
-      HomeViewContent(noteViewModel, navController)
+      HomeViewContent(noteViewModel, navController, currentUser)
     }
   }
 }
@@ -94,7 +99,7 @@ fun HomeView(
  * @usage HomeViewContent(noteViewModel = noteViewModel)
  */
 @Composable
-fun HomeViewContent(noteViewModel: NoteViewModel, navController: NavController) {
+fun HomeViewContent(noteViewModel: NoteViewModel, navController: NavController, currentUser: UserModel?) {
   val notes by noteViewModel.notes.collectAsState()
   val onDeleteNote: (Note) -> Unit = { note ->
     noteViewModel.deleteNote(note)
@@ -109,7 +114,7 @@ fun HomeViewContent(noteViewModel: NoteViewModel, navController: NavController) 
         .height(20.dp)
     )
     MainTitle(
-      text = "Tus Notas",
+      text = "Tus Notas ${currentUser?.userName ?: ""}",
       color = MaterialTheme.colorScheme.secondary,
     )
     Column(
@@ -161,7 +166,7 @@ fun HomeNotesContent(notes: List<NoteModel>, onDeleteNote: (Note) -> Unit, navCo
           content = it.content,
           time = it.timestamp,
           onClick = {
-//            navController.navigate("${Routes.EDIT}/${it.id}")
+            navController.navigate("${Routes.EDIT}/${it.uid}")
           }
         )
       }

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseUser
+import com.julhdev.notes.data.model.UserModel
 import com.julhdev.notes.data.repository.AuthRepository
 import com.julhdev.notes.utils.ErrorMapper.map
 import com.julhdev.notes.utils.resources.Resource
@@ -36,6 +37,9 @@ class AuthViewModel @Inject constructor(
   var isError = _isError.asStateFlow()
   private val _currentUser = MutableStateFlow<FirebaseUser?>(null)
   val currentUser = _currentUser.asStateFlow()
+  private val _user = MutableStateFlow<UserModel?>(null)
+  val user = _user.asStateFlow()
+
 
   init {
     if (repository.getCurrentUser() != null) {
@@ -60,6 +64,18 @@ class AuthViewModel @Inject constructor(
    * @usage AuthViewModel().currentUser()
    */
   fun currentUser() = repository.getCurrentUser()
+
+  /**
+   * Obtiene el usuario actual
+   * @return FirebaseUser?
+   * @usage AuthViewModel().getUser()
+   */
+  fun getUser(user: FirebaseUser?) {
+    viewModelScope.launch {
+      val result = repository.getUser(user)
+      _user.value = result
+    }
+  }
 
   /**
    * Verifica si el usuario está autenticado.

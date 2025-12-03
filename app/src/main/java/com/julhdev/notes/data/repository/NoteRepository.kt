@@ -1,7 +1,7 @@
 package com.julhdev.notes.data.repository
 
 import com.google.firebase.auth.FirebaseUser
-import com.julhdev.notes.data.firebase.UserFirestoreDataSource
+import com.julhdev.notes.data.firebase.NotesFirestoreDataSource
 import com.julhdev.notes.data.local.Note
 import com.julhdev.notes.data.local.NoteDao
 import com.julhdev.notes.data.model.NoteModel
@@ -22,7 +22,7 @@ import javax.inject.Inject
  */
 class NoteRepository @Inject constructor(
   private val noteDao: NoteDao,
-  private val noteStore: UserFirestoreDataSource
+  private val noteStore: NotesFirestoreDataSource
 ) {
 
   /**
@@ -62,8 +62,6 @@ class NoteRepository @Inject constructor(
    * @usage val notesFlow: Flow<List<Note>> = noteRepository.getNotes()
    */
   fun getNotes(user: FirebaseUser?): Flow<List<NoteModel>> = noteStore.getNotes(user).flowOn(Dispatchers.IO).conflate()
-
-//  fun getNotes(): Flow<List<Note>> = noteDao.getNotes().flowOn(Dispatchers.IO).conflate()
 
   /**
    * Recupera una nota por su ID como un flujo.

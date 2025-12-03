@@ -9,6 +9,7 @@ package com.julhdev.notes.data.model
  * @usage UserModel(userId, userName, email)
  */
 data class NoteModel(
+  val uid: String? = null,
   val userId: String?,
   val title: String,
   val content: String,
@@ -20,6 +21,7 @@ data class NoteModel(
    */
   fun toMap(): MutableMap<String, String?> {
     return mutableMapOf(
+      "uid" to this.uid,
       "userId" to this.userId,
       "title" to this.title,
       "content" to this.content,
